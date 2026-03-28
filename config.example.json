@@ -1,0 +1,40 @@
+{
+  "targeting_rules": [
+    {
+      "name": "Restaurants Paris",
+      "hashtags": ["restaurantparis", "parisfood", "bonnesadresses"],
+      "keywords": ["restaurant", "brunch", "gastronomie"],
+      "locations": ["Paris"],
+      "usernames": [],
+      "comment_templates": [
+        "{greeting} {username} ! Super adresse à {city} {emoji}",
+        "{emoji} Ça donne trop envie ! {hashtag}",
+        "Wow {username} ! Faut que j'essaie ça {emoji}"
+      ]
+    },
+    {
+      "name": "Fitness Lyon",
+      "hashtags": ["fitnesslyon", "sportlyon", "musculationlyon"],
+      "keywords": ["musculation", "fitness", "entraînement"],
+      "locations": ["Lyon"],
+      "usernames": [],
+      "comment_templates": [
+        "{greeting} {username} ! Belle perf {emoji}",
+        "{emoji} Lyon représente ! {hashtag}",
+        "Respect {username} ! Continue comme ça {emoji}"
+      ]
+    },
+    {
+      "name": "Immobilier",
+      "hashtags": ["immobilier", "realestate", "appartement"],
+      "keywords": ["vente", "location", "appartement", "maison"],
+      "locations": [],
+      "usernames": ["immo_paris", "century21france"],
+      "comment_templates": [
+        "{greeting} ! Superbe bien {emoji}",
+        "{emoji} Magnifique {username} !",
+        "Très intéressant {emoji} {hashtag}"
+      ]
+    }
+  ]
+}
