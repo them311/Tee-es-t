@@ -180,3 +180,120 @@ Eviter : samedi, dimanche, lundi matin, vendredi apres-midi
 - Logger la source de chaque contact
 - Respecter les preferences de communication
 - Ne jamais re-contacter un contact desabonne
+
+---
+
+## Configuration Notion
+
+### Integration
+
+- **Type** : Integration interne Notion
+- **Cle API** : Variable d'environnement `NOTION_API_KEY`
+- **Version API** : 2022-06-28
+- **Permissions requises** : Read content, Insert content, Update content
+
+### Bonnes Pratiques Notion
+
+#### Structure Recommandee du Workspace
+
+```
+📁 L-FDS Workspace
+├── 📊 Pipeline Prospects (database)
+│   ├── Colonnes : Nom, Email, Entreprise, Statut, Source, Deal HubSpot, Derniere Interaction
+│   └── Vues : Kanban par statut, Table complete, Calendrier
+├── 📧 Campagnes Email (database)
+│   ├── Colonnes : Nom campagne, Segment, Statut, Date envoi, Taux ouverture, Taux reponse
+│   └── Vues : Calendrier, Table
+├── 📝 Comptes-Rendus RDV (database)
+│   ├── Colonnes : Date, Contact, Sujet, Notes, Actions suivantes
+│   └── Vues : Table par date
+├── 📋 Processus Internes
+│   ├── Workflow de vente
+│   ├── Onboarding client
+│   └── FAQ objections
+└── 📈 Rapports
+    ├── Rapport hebdomadaire
+    └── Bilan mensuel
+```
+
+#### Types de Proprietes Notion
+
+| Type | Utilisation | Exemple |
+|------|------------|---------|
+| title | Nom principal | Nom du prospect |
+| rich_text | Texte libre | Notes, description |
+| select | Choix unique | Statut, Priorite |
+| multi_select | Choix multiples | Tags, Competences |
+| email | Adresse email | Email de contact |
+| phone_number | Telephone | Numero direct |
+| url | Lien | Site web, LinkedIn |
+| number | Valeur numerique | Montant deal |
+| date | Date | Prochaine relance |
+| checkbox | Vrai/Faux | Email envoye ? |
+| status | Statut avec groupes | En cours / Termine |
+
+#### Synchronisation CRM ↔ Notion
+
+Quand un prospect avance dans le pipeline :
+1. Mettre a jour la propriete "Statut" dans la database Notion Pipeline
+2. Ajouter un commentaire avec la date et le detail de l'avancement
+3. Si deal cree dans HubSpot → ajouter l'ID du deal dans la propriete "Deal HubSpot"
+4. Si RDV planifie → creer une page dans "Comptes-Rendus RDV"
+
+---
+
+## Configuration GitHub
+
+### Authentification
+
+- **Token** : Personal Access Token (PAT) classique ou fine-grained
+- **Variable** : `GITHUB_TOKEN`
+- **Permissions requises** : `repo`, `issues:write`, `pull_requests:read`
+- **API** : REST API v3 (api.github.com)
+
+### Repos Principaux
+
+| Repo | Usage |
+|------|-------|
+| them311/Tee-es-t | Repository principal de l'agent |
+| (autres repos a ajouter) | Projets clients, landing pages, etc. |
+
+### Bonnes Pratiques GitHub pour le Commercial
+
+#### Labels Recommandes
+
+| Label | Couleur | Usage |
+|-------|---------|-------|
+| `commercial` | 🟢 vert | Taches liees au commercial |
+| `landing-page` | 🔵 bleu | Landing pages pour campagnes |
+| `bug-prod` | 🔴 rouge | Bugs impactant les clients |
+| `feature-request` | 🟡 jaune | Demandes de fonctionnalites clients |
+| `integration` | 🟣 violet | Integrations (CRM, email, etc.) |
+
+#### Workflow Issues
+
+1. **Detection** : Identifier les besoins techniques issus de la prospection
+2. **Creation** : Creer une issue avec contexte commercial (quel prospect, quel besoin)
+3. **Suivi** : Verifier regulierement l'avancement des issues critiques
+4. **Communication** : Informer le prospect quand la fonctionnalite est disponible
+
+#### Template d'Issue Commerciale
+
+```markdown
+## Contexte Commercial
+- **Prospect** : [Nom] ([Email])
+- **Deal HubSpot** : [ID/Lien]
+- **Besoin exprime** : [Description]
+
+## Description Technique
+[Ce qu'il faut developper/corriger]
+
+## Impact Business
+- Nombre de prospects concernes : X
+- Valeur potentielle : X EUR
+- Urgence : Haute/Moyenne/Basse
+
+## Criteres d'Acceptation
+- [ ] Critere 1
+- [ ] Critere 2
+```

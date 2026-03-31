@@ -164,3 +164,158 @@
 > - Conversion en RDV : > 5%
 >
 > Voulez-vous que je commence par segmenter vos contacts HubSpot ?
+
+---
+
+## Exemple 6 : Creer un Pipeline dans Notion
+
+**Commande :** `/commercial-agent creer pipeline notion`
+
+**Utilisateur :** "Je veux un tableau de suivi de mes prospects dans Notion"
+
+**Agent :**
+
+> J'ai cherche dans votre workspace Notion et aucun pipeline prospects n'existe encore.
+>
+> Voici ce que je propose de creer :
+>
+> **Base de donnees : Pipeline Prospects L-FDS**
+>
+> | Propriete | Type | Options |
+> |-----------|------|---------|
+> | Nom | title | - |
+> | Email | email | - |
+> | Entreprise | rich_text | - |
+> | Statut | select | Nouveau, Contact, Qualifie, Proposition, Gagne, Perdu |
+> | Source | select | Salon, Web, Referral, LinkedIn, Autre |
+> | Montant | number | EUR |
+> | Prochaine relance | date | - |
+> | Email envoye | checkbox | - |
+> | Notes | rich_text | - |
+> | Deal HubSpot | url | Lien vers le deal |
+>
+> **Vues :**
+> - Kanban par Statut (vue par defaut)
+> - Table complete
+>
+> Dois-je creer cette base de donnees dans votre workspace ?
+
+---
+
+## Exemple 7 : Synchroniser HubSpot et Notion
+
+**Commande :** `/commercial-agent sync hubspot notion`
+
+**Utilisateur :** "Mets a jour le pipeline Notion avec les derniers deals HubSpot"
+
+**Agent :**
+
+> J'ai analyse les deux sources :
+>
+> **HubSpot** : 8 deals actifs
+> **Notion Pipeline** : 5 lignes existantes
+>
+> **Actions a effectuer :**
+>
+> | Contact | HubSpot | Notion | Action |
+> |---------|---------|--------|--------|
+> | Jean Dupont | Deal "ABC Corp" - Proposition | Absent | Ajouter dans Notion |
+> | Marie Martin | Deal "XYZ" - Negociation | Statut "Contact" | Mettre a jour -> "Proposition" |
+> | Paul Durand | Deal "Startup" - Gagne | Statut "Qualifie" | Mettre a jour -> "Gagne" 🎉 |
+>
+> Dois-je proceder a ces 3 mises a jour ?
+
+---
+
+## Exemple 8 : Suivi Technique via GitHub
+
+**Commande :** `/commercial-agent suivi technique`
+
+**Utilisateur :** "Ou en est le developpement du site ? Y a-t-il des bugs ouverts ?"
+
+**Agent :**
+
+> J'ai consulte le repository them311/Tee-es-t :
+>
+> **Resume :**
+> - Branche principale : main
+> - Derniers commits : 4 commits cette semaine
+> - Issues ouvertes : 2
+> - PRs en attente : 1
+>
+> **Issues ouvertes :**
+>
+> | # | Titre | Labels | Cree le |
+> |---|-------|--------|---------|
+> | #5 | Formulaire contact ne fonctionne pas sur mobile | bug-prod | 28 mars |
+> | #3 | Ajouter page temoignages | feature-request | 25 mars |
+>
+> **Pull Requests :**
+>
+> | # | Titre | Auteur | Statut |
+> |---|-------|--------|--------|
+> | #6 | Fix responsive form | them311 | En review |
+>
+> **Impact commercial :**
+> - ⚠️ Issue #5 (formulaire mobile) pourrait bloquer la conversion de prospects mobiles
+> - 💡 Issue #3 (temoignages) peut booster la confiance des prospects
+>
+> **Recommandations :**
+> 1. Priorite haute sur #5 — 60% du trafic web est mobile
+> 2. Creer une issue pour la landing page de la campagne renovation
+>
+> Voulez-vous que je cree une issue pour la landing page ?
+
+---
+
+## Exemple 9 : Workflow Complet Cross-Plateforme
+
+**Commande :** `/commercial-agent workflow complet`
+
+**Utilisateur :** "J'ai eu un RDV avec Sophie Lemaire de Deco Plus, elle est interessee par nos services. Gere tout."
+
+**Agent :**
+
+> J'ai lance le workflow complet. Voici ce que j'ai fait et ce que je propose :
+>
+> **1. HubSpot CRM** ✅
+> - Recherche : Sophie Lemaire n'existe pas encore dans le CRM
+> - Creation du contact : sophie.lemaire@decoplus.fr, Deco Plus, Source: RDV Direct
+> - Creation du deal : "Deco Plus - Services Renovation", Montant: a definir, Etape: "Echange en cours"
+> - Note ajoutee : "RDV du 31/03 - Interessee par nos services, a rappeler"
+> - Tache creee : "Envoyer proposition Deco Plus" (echeance: 03/04)
+>
+> **2. Notion** 📝
+> - Ajout dans Pipeline Prospects : Sophie Lemaire, Statut "Qualifie"
+> - Page Compte-Rendu RDV creee :
+>   - Date : 31/03/2026
+>   - Contact : Sophie Lemaire - Deco Plus
+>   - (A completer : vos notes du RDV)
+>
+> **3. Gmail** ✉️
+> - Brouillon de remerciement cree :
+>
+> > **A :** sophie.lemaire@decoplus.fr
+> > **Objet :** Sophie, merci pour notre echange !
+> >
+> > Bonjour Sophie,
+> >
+> > Merci pour le temps que vous m'avez accorde aujourd'hui. Notre echange sur vos projets de renovation chez Deco Plus etait tres enrichissant.
+> >
+> > Comme convenu, je vous prepare une proposition detaillee que je vous enverrai d'ici jeudi.
+> >
+> > N'hesitez pas si vous avez des questions entre-temps.
+> >
+> > Bien cordialement,
+> > Baptiste Thevenot
+>
+> **4. GitHub** 🔧
+> - Verifie : aucune issue en cours liee a Deco Plus
+> - (Si besoin technique specifique, je pourrai creer une issue)
+>
+> **Prochaines etapes :**
+> - [ ] Valider le brouillon email de remerciement
+> - [ ] Completer les notes du RDV dans Notion
+> - [ ] Preparer la proposition pour jeudi
+>
+> Voulez-vous modifier quelque chose ?
