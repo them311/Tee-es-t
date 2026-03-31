@@ -9,8 +9,8 @@ import { getAllStoredSessions, exportSessionsAsCSV } from "../utils/analytics";
 import useQuizEngine from "../hooks/useQuizEngine";
 
 // ─── CONFIG ───
-// Set your API endpoint here to enable server-side data collection
-const API_ENDPOINT = null; // e.g. "https://your-api.com/quiz-submissions"
+// Points to the local API server (proxied via Vite in dev, or direct in prod)
+const API_ENDPOINT = "/api/quiz/submit";
 
 export default function QuizApp() {
   const quiz = useQuizEngine({ apiEndpoint: API_ENDPOINT });
