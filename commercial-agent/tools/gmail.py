@@ -36,33 +36,41 @@ def _get_gmail_service():
     creds = None
     token_path = Path("./config/gmail_token.json")
 
-    # Support credentials from env var (JSON string) or file path
-    credentials_json = os.getenv("GMAIL_CREDENTIALS_JSON")
-    credentials_path = Path(os.getenv("GMAIL_CREDENTIALS_PATH", "./config/gmail_credentials.json"))
+    # 1. Try loading token from env var (for Railway/serverless)
+    token_json = os.getenv("GMAIL_TOKEN_JSON")
+    if token_json:
+        creds = Credentials.from_authorized_user_info(json.loads(token_json), SCOPES)
 
-    # If JSON is provided as env var, write it to a temp file
-    if credentials_json and not credentials_path.exists():
-        credentials_path = Path("./config/gmail_credentials.json")
-        credentials_path.parent.mkdir(parents=True, exist_ok=True)
-        credentials_path.write_text(credentials_json)
-
-    if not credentials_path.exists():
-        raise RuntimeError(
-            "Gmail not configured. Set GMAIL_CREDENTIALS_JSON env var "
-            "or place credentials file at ./config/gmail_credentials.json"
-        )
-
-    if token_path.exists():
+    # 2. Try loading token from file
+    if not creds and token_path.exists():
         creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
 
+    # 3. Refresh if expired
+    if creds and creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+
+    # 4. If no valid token, try OAuth flow (only works locally with browser)
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(str(credentials_path), SCOPES)
-            creds = flow.run_local_server(port=0)
-        token_path.parent.mkdir(parents=True, exist_ok=True)
-        token_path.write_text(creds.to_json())
+        credentials_json = os.getenv("GMAIL_CREDENTIALS_JSON")
+        credentials_path = Path(os.getenv("GMAIL_CREDENTIALS_PATH", "./config/gmail_credentials.json"))
+
+        if credentials_json and not credentials_path.exists():
+            credentials_path = Path("./config/gmail_credentials.json")
+            credentials_path.parent.mkdir(parents=True, exist_ok=True)
+            credentials_path.write_text(credentials_json)
+
+        if not credentials_path.exists():
+            raise RuntimeError(
+                "Gmail not configured. Run 'python setup_gmail.py' on your Mac first, "
+                "then add GMAIL_TOKEN_JSON to Railway env vars."
+            )
+
+        flow = InstalledAppFlow.from_client_secrets_file(str(credentials_path), SCOPES)
+        creds = flow.run_local_server(port=0)
+
+    # Save token locally
+    token_path.parent.mkdir(parents=True, exist_ok=True)
+    token_path.write_text(creds.to_json())
 
     _service = build("gmail", "v1", credentials=creds)
     return _service
