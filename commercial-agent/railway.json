@@ -7,6 +7,6 @@
   "deploy": {
     "startCommand": "python autonomous.py morning",
     "restartPolicyType": "NEVER",
-    "cronSchedule": "0 7 * * 1-5"
+    "cronSchedule": "40 6 * * 1-5"
   }
 }
