@@ -1,0 +1,72 @@
+services:
+  - type: cron
+    name: commercial-agent-morning
+    schedule: "0 7 * * 1-5"
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python autonomous.py morning
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: HUBSPOT_API_KEY
+        sync: false
+      - key: GMAIL_CREDENTIALS_PATH
+        value: ./config/gmail_credentials.json
+      - key: NOTION_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: AGENT_OWNER_NAME
+        value: Baptiste Thevenot
+      - key: AGENT_OWNER_EMAIL
+        value: bp.thevenot@gmail.com
+      - key: HUBSPOT_OWNER_ID
+        value: "80842560"
+
+  - type: cron
+    name: commercial-agent-followup
+    schedule: "0 14 * * 1-5"
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python autonomous.py followup
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: HUBSPOT_API_KEY
+        sync: false
+      - key: GMAIL_CREDENTIALS_PATH
+        value: ./config/gmail_credentials.json
+      - key: NOTION_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: AGENT_OWNER_NAME
+        value: Baptiste Thevenot
+      - key: AGENT_OWNER_EMAIL
+        value: bp.thevenot@gmail.com
+      - key: HUBSPOT_OWNER_ID
+        value: "80842560"
+
+  - type: cron
+    name: commercial-agent-weekly-audit
+    schedule: "0 17 * * 5"
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python autonomous.py weekly_audit
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: HUBSPOT_API_KEY
+        sync: false
+      - key: GMAIL_CREDENTIALS_PATH
+        value: ./config/gmail_credentials.json
+      - key: NOTION_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: AGENT_OWNER_NAME
+        value: Baptiste Thevenot
+      - key: AGENT_OWNER_EMAIL
+        value: bp.thevenot@gmail.com
+      - key: HUBSPOT_OWNER_ID
+        value: "80842560"
