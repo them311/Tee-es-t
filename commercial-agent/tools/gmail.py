@@ -3,13 +3,18 @@
 import os
 import json
 import base64
+import tempfile
 from email.mime.text import MIMEText
 from pathlib import Path
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
+try:
+    from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from googleapiclient.discovery import build
+    GMAIL_AVAILABLE = True
+except ImportError:
+    GMAIL_AVAILABLE = False
 
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.compose",
@@ -25,9 +30,27 @@ def _get_gmail_service():
     if _service is not None:
         return _service
 
+    if not GMAIL_AVAILABLE:
+        raise RuntimeError("Gmail dependencies not installed. Run: pip install google-auth google-auth-oauthlib google-api-python-client")
+
     creds = None
     token_path = Path("./config/gmail_token.json")
+
+    # Support credentials from env var (JSON string) or file path
+    credentials_json = os.getenv("GMAIL_CREDENTIALS_JSON")
     credentials_path = Path(os.getenv("GMAIL_CREDENTIALS_PATH", "./config/gmail_credentials.json"))
+
+    # If JSON is provided as env var, write it to a temp file
+    if credentials_json and not credentials_path.exists():
+        credentials_path = Path("./config/gmail_credentials.json")
+        credentials_path.parent.mkdir(parents=True, exist_ok=True)
+        credentials_path.write_text(credentials_json)
+
+    if not credentials_path.exists():
+        raise RuntimeError(
+            "Gmail not configured. Set GMAIL_CREDENTIALS_JSON env var "
+            "or place credentials file at ./config/gmail_credentials.json"
+        )
 
     if token_path.exists():
         creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
@@ -38,6 +61,7 @@ def _get_gmail_service():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(str(credentials_path), SCOPES)
             creds = flow.run_local_server(port=0)
+        token_path.parent.mkdir(parents=True, exist_ok=True)
         token_path.write_text(creds.to_json())
 
     _service = build("gmail", "v1", credentials=creds)
