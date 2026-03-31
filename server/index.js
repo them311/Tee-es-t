@@ -244,23 +244,38 @@ app.delete("/api/admin/submissions/:sessionId", requireApiKey, (req, res) => {
   res.json({ success: true, deleted: req.params.sessionId });
 });
 
+// ─── SERVE FRONTEND IN PRODUCTION ───
+const DIST_DIR = path.join(__dirname, "..", "dist");
+if (fs.existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+  // SPA fallback — serve index.html for all non-API routes
+  app.get("*", (req, res) => {
+    if (!req.path.startsWith("/api")) {
+      res.sendFile(path.join(DIST_DIR, "index.html"));
+    }
+  });
+}
+
 // ─── START ───
 app.listen(PORT, () => {
+  const isProduction = fs.existsSync(DIST_DIR);
   console.log("");
-  console.log("  LFDS Quiz API Server");
-  console.log(`  http://localhost:${PORT}`);
+  console.log("  ╔══════════════════════════════════════════╗");
+  console.log("  ║     LFDS Quiz — API Server               ║");
+  console.log("  ╚══════════════════════════════════════════╝");
   console.log("");
-  console.log("  Public endpoints:");
-  console.log("    POST /api/quiz/submit     — Receive quiz data");
-  console.log("    GET  /api/health          — Health check");
+  console.log(`  Mode:     ${isProduction ? "PRODUCTION (serving frontend)" : "DEVELOPMENT (API only)"}`);
+  console.log(`  URL:      http://localhost:${PORT}`);
+  console.log(`  API Key:  ${API_KEY}`);
   console.log("");
-  console.log("  Admin endpoints (require x-api-key header):");
-  console.log("    GET  /api/admin/submissions     — List all submissions");
-  console.log("    GET  /api/admin/submissions/:id — Get one submission");
-  console.log("    GET  /api/admin/stats           — Aggregated stats");
-  console.log("    GET  /api/admin/export/csv      — Download CSV");
-  console.log("    DEL  /api/admin/submissions/:id — Delete submission");
+  console.log("  Public:");
+  console.log("    POST /api/quiz/submit");
+  console.log("    GET  /api/health");
   console.log("");
-  console.log(`  API Key: ${API_KEY}`);
+  console.log("  Admin (x-api-key required):");
+  console.log("    GET  /api/admin/submissions");
+  console.log("    GET  /api/admin/stats");
+  console.log("    GET  /api/admin/export/csv");
+  console.log("    DEL  /api/admin/submissions/:id");
   console.log("");
 });
