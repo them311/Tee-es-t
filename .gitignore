@@ -22,3 +22,14 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Environment secrets
+.env
+commercial-agent/.env
+commercial-agent/config/gmail_token.json
+commercial-agent/config/gmail_credentials.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
