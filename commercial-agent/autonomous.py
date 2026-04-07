@@ -42,9 +42,15 @@ ROUTINES = {
 
 3. TACHES : Utilise hubspot_search_contacts pour verifier s'il y a des taches en retard.
 
-4. RESUME : A la fin, donne un resume structure :
+4. DEVIS & PROPOSITIONS : Pour chaque prospect qui a exprime un besoin concret ou demande un tarif :
+   - Utilise livrables_create_devis pour generer un devis avec les lignes de prestation adaptees.
+   - Si le projet est complexe, utilise livrables_create_proposition pour une proposition detaillee.
+   - Mentionne le livrable genere dans le brouillon de reponse au client.
+
+5. RESUME : A la fin, donne un resume structure :
    - Nombre d'emails traites
    - Nombre de brouillons crees
+   - Nombre de devis/propositions generes
    - Contacts a relancer
    - Actions prioritaires
 
@@ -55,9 +61,10 @@ IMPORTANT : Tu dois TOUJOURS creer des brouillons (gmail_create_draft), JAMAIS e
 1. Cherche dans HubSpot tous les contacts avec hs_lead_status = OPEN.
 2. Pour chacun, verifie dans Gmail s'il y a eu une reponse recente (gmail_search_messages from:email_du_contact).
 3. Si pas de reponse depuis plus de 3 jours : cree un brouillon de relance personnalise.
-4. Si pas de reponse depuis plus de 7 jours : cree un brouillon de derniere relance.
+4. Si pas de reponse depuis plus de 7 jours : cree un brouillon de derniere relance avec une offre speciale ou un devis adapte (livrables_create_devis).
 5. Si pas de reponse depuis plus de 14 jours : mets le statut a ATTEMPTED_TO_REACH dans HubSpot.
-6. Resume les actions effectuees.""",
+6. Verifie les livrables existants (livrables_list) et mentionne-les dans les relances si pertinent.
+7. Resume les actions effectuees, incluant les devis generes.""",
 
     "weekly_audit": """Effectue l'audit hebdomadaire du CRM :
 

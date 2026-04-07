@@ -607,6 +607,37 @@
         </ul>
     </div>
 
+    <!-- Livrables -->
+    <div class="section">
+        <div class="section-header">
+            <h2>
+                <span class="section-icon">&#128196;</span>
+                Livrables & Devis
+            </h2>
+            <span class="section-meta" id="livrables-meta">--</span>
+        </div>
+        <div class="dashboard" style="margin:0" id="livrables-kpis">
+            <div class="card" style="border-top-color:#6c5ce7">
+                <h3>Devis generes</h3>
+                <div class="value" id="kpi-devis">--</div>
+                <div class="detail">Devis automatiques</div>
+            </div>
+            <div class="card" style="border-top-color:#00b894">
+                <h3>Propositions</h3>
+                <div class="value" id="kpi-propositions">--</div>
+                <div class="detail">Propositions commerciales</div>
+            </div>
+            <div class="card" style="border-top-color:#fdcb6e">
+                <h3>Montant total</h3>
+                <div class="value" id="kpi-montant">--</div>
+                <div class="detail">Chiffre d'affaires potentiel</div>
+            </div>
+        </div>
+        <ul class="activity-log" id="livrables-list" style="margin-top:1rem">
+            <li class="log-empty">Aucun livrable genere pour le moment.</li>
+        </ul>
+    </div>
+
     <!-- Services -->
     <div class="section">
         <div class="section-header">
@@ -742,6 +773,33 @@
                     });
                 } else {
                     logEl.innerHTML = '<li class="log-empty">Aucune activite enregistree pour le moment.</li>';
+                }
+
+                // Livrables section
+                if (data.livrables) {
+                    var liv = data.livrables;
+                    document.getElementById('kpi-devis').textContent = liv.devis_count || 0;
+                    document.getElementById('kpi-propositions').textContent = liv.propositions_count || 0;
+                    var montant = liv.total_montant || 0;
+                    document.getElementById('kpi-montant').textContent =
+                        montant > 0 ? montant.toLocaleString('fr-FR') + ' \u20AC' : '--';
+                    document.getElementById('livrables-meta').textContent =
+                        (liv.devis_count + liv.propositions_count) + ' documents';
+
+                    var livList = document.getElementById('livrables-list');
+                    if (liv.recent && liv.recent.length > 0) {
+                        livList.innerHTML = '';
+                        liv.recent.forEach(function(doc) {
+                            var li = document.createElement('li');
+                            var badgeClass = doc.type === 'devis' ? 'badge-crm' : 'badge-notion';
+                            li.innerHTML =
+                                '<span class="log-time">' + (doc.date || '') + '</span>' +
+                                '<span class="log-badge ' + badgeClass + '">' + (doc.type || '').toUpperCase() + '</span>' +
+                                '<span><strong>' + (doc.client || '') + '</strong> — ' + (doc.objet || doc.titre || '') +
+                                (doc.montant ? ' (' + doc.montant + ')' : '') + '</span>';
+                            livList.appendChild(li);
+                        });
+                    }
                 }
 
                 // Footer timestamp

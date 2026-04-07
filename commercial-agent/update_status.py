@@ -13,6 +13,7 @@ from datetime import datetime
 
 STATUS_FILE = os.path.join(os.path.dirname(__file__), "..", "docs", "status.json")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "agent.log")
+LIVRABLES_DIR = os.path.join(os.path.dirname(__file__), "livrables")
 
 
 def load_status() -> dict:
@@ -114,6 +115,34 @@ def update_status(routine_name: str):
     activities = status.get("activity", [])
     activities.insert(0, activity_entry)
     status["activity"] = activities[:20]
+
+    # Scan livrables directory for generated documents
+    livrables_data = {"devis_count": 0, "propositions_count": 0, "total_montant": 0, "recent": []}
+    if os.path.exists(LIVRABLES_DIR):
+        for fname in sorted(os.listdir(LIVRABLES_DIR), reverse=True):
+            if not fname.endswith(".json"):
+                continue
+            try:
+                with open(os.path.join(LIVRABLES_DIR, fname), "r", encoding="utf-8") as f:
+                    meta = json.load(f)
+                if meta.get("type") == "devis":
+                    livrables_data["devis_count"] += 1
+                    livrables_data["total_montant"] += meta.get("total_ht", 0)
+                elif meta.get("type") == "proposition":
+                    livrables_data["propositions_count"] += 1
+                    livrables_data["total_montant"] += meta.get("total_ht", 0)
+                # Keep last 10 for display
+                if len(livrables_data["recent"]) < 10:
+                    livrables_data["recent"].append({
+                        "type": meta.get("type", ""),
+                        "date": meta.get("date", ""),
+                        "client": meta.get("client", ""),
+                        "objet": meta.get("objet", meta.get("titre", "")),
+                        "montant": f"{meta.get('total_ht', 0):,.0f} EUR" if meta.get("total_ht") else None,
+                    })
+            except (json.JSONDecodeError, IOError):
+                continue
+    status["livrables"] = livrables_data
 
     # Reset weekly counter on Monday morning
     if datetime.now().weekday() == 0 and routine_name == "morning":
