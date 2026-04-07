@@ -2,8 +2,8 @@ name: Robot Commercial - Routines automatiques
 
 on:
   schedule:
-    # Toutes les 2 minutes
-    - cron: '*/2 * * * *'
+    # Toutes les 10 minutes
+    - cron: '*/10 * * * *'
   workflow_dispatch:
     inputs:
       routine:

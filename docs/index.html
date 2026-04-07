@@ -3,134 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNB Consulting - Agent Commercial Autonome</title>
-    <meta name="description" content="SNB Consulting - Prospection, CRM et suivi client automatises par intelligence artificielle. Robot commercial autonome 24h/24.">
-    <meta property="og:title" content="SNB Consulting - Agent Commercial Autonome">
-    <meta property="og:description" content="Prospection, CRM et suivi client automatises par IA. Robot commercial autonome.">
+    <title>SNB Consulting | Agent Commercial IA</title>
+    <meta name="description" content="SNB Consulting - Votre agent commercial autonome propulse par intelligence artificielle. Prospection, CRM, emails et suivi client automatises 24h/24.">
+    <meta property="og:title" content="SNB Consulting | Agent Commercial IA">
+    <meta property="og:description" content="Agent commercial autonome. Prospection, CRM et suivi client automatises par IA.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://snb-consulting-platform.netlify.app/">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='20' width='100' height='100' fill='%231a2a3a'/><text x='50' y='68' text-anchor='middle' fill='%232c7be5' font-size='50' font-family='sans-serif' font-weight='bold'>S</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='18' width='100' height='100' fill='%230f172a'/><text x='50' y='66' text-anchor='middle' fill='%2338bdf8' font-size='48' font-family='system-ui' font-weight='800'>S</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1a2a3a;
-            --primary-light: #243b53;
-            --accent: #2c7be5;
-            --accent-dark: #1a5fc4;
-            --accent-light: #e8f0fe;
-            --success: #00c853;
-            --success-light: #e8f5e9;
-            --warning: #ff9800;
-            --warning-light: #fff3e0;
-            --error: #e53935;
-            --error-light: #ffebee;
-            --text: #333;
-            --text-light: #666;
-            --text-muted: #999;
-            --bg: #f5f7fa;
-            --white: #fff;
-            --border: #e8ecf1;
-            --shadow: 0 2px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --blue-400: #38bdf8;
+            --blue-500: #0ea5e9;
+            --blue-600: #0284c7;
+            --blue-700: #0369a1;
+            --green-400: #4ade80;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
+            --orange-400: #fb923c;
+            --orange-500: #f97316;
+            --red-400: #f87171;
+            --red-500: #ef4444;
+            --purple-500: #a855f7;
+            --radius: 10px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            color: var(--text);
-            background: var(--bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--slate-50);
+            color: var(--slate-800);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Header */
-        header {
-            background: var(--primary);
-            color: var(--white);
-            padding: 0.75rem 2rem;
+        /* ===== NAV ===== */
+        nav {
+            background: var(--slate-900);
+            padding: 0 2rem;
+            height: 56px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 50;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
-        .logo {
+        .nav-brand {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
         }
 
-        .logo-icon {
-            width: 36px;
-            height: 36px;
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
             border-radius: 8px;
-            background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 1.1rem;
+            font-weight: 900;
+            font-size: 16px;
+            color: white;
         }
 
-        header h1 {
-            font-size: 1.2rem;
+        .nav-title {
             font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 15px;
+            letter-spacing: -0.3px;
         }
 
-        header h1 span { color: var(--accent); font-weight: 400; }
+        .nav-title span { color: var(--slate-400); font-weight: 400; }
 
-        .header-right {
+        .nav-right {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 16px;
         }
 
-        .header-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            background: rgba(255,255,255,0.08);
-            padding: 0.4rem 0.75rem;
-            border-radius: 20px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-            animation: pulse 2s infinite;
-            flex-shrink: 0;
-        }
-
-        .status-dot.error { background: var(--error); }
-        .status-dot.warning { background: var(--warning); }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,200,83,0.4); }
-            50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(0,200,83,0); }
-        }
-
-        .next-run {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .next-run strong {
-            color: rgba(255,255,255,0.9);
+        .nav-timer {
+            font-size: 12px;
+            color: var(--slate-400);
             font-variant-numeric: tabular-nums;
         }
 
-        /* Hero */
+        .nav-timer strong { color: var(--slate-200); }
+
+        .nav-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(34,197,94,0.12);
+            color: var(--green-400);
+        }
+
+        .nav-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green-400);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        .nav-badge.error { background: rgba(239,68,68,0.12); color: var(--red-400); }
+        .nav-badge.error .dot { background: var(--red-400); }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ===== HERO ===== */
         .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #1a3a5c 100%);
-            color: var(--white);
-            padding: 3.5rem 2rem 3rem;
+            background: var(--slate-900);
+            padding: 48px 2rem 56px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -139,686 +152,676 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(44,123,229,0.1) 0%, transparent 50%);
-            animation: drift 20s linear infinite;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 600px 300px at 30% 80%, rgba(14,165,233,0.12), transparent),
+                radial-gradient(ellipse 400px 250px at 70% 20%, rgba(168,85,247,0.08), transparent);
         }
 
-        @keyframes drift {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: rgba(14,165,233,0.1);
+            border: 1px solid rgba(14,165,233,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--blue-400);
+            margin-bottom: 20px;
         }
 
-        .hero-content { position: relative; z-index: 1; }
-
-        .hero h2 {
-            font-size: 2.4rem;
-            margin-bottom: 0.75rem;
-            font-weight: 800;
-            letter-spacing: -1px;
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: -1.5px;
+            line-height: 1.15;
+            margin-bottom: 12px;
         }
 
         .hero p {
-            font-size: 1.05rem;
-            opacity: 0.8;
-            max-width: 550px;
+            font-size: 16px;
+            color: var(--slate-400);
+            max-width: 480px;
             margin: 0 auto;
+            line-height: 1.7;
         }
 
-        /* Container */
+        /* ===== LAYOUT ===== */
         .container {
-            max-width: 1100px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 1.5rem 2rem;
+            padding: 0 20px;
         }
 
-        /* Dashboard cards */
-        .dashboard {
+        /* ===== KPI CARDS ===== */
+        .kpi-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin: -2rem 0 1.5rem;
+            gap: 12px;
+            margin-top: -32px;
             position: relative;
             z-index: 2;
         }
 
-        .card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            box-shadow: var(--shadow);
-            border-top: 3px solid var(--accent);
-            transition: transform 0.2s, box-shadow 0.2s;
+        .kpi {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--slate-100);
+            transition: transform 0.15s, box-shadow 0.15s;
         }
 
-        .card:hover {
-            transform: translateY(-3px);
+        .kpi:hover {
+            transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
 
-        .card h3 {
-            font-size: 0.7rem;
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-muted);
-            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+            color: var(--slate-500);
+            margin-bottom: 6px;
         }
 
-        .card .value {
-            font-size: 1.8rem;
+        .kpi-value {
+            font-size: 28px;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--slate-900);
+            letter-spacing: -1px;
             line-height: 1.2;
         }
 
-        .card .detail {
-            font-size: 0.78rem;
-            color: var(--text-light);
-            margin-top: 0.25rem;
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--slate-400);
+            margin-top: 4px;
         }
 
-        .card.success { border-top-color: var(--success); }
-        .card.warning { border-top-color: var(--warning); }
+        .kpi-value.green { color: var(--green-600); }
 
-        /* Sections */
-        .section {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 1.5rem 2rem;
-            box-shadow: var(--shadow);
-            margin: 1.5rem 0;
+        /* ===== SECTIONS ===== */
+        .panel {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-sm);
+            margin-top: 16px;
+            overflow: hidden;
         }
 
-        .section-header {
+        .panel-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--bg);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--slate-100);
         }
 
-        .section-header h2 {
-            font-size: 1.15rem;
-            color: var(--primary);
+        .panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-800);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
         }
 
-        .section-header .section-icon {
-            width: 28px;
-            height: 28px;
+        .panel-title .icon {
+            width: 24px;
+            height: 24px;
             border-radius: 6px;
-            background: var(--accent-light);
-            color: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
+            font-size: 12px;
         }
 
-        .section-meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        .panel-meta {
+            font-size: 11px;
+            color: var(--slate-400);
+            font-weight: 500;
         }
 
-        /* Robot cycle info */
-        .cycle-banner {
-            background: linear-gradient(135deg, var(--accent-light) 0%, #dce8fd 100%);
-            border: 1px solid rgba(44,123,229,0.15);
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
+        .panel-body { padding: 16px 20px; }
+
+        /* ===== CYCLE BANNER ===== */
+        .cycle {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 16px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(14,165,233,0.06), rgba(168,85,247,0.04));
+            border-bottom: 1px solid var(--slate-100);
         }
 
-        .cycle-icon {
-            width: 44px;
-            height: 44px;
+        .cycle-spinner {
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
-            background: var(--accent);
-            color: var(--white);
+            background: var(--blue-500);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 18px;
             flex-shrink: 0;
-            animation: spin 4s linear infinite;
+            animation: rotate 3s linear infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
 
-        .cycle-info { flex: 1; }
-        .cycle-info h4 { font-size: 0.95rem; margin-bottom: 0.15rem; color: var(--primary); }
-        .cycle-info p { font-size: 0.82rem; color: var(--text-light); }
+        .cycle-text { flex: 1; }
+        .cycle-text strong { font-size: 14px; color: var(--slate-800); }
+        .cycle-text p { font-size: 12px; color: var(--slate-500); margin-top: 2px; }
 
-        .cycle-countdown {
-            font-size: 1.4rem;
+        .cycle-timer {
+            font-size: 24px;
             font-weight: 800;
-            color: var(--accent);
+            color: var(--blue-600);
             font-variant-numeric: tabular-nums;
-            min-width: 50px;
-            text-align: right;
+            letter-spacing: -0.5px;
         }
 
-        /* Routine cards */
-        .routines-grid {
+        /* ===== ROUTINES ===== */
+        .routines {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-top: 1rem;
+            gap: 10px;
+            padding: 16px 20px;
         }
 
-        .routine-card {
-            padding: 1rem;
-            background: var(--bg);
+        .routine {
+            padding: 14px;
+            background: var(--slate-50);
             border-radius: 8px;
-            border-left: 3px solid var(--accent);
-            transition: background 0.2s;
+            border: 1px solid var(--slate-100);
+            transition: border-color 0.15s;
         }
 
-        .routine-card:hover { background: var(--accent-light); }
+        .routine:hover { border-color: var(--blue-500); }
 
-        .routine-card h4 {
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
-            color: var(--primary);
+        .routine-tag {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--blue-600);
+            margin-bottom: 6px;
         }
 
-        .routine-card p {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            line-height: 1.4;
-        }
+        .routine h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+        .routine p { font-size: 11px; color: var(--slate-500); line-height: 1.5; }
 
-        .routine-card .routine-tag {
-            display: inline-block;
-            padding: 0.1rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            background: var(--accent);
-            color: var(--white);
-            margin-bottom: 0.4rem;
-        }
+        /* ===== ACTIVITY LOG ===== */
+        .log-list { list-style: none; }
 
-        /* Activity log */
-        .activity-log {
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-
-        .activity-log li {
-            padding: 0.6rem 0.75rem;
-            border-radius: 6px;
+        .log-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            transition: background 0.15s;
+            gap: 10px;
+            padding: 10px 20px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--slate-50);
+            transition: background 0.1s;
         }
 
-        .activity-log li:hover { background: var(--bg); }
-
-        .activity-log li + li { border-top: 1px solid var(--border); }
+        .log-item:last-child { border-bottom: none; }
+        .log-item:hover { background: var(--slate-50); }
 
         .log-time {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            min-width: 75px;
+            font-size: 11px;
+            color: var(--slate-400);
             font-variant-numeric: tabular-nums;
+            min-width: 44px;
         }
 
-        .log-badge {
-            display: inline-block;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.65rem;
+        .log-tag {
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            min-width: 55px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            min-width: 50px;
             text-align: center;
         }
 
-        .badge-crm { background: #e3f2fd; color: #1565c0; }
-        .badge-email { background: #fce4ec; color: #c62828; }
-        .badge-notion { background: #f3e5f5; color: #6a1b9a; }
-        .badge-systeme { background: var(--bg); color: var(--text-muted); }
+        .tag-crm { background: #dbeafe; color: #1d4ed8; }
+        .tag-email { background: #fce7f3; color: #be185d; }
+        .tag-notion { background: #f3e8ff; color: #7c3aed; }
+        .tag-systeme { background: var(--slate-100); color: var(--slate-500); }
 
         .log-empty {
+            padding: 32px 20px;
             text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
+            color: var(--slate-400);
+            font-size: 13px;
         }
 
-        /* Services */
-        .services-grid {
+        /* ===== SOURCES / SERVICES ===== */
+        .sources {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 12px;
+            padding: 16px 20px;
         }
 
-        .service {
+        .source {
             text-align: center;
-            padding: 1.25rem 1rem;
+            padding: 20px 12px;
+            background: var(--slate-50);
+            border-radius: 8px;
+            border: 1px solid var(--slate-100);
+            transition: border-color 0.15s, transform 0.15s;
+        }
+
+        .source:hover {
+            border-color: var(--slate-300);
+            transform: translateY(-1px);
+        }
+
+        .source-logo {
+            width: 44px;
+            height: 44px;
             border-radius: 10px;
-            background: var(--bg);
-            transition: transform 0.2s, background 0.2s;
-        }
-
-        .service:hover {
-            transform: translateY(-2px);
-            background: var(--accent-light);
-        }
-
-        .service-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 0.75rem;
-            font-weight: 700;
-            font-size: 0.85rem;
+            margin: 0 auto 10px;
+            font-size: 18px;
+            font-weight: 800;
         }
 
-        .service-icon.hubspot { background: #fff1f0; color: #ff5c35; }
-        .service-icon.gmail { background: #fce8e6; color: #ea4335; }
-        .service-icon.notion { background: #f5f5f5; color: #191919; }
-        .service-icon.github { background: #f0f0f0; color: #24292e; }
+        .source-logo.hubspot { background: #fff1ef; color: #ff5c35; }
+        .source-logo.gmail { background: #fef2f2; color: #ea4335; }
+        .source-logo.notion { background: var(--slate-100); color: var(--slate-900); }
+        .source-logo.github { background: var(--slate-100); color: #24292f; }
 
-        .service h4 { font-size: 0.85rem; margin-bottom: 0.3rem; }
-        .service p { font-size: 0.75rem; color: var(--text-light); line-height: 1.4; }
+        .source h4 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+        .source p { font-size: 11px; color: var(--slate-500); line-height: 1.4; }
 
-        .service .service-status {
+        .source-badge {
             display: inline-block;
-            margin-top: 0.5rem;
-            font-size: 0.65rem;
-            padding: 0.15rem 0.5rem;
-            border-radius: 10px;
+            margin-top: 8px;
+            font-size: 10px;
             font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
         }
 
-        .service-status.connected { background: var(--success-light); color: #2e7d32; }
-        .service-status.pending { background: var(--warning-light); color: #e65100; }
+        .source-badge.ok { background: rgba(34,197,94,0.1); color: var(--green-600); }
+        .source-badge.wait { background: rgba(249,115,22,0.1); color: var(--orange-500); }
 
-        /* Footer */
-        footer {
-            background: var(--primary);
-            color: rgba(255,255,255,0.6);
+        /* ===== LIVRABLES ===== */
+        .livrables-kpis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .liv-kpi {
             text-align: center;
-            padding: 1.5rem 2rem;
-            margin-top: 2rem;
-            font-size: 0.8rem;
+            padding: 12px;
+            background: var(--slate-50);
+            border-radius: 8px;
         }
 
-        footer strong { color: rgba(255,255,255,0.85); }
-        footer a { color: var(--accent); text-decoration: none; }
+        .liv-kpi .lk-val {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--slate-900);
+        }
+
+        .liv-kpi .lk-label {
+            font-size: 11px;
+            color: var(--slate-500);
+            margin-top: 2px;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            margin-top: 32px;
+            padding: 24px 2rem;
+            background: var(--slate-900);
+            text-align: center;
+            font-size: 12px;
+            color: var(--slate-500);
+        }
+
+        footer strong { color: var(--slate-300); }
+        footer a { color: var(--blue-400); text-decoration: none; }
         footer a:hover { text-decoration: underline; }
+        footer .foot-line + .foot-line { margin-top: 4px; }
 
-        .footer-line + .footer-line { margin-top: 0.3rem; }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .sources { grid-template-columns: repeat(2, 1fr); }
+            .routines { grid-template-columns: 1fr; }
+            .livrables-kpis { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 26px; }
+            .hero { padding: 32px 1.5rem 44px; }
+        }
 
-        /* Loading skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, var(--bg) 25%, #e8ecf1 50%, var(--bg) 75%);
+        @media (max-width: 480px) {
+            nav { padding: 0 12px; }
+            .nav-timer { display: none; }
+            .kpi-row { gap: 8px; }
+            .kpi { padding: 14px; }
+            .kpi-value { font-size: 22px; }
+            .cycle { flex-wrap: wrap; }
+            .cycle-timer { width: 100%; text-align: center; margin-top: 4px; }
+        }
+
+        /* ===== SKELETON ===== */
+        .skel {
+            background: linear-gradient(90deg, var(--slate-100) 25%, var(--slate-200) 50%, var(--slate-100) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 4px;
             display: inline-block;
         }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Responsive */
-        @media (max-width: 800px) {
-            .dashboard { grid-template-columns: repeat(2, 1fr); }
-            .routines-grid { grid-template-columns: 1fr; }
-            .services-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 500px) {
-            .hero h2 { font-size: 1.6rem; }
-            .hero { padding: 2.5rem 1.5rem 2rem; }
-            .container { padding: 1rem; }
-            header { padding: 0.75rem 1rem; }
-            .header-right { gap: 0.75rem; }
-            .next-run { display: none; }
-            .dashboard { grid-template-columns: 1fr 1fr; margin: -1.5rem 0 1rem; }
-            .card .value { font-size: 1.5rem; }
-            .cycle-banner { flex-wrap: wrap; }
-            .cycle-countdown { width: 100%; text-align: center; }
-        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <div class="logo-icon">S</div>
-        <h1>SNB <span>Consulting</span></h1>
-    </div>
-    <div class="header-right">
-        <div class="next-run">Prochain cycle : <strong id="next-run-timer">--:--</strong></div>
-        <div class="header-status">
-            <div class="status-dot" id="status-dot"></div>
-            <span id="robot-status-text">Robot actif</span>
+<!-- NAV -->
+<nav>
+    <a class="nav-brand" href="#">
+        <div class="nav-logo">S</div>
+        <div class="nav-title">SNB Consulting <span>| Agent IA</span></div>
+    </a>
+    <div class="nav-right">
+        <div class="nav-timer">Prochain cycle <strong id="hd-timer">--:--</strong></div>
+        <div class="nav-badge" id="nav-badge">
+            <span class="dot"></span>
+            <span id="nav-status">Actif</span>
         </div>
     </div>
-</header>
+</nav>
 
+<!-- HERO -->
 <section class="hero">
-    <div class="hero-content">
-        <h2>Agent Commercial Autonome</h2>
-        <p>Prospection, CRM et suivi client automatises par intelligence artificielle. Votre robot commercial travaille en continu.</p>
+    <div class="hero-inner">
+        <div class="hero-badge">Cycle automatique toutes les 10 min</div>
+        <h1>Votre agent commercial tourne en continu</h1>
+        <p>Prospection, CRM HubSpot, emails Gmail, documentation Notion et suivi GitHub — automatises par intelligence artificielle.</p>
     </div>
 </section>
 
 <div class="container">
 
-    <!-- Dashboard KPIs -->
-    <div class="dashboard" id="dashboard">
-        <div class="card success">
-            <h3>Statut Robot</h3>
-            <div class="value" id="kpi-status">Actif</div>
-            <div class="detail" id="kpi-last-run"><span class="skeleton" style="width:140px;height:12px">&nbsp;</span></div>
+    <!-- KPIs -->
+    <div class="kpi-row">
+        <div class="kpi">
+            <div class="kpi-label">Statut</div>
+            <div class="kpi-value green" id="kpi-status">Actif</div>
+            <div class="kpi-sub" id="kpi-lastrun"><span class="skel" style="width:120px;height:11px">&nbsp;</span></div>
         </div>
-        <div class="card">
-            <h3>Emails traites</h3>
-            <div class="value" id="kpi-emails">--</div>
-            <div class="detail">Brouillons crees</div>
+        <div class="kpi">
+            <div class="kpi-label">Emails traites</div>
+            <div class="kpi-value" id="kpi-emails">0</div>
+            <div class="kpi-sub">Brouillons crees</div>
         </div>
-        <div class="card warning">
-            <h3>Contacts CRM</h3>
-            <div class="value" id="kpi-contacts">--</div>
-            <div class="detail">Contacts actifs HubSpot</div>
+        <div class="kpi">
+            <div class="kpi-label">Contacts CRM</div>
+            <div class="kpi-value" id="kpi-contacts">0</div>
+            <div class="kpi-sub">Actifs dans HubSpot</div>
         </div>
-        <div class="card">
-            <h3>Routines cette semaine</h3>
-            <div class="value" id="kpi-routines">--</div>
-            <div class="detail">Cycles executes</div>
+        <div class="kpi">
+            <div class="kpi-label">Cycles cette semaine</div>
+            <div class="kpi-value" id="kpi-routines">0</div>
+            <div class="kpi-sub">Routines executees</div>
         </div>
     </div>
 
-    <!-- Robot Cycle -->
-    <div class="section">
-        <div class="section-header">
-            <h2>
-                <span class="section-icon">&#9881;</span>
+    <!-- CYCLE & ROUTINES -->
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <span class="icon" style="background:rgba(14,165,233,0.1);color:var(--blue-600)">&#9881;</span>
                 Cycle du Robot
-            </h2>
-            <span class="section-meta" id="cycle-meta">Cycle : toutes les 2 min</span>
+            </div>
+            <div class="panel-meta">Toutes les 10 minutes</div>
         </div>
-
-        <div class="cycle-banner">
-            <div class="cycle-icon">&#8635;</div>
-            <div class="cycle-info">
-                <h4>Execution continue</h4>
-                <p>Le robot s'execute automatiquement toutes les 2 minutes. Il traite les emails, met a jour le CRM et relance les prospects.</p>
+        <div class="cycle">
+            <div class="cycle-spinner">&#8635;</div>
+            <div class="cycle-text">
+                <strong>Execution automatique</strong>
+                <p>Emails, CRM, relances et generation de devis — en continu</p>
             </div>
-            <div class="cycle-countdown" id="countdown">--:--</div>
+            <div class="cycle-timer" id="countdown">--:--</div>
         </div>
-
-        <div class="routines-grid">
-            <div class="routine-card">
-                <span class="routine-tag">MATIN</span>
-                <h4>Routine du Matin</h4>
-                <p>Emails non-lus, taches CRM, identification des prospects</p>
+        <div class="routines">
+            <div class="routine">
+                <div class="routine-tag">Matin</div>
+                <h4>Traitement emails</h4>
+                <p>Lecture des emails non-lus, identification des prospects, creation de brouillons</p>
             </div>
-            <div class="routine-card">
-                <span class="routine-tag">RELANCES</span>
-                <h4>Suivi Prospects</h4>
-                <p>Relances automatiques a J+3, J+7 et J+14</p>
+            <div class="routine">
+                <div class="routine-tag">Relances</div>
+                <h4>Suivi prospects</h4>
+                <p>Relances automatiques J+3, J+7, J+14 avec devis personnalises</p>
             </div>
-            <div class="routine-card">
-                <span class="routine-tag">AUDIT</span>
-                <h4>Audit Hebdomadaire</h4>
-                <p>KPIs, contacts inactifs, deals sans montant, rapport complet</p>
+            <div class="routine">
+                <div class="routine-tag">Audit</div>
+                <h4>Rapport hebdo</h4>
+                <p>KPIs, contacts inactifs, pipeline, rapport complet chaque vendredi</p>
             </div>
         </div>
     </div>
 
-    <!-- Activity Log -->
-    <div class="section">
-        <div class="section-header">
-            <h2>
-                <span class="section-icon">&#9776;</span>
-                Journal d'activite
-            </h2>
-            <span class="section-meta" id="log-meta">Mise a jour auto</span>
+    <!-- 4 SOURCES -->
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <span class="icon" style="background:rgba(168,85,247,0.1);color:var(--purple-500)">&#9889;</span>
+                4 Sources connectees
+            </div>
+            <div class="panel-meta">Integrations actives</div>
         </div>
-        <ul class="activity-log" id="activity-log">
-            <li class="log-empty">Chargement du journal d'activite...</li>
+        <div class="sources">
+            <div class="source">
+                <div class="source-logo hubspot">H</div>
+                <h4>HubSpot CRM</h4>
+                <p>Contacts, deals, taches, pipeline de vente</p>
+                <span class="source-badge ok">Connecte</span>
+            </div>
+            <div class="source">
+                <div class="source-logo gmail">G</div>
+                <h4>Gmail</h4>
+                <p>Emails, brouillons, suivi de prospection</p>
+                <span class="source-badge ok">Connecte</span>
+            </div>
+            <div class="source">
+                <div class="source-logo notion">N</div>
+                <h4>Notion</h4>
+                <p>Documentation, bases de donnees, projets</p>
+                <span class="source-badge ok">Connecte</span>
+            </div>
+            <div class="source">
+                <div class="source-logo github">GH</div>
+                <h4>GitHub</h4>
+                <p>Issues, pull requests, suivi technique</p>
+                <span class="source-badge ok">Connecte</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <span class="icon" style="background:rgba(34,197,94,0.1);color:var(--green-600)">&#9776;</span>
+                Journal d'activite
+            </div>
+            <div class="panel-meta" id="log-meta">Temps reel</div>
+        </div>
+        <ul class="log-list" id="activity-log">
+            <li class="log-empty">En attente de la premiere execution du robot...</li>
         </ul>
     </div>
 
-    <!-- Livrables -->
-    <div class="section">
-        <div class="section-header">
-            <h2>
-                <span class="section-icon">&#128196;</span>
-                Livrables & Devis
-            </h2>
-            <span class="section-meta" id="livrables-meta">--</span>
+    <!-- LIVRABLES -->
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <span class="icon" style="background:rgba(249,115,22,0.1);color:var(--orange-500)">&#128196;</span>
+                Livrables &amp; Devis
+            </div>
+            <div class="panel-meta" id="liv-meta">--</div>
         </div>
-        <div class="dashboard" style="margin:0" id="livrables-kpis">
-            <div class="card" style="border-top-color:#6c5ce7">
-                <h3>Devis generes</h3>
-                <div class="value" id="kpi-devis">--</div>
-                <div class="detail">Devis automatiques</div>
+        <div class="livrables-kpis">
+            <div class="liv-kpi">
+                <div class="lk-val" id="kpi-devis">0</div>
+                <div class="lk-label">Devis generes</div>
             </div>
-            <div class="card" style="border-top-color:#00b894">
-                <h3>Propositions</h3>
-                <div class="value" id="kpi-propositions">--</div>
-                <div class="detail">Propositions commerciales</div>
+            <div class="liv-kpi">
+                <div class="lk-val" id="kpi-props">0</div>
+                <div class="lk-label">Propositions</div>
             </div>
-            <div class="card" style="border-top-color:#fdcb6e">
-                <h3>Montant total</h3>
-                <div class="value" id="kpi-montant">--</div>
-                <div class="detail">Chiffre d'affaires potentiel</div>
+            <div class="liv-kpi">
+                <div class="lk-val" id="kpi-montant">--</div>
+                <div class="lk-label">CA potentiel</div>
             </div>
         </div>
-        <ul class="activity-log" id="livrables-list" style="margin-top:1rem">
+        <ul class="log-list" id="livrables-list">
             <li class="log-empty">Aucun livrable genere pour le moment.</li>
         </ul>
     </div>
 
-    <!-- Services -->
-    <div class="section">
-        <div class="section-header">
-            <h2>
-                <span class="section-icon">&#9889;</span>
-                Services integres
-            </h2>
-        </div>
-        <div class="services-grid">
-            <div class="service">
-                <div class="service-icon hubspot">HS</div>
-                <h4>HubSpot CRM</h4>
-                <p>Contacts, deals, taches et pipeline de vente</p>
-                <span class="service-status connected">Connecte</span>
-            </div>
-            <div class="service">
-                <div class="service-icon gmail">GM</div>
-                <h4>Gmail</h4>
-                <p>Brouillons et suivi des emails de prospection</p>
-                <span class="service-status connected">Connecte</span>
-            </div>
-            <div class="service">
-                <div class="service-icon notion">N</div>
-                <h4>Notion</h4>
-                <p>Documentation et suivi de projets</p>
-                <span class="service-status connected">Connecte</span>
-            </div>
-            <div class="service">
-                <div class="service-icon github">GH</div>
-                <h4>GitHub</h4>
-                <p>Issues, pull requests et suivi technique</p>
-                <span class="service-status connected">Connecte</span>
-            </div>
-        </div>
-    </div>
-
 </div>
 
+<!-- FOOTER -->
 <footer>
-    <div class="footer-line"><strong>SNB Consulting</strong> &mdash; Agent Commercial Autonome propulse par Claude AI</div>
-    <div class="footer-line">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
-    <div class="footer-line" style="margin-top:0.5rem" id="page-updated"></div>
+    <div class="foot-line"><strong>SNB Consulting</strong> &mdash; Agent Commercial Autonome propulse par Claude AI</div>
+    <div class="foot-line">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
+    <div class="foot-line" id="foot-ts" style="margin-top:8px"></div>
 </footer>
 
 <script>
 (function() {
-    var CYCLE_SECONDS = 120; // 2 minutes
+    var CYCLE = 600; // 10 minutes
 
-    // Countdown timer
+    // --- Countdown ---
     function startCountdown() {
-        var now = Math.floor(Date.now() / 1000);
-        var remaining = CYCLE_SECONDS - (now % CYCLE_SECONDS);
         var el = document.getElementById('countdown');
-        var headerEl = document.getElementById('next-run-timer');
+        var hd = document.getElementById('hd-timer');
+        var now = Math.floor(Date.now() / 1000);
+        var rem = CYCLE - (now % CYCLE);
 
-        function tick() {
-            var m = Math.floor(remaining / 60);
-            var s = remaining % 60;
-            var display = m + ':' + (s < 10 ? '0' : '') + s;
-            el.textContent = display;
-            headerEl.textContent = display;
-
-            if (remaining <= 0) {
-                remaining = CYCLE_SECONDS;
-                loadStatus(); // Refresh data when cycle completes
-            }
-            remaining--;
-        }
-
-        tick();
-        setInterval(tick, 1000);
+        setInterval(function() {
+            var m = Math.floor(rem / 60);
+            var s = rem % 60;
+            var d = m + ':' + (s < 10 ? '0' : '') + s;
+            el.textContent = d;
+            hd.textContent = d;
+            if (rem <= 0) { rem = CYCLE; loadStatus(); }
+            rem--;
+        }, 1000);
     }
 
-    // Relative time
-    function timeAgo(dateStr) {
-        if (!dateStr) return '';
-        var diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-        if (diff < 60) return 'il y a ' + diff + 's';
-        if (diff < 3600) return 'il y a ' + Math.floor(diff / 60) + ' min';
-        if (diff < 86400) return 'il y a ' + Math.floor(diff / 3600) + 'h';
-        return 'il y a ' + Math.floor(diff / 86400) + 'j';
+    // --- Relative time ---
+    function ago(iso) {
+        if (!iso) return '';
+        var s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+        if (s < 60) return 'il y a ' + s + 's';
+        if (s < 3600) return 'il y a ' + Math.floor(s/60) + ' min';
+        if (s < 86400) return 'il y a ' + Math.floor(s/3600) + 'h';
+        return 'il y a ' + Math.floor(s/86400) + 'j';
     }
 
-    // Load status
+    // --- Load status ---
     function loadStatus() {
-        fetch('status.json?t=' + Date.now())
-            .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(function(data) {
-                // KPIs
-                var statusEl = document.getElementById('kpi-status');
-                statusEl.textContent = data.status || 'Actif';
+        fetch('status.json?_=' + Date.now())
+        .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function(d) {
+            // KPIs
+            document.getElementById('kpi-status').textContent = d.status || 'Actif';
+            document.getElementById('kpi-lastrun').textContent = d.last_run
+                ? ago(d.last_run) + ' (' + new Date(d.last_run).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) + ')'
+                : 'En attente 1ere execution';
+            document.getElementById('kpi-emails').textContent = d.emails_processed || 0;
+            document.getElementById('kpi-contacts').textContent = d.active_contacts || 0;
+            document.getElementById('kpi-routines').textContent = d.routines_this_week || 0;
 
-                var lastRunEl = document.getElementById('kpi-last-run');
-                if (data.last_run) {
-                    lastRunEl.textContent = timeAgo(data.last_run) + ' (' + new Date(data.last_run).toLocaleString('fr-FR', {hour:'2-digit', minute:'2-digit'}) + ')';
-                } else {
-                    lastRunEl.textContent = 'En attente 1ere execution';
-                }
+            // Nav badge
+            var badge = document.getElementById('nav-badge');
+            var navSt = document.getElementById('nav-status');
+            badge.className = 'nav-badge';
+            if (d.status === 'Erreur') { badge.classList.add('error'); navSt.textContent = 'Erreur'; }
+            else { navSt.textContent = 'Actif'; }
 
-                document.getElementById('kpi-emails').textContent = data.emails_processed ?? 0;
-                document.getElementById('kpi-contacts').textContent = data.active_contacts ?? 0;
-                document.getElementById('kpi-routines').textContent = data.routines_this_week ?? 0;
+            // Status color
+            var sv = document.getElementById('kpi-status');
+            sv.className = 'kpi-value' + (d.status === 'Erreur' ? '' : ' green');
 
-                // Status dot
-                var dot = document.getElementById('status-dot');
-                var txt = document.getElementById('robot-status-text');
-                dot.className = 'status-dot';
-                if (data.status === 'Erreur') {
-                    dot.classList.add('error');
-                    txt.textContent = 'Erreur';
-                } else if (data.status === 'En attente') {
-                    dot.classList.add('warning');
-                    txt.textContent = 'En attente';
-                } else {
-                    txt.textContent = 'Robot actif';
-                }
+            // Activity log
+            var log = document.getElementById('activity-log');
+            if (d.activity && d.activity.length) {
+                log.innerHTML = '';
+                d.activity.forEach(function(a) {
+                    var tc = 'tag-' + (a.type || 'systeme');
+                    if (!['tag-crm','tag-email','tag-notion','tag-systeme'].includes(tc)) tc = 'tag-systeme';
+                    var li = document.createElement('li');
+                    li.className = 'log-item';
+                    li.innerHTML =
+                        '<span class="log-time">' + (a.time||'') + '</span>' +
+                        '<span class="log-tag ' + tc + '">' + (a.type||'info').toUpperCase() + '</span>' +
+                        '<span>' + (a.message||'') + '</span>';
+                    log.appendChild(li);
+                });
+            }
 
-                // Activity log
-                var logEl = document.getElementById('activity-log');
-                if (data.activity && data.activity.length > 0) {
-                    logEl.innerHTML = '';
-                    data.activity.forEach(function(item) {
+            // Livrables
+            if (d.livrables) {
+                var l = d.livrables;
+                document.getElementById('kpi-devis').textContent = l.devis_count || 0;
+                document.getElementById('kpi-props').textContent = l.propositions_count || 0;
+                var mt = l.total_montant || 0;
+                document.getElementById('kpi-montant').textContent = mt > 0 ? mt.toLocaleString('fr-FR') + ' \u20ac' : '--';
+                document.getElementById('liv-meta').textContent = (l.devis_count + l.propositions_count) + ' documents';
+
+                var ll = document.getElementById('livrables-list');
+                if (l.recent && l.recent.length) {
+                    ll.innerHTML = '';
+                    l.recent.forEach(function(doc) {
                         var li = document.createElement('li');
-                        var badgeClass = 'badge-' + (item.type || 'systeme');
-                        if (!['badge-crm','badge-email','badge-notion','badge-systeme'].includes(badgeClass)) {
-                            badgeClass = 'badge-systeme';
-                        }
+                        li.className = 'log-item';
+                        var tc2 = doc.type === 'devis' ? 'tag-crm' : 'tag-notion';
                         li.innerHTML =
-                            '<span class="log-time">' + (item.time || '--:--') + '</span>' +
-                            '<span class="log-badge ' + badgeClass + '">' + (item.type || 'info').toUpperCase() + '</span>' +
-                            '<span>' + (item.message || '') + '</span>';
-                        logEl.appendChild(li);
+                            '<span class="log-time">' + (doc.date||'') + '</span>' +
+                            '<span class="log-tag ' + tc2 + '">' + (doc.type||'').toUpperCase() + '</span>' +
+                            '<span><strong>' + (doc.client||'') + '</strong> — ' + (doc.objet||doc.titre||'') +
+                            (doc.montant ? ' (' + doc.montant + ')' : '') + '</span>';
+                        ll.appendChild(li);
                     });
-                } else {
-                    logEl.innerHTML = '<li class="log-empty">Aucune activite enregistree pour le moment.</li>';
                 }
+            }
 
-                // Livrables section
-                if (data.livrables) {
-                    var liv = data.livrables;
-                    document.getElementById('kpi-devis').textContent = liv.devis_count || 0;
-                    document.getElementById('kpi-propositions').textContent = liv.propositions_count || 0;
-                    var montant = liv.total_montant || 0;
-                    document.getElementById('kpi-montant').textContent =
-                        montant > 0 ? montant.toLocaleString('fr-FR') + ' \u20AC' : '--';
-                    document.getElementById('livrables-meta').textContent =
-                        (liv.devis_count + liv.propositions_count) + ' documents';
-
-                    var livList = document.getElementById('livrables-list');
-                    if (liv.recent && liv.recent.length > 0) {
-                        livList.innerHTML = '';
-                        liv.recent.forEach(function(doc) {
-                            var li = document.createElement('li');
-                            var badgeClass = doc.type === 'devis' ? 'badge-crm' : 'badge-notion';
-                            li.innerHTML =
-                                '<span class="log-time">' + (doc.date || '') + '</span>' +
-                                '<span class="log-badge ' + badgeClass + '">' + (doc.type || '').toUpperCase() + '</span>' +
-                                '<span><strong>' + (doc.client || '') + '</strong> — ' + (doc.objet || doc.titre || '') +
-                                (doc.montant ? ' (' + doc.montant + ')' : '') + '</span>';
-                            livList.appendChild(li);
-                        });
-                    }
-                }
-
-                // Footer timestamp
-                document.getElementById('page-updated').textContent =
-                    'Derniere MAJ : ' + new Date().toLocaleString('fr-FR');
-            })
-            .catch(function() {
-                document.getElementById('kpi-last-run').textContent = 'En attente 1ere execution';
-                var logEl = document.getElementById('activity-log');
-                logEl.innerHTML = '<li class="log-empty">Robot configure et pret. En attente de la premiere execution automatique.</li>';
-                document.getElementById('page-updated').textContent =
-                    'Derniere MAJ : ' + new Date().toLocaleString('fr-FR');
-            });
+            // Footer
+            document.getElementById('foot-ts').textContent = 'MAJ : ' + new Date().toLocaleString('fr-FR');
+        })
+        .catch(function() {
+            document.getElementById('kpi-lastrun').textContent = 'En attente 1ere execution';
+            document.getElementById('foot-ts').textContent = 'MAJ : ' + new Date().toLocaleString('fr-FR');
+        });
     }
 
     loadStatus();
     startCountdown();
-    // Refresh every 2 minutes (aligned with robot cycle)
-    setInterval(loadStatus, CYCLE_SECONDS * 1000);
+    setInterval(loadStatus, CYCLE * 1000);
 })();
 </script>
 
