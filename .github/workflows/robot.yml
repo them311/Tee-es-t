@@ -2,12 +2,8 @@ name: Robot Commercial - Routines automatiques
 
 on:
   schedule:
-    # Routine du matin : 8h40 heure de Paris (6h40 UTC)
-    - cron: '40 6 * * 1-5'
-    # Relances : 14h00 heure de Paris (12h00 UTC)
-    - cron: '0 12 * * 1-5'
-    # Audit hebdomadaire : vendredi 17h00 Paris (15h00 UTC)
-    - cron: '0 15 * * 5'
+    # Toutes les 2 minutes
+    - cron: '*/2 * * * *'
   workflow_dispatch:
     inputs:
       routine:
