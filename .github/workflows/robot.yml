@@ -1,0 +1,83 @@
+name: Robot Commercial - Routines automatiques
+
+on:
+  schedule:
+    # Routine du matin : 8h40 heure de Paris (6h40 UTC)
+    - cron: '40 6 * * 1-5'
+    # Relances : 14h00 heure de Paris (12h00 UTC)
+    - cron: '0 12 * * 1-5'
+    # Audit hebdomadaire : vendredi 17h00 Paris (15h00 UTC)
+    - cron: '0 15 * * 5'
+  workflow_dispatch:
+    inputs:
+      routine:
+        description: 'Routine a executer (morning, followup, weekly_audit)'
+        required: true
+        default: 'morning'
+        type: choice
+        options:
+          - morning
+          - followup
+          - weekly_audit
+
+jobs:
+  run-robot:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: commercial-agent
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Determine routine
+        id: routine
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ github.event.inputs.routine }}" >> $GITHUB_OUTPUT
+          else
+            HOUR=$(TZ='Europe/Paris' date +%H)
+            DOW=$(TZ='Europe/Paris' date +%u)
+            if [ "$DOW" = "5" ] && [ "$HOUR" -ge 16 ]; then
+              echo "name=weekly_audit" >> $GITHUB_OUTPUT
+            elif [ "$HOUR" -lt 12 ]; then
+              echo "name=morning" >> $GITHUB_OUTPUT
+            else
+              echo "name=followup" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Run robot routine
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HUBSPOT_API_KEY: ${{ secrets.HUBSPOT_API_KEY }}
+          GMAIL_CREDENTIALS_JSON: ${{ secrets.GMAIL_CREDENTIALS_JSON }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AGENT_OWNER_NAME: Baptiste Thevenot
+          AGENT_OWNER_EMAIL: bp.thevenot@gmail.com
+          HUBSPOT_OWNER_ID: '80842560'
+        run: |
+          python autonomous.py ${{ steps.routine.outputs.name }} || true
+
+      - name: Update website status
+        run: |
+          python update_status.py ${{ steps.routine.outputs.name }}
+
+      - name: Commit and push status update
+        working-directory: .
+        run: |
+          git config user.name "Robot Commercial"
+          git config user.email "robot@snbbm-consulting.com"
+          git add docs/status.json
+          git diff --staged --quiet || git commit -m "Robot: mise a jour statut (${{ steps.routine.outputs.name }})"
+          git push

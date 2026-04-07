@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNBBM Consulting - Agent Commercial Autonome</title>
+    <style>
+        :root {
+            --primary: #1a2a3a;
+            --accent: #2c7be5;
+            --accent-light: #e8f0fe;
+            --success: #00c853;
+            --warning: #ff9800;
+            --error: #e53935;
+            --text: #333;
+            --text-light: #666;
+            --bg: #f8f9fa;
+            --white: #fff;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        header h1 span { color: var(--accent); }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #2c3e50 100%);
+            color: var(--white);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard cards */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-2px); }
+
+        .card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .card .detail {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .card.success { border-left-color: var(--success); }
+        .card.warning { border-left-color: var(--warning); }
+        .card.info { border-left-color: var(--accent); }
+
+        /* Robot status section */
+        .section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+        }
+
+        .section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Robot schedule */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--accent-light);
+            border-radius: 8px;
+        }
+
+        .schedule-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .schedule-info h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .schedule-info p { font-size: 0.8rem; color: var(--text-light); }
+
+        /* Activity log */
+        .activity-log {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .activity-log li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .activity-log li:last-child { border-bottom: none; }
+
+        .log-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            min-width: 80px;
+        }
+
+        .log-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-crm { background: #e3f2fd; color: #1565c0; }
+        .badge-email { background: #fce4ec; color: #c62828; }
+        .badge-notion { background: #f3e5f5; color: #6a1b9a; }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .service {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--accent-light);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .service h4 { margin-bottom: 0.5rem; }
+        .service p { font-size: 0.85rem; color: var(--text-light); }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            font-size: 0.85rem;
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
+
+        /* Loading animation for status */
+        #robot-status-text { transition: opacity 0.3s; }
+        .loading { opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            .hero h2 { font-size: 1.5rem; }
+            .container { padding: 1rem; }
+            header { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SNBBM <span>Consulting</span></h1>
+    <div class="header-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="robot-status-text">Robot actif</span>
+    </div>
+</header>
+
+<section class="hero">
+    <h2>Agent Commercial Autonome</h2>
+    <p>Prospection, CRM et suivi client automatises par intelligence artificielle. Votre robot commercial travaille 24h/24.</p>
+</section>
+
+<div class="container">
+
+    <!-- Dashboard KPIs -->
+    <div class="dashboard" id="dashboard">
+        <div class="card success">
+            <h3>Statut Robot</h3>
+            <div class="value" id="kpi-status">Actif</div>
+            <div class="detail" id="kpi-last-run">Chargement...</div>
+        </div>
+        <div class="card info">
+            <h3>Emails traites</h3>
+            <div class="value" id="kpi-emails">--</div>
+            <div class="detail">Brouillons crees automatiquement</div>
+        </div>
+        <div class="card warning">
+            <h3>Contacts CRM</h3>
+            <div class="value" id="kpi-contacts">--</div>
+            <div class="detail">Contacts actifs dans HubSpot</div>
+        </div>
+        <div class="card info">
+            <h3>Routines executees</h3>
+            <div class="value" id="kpi-routines">--</div>
+            <div class="detail">Cette semaine</div>
+        </div>
+    </div>
+
+    <!-- Robot Schedule -->
+    <div class="section">
+        <h2>Planning du Robot</h2>
+        <div class="schedule-grid">
+            <div class="schedule-item">
+                <div class="schedule-icon">AM</div>
+                <div class="schedule-info">
+                    <h4>Routine du Matin</h4>
+                    <p>Lun-Ven, 8h40 (Paris) - Emails, CRM, taches du jour</p>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="schedule-icon">PM</div>
+                <div class="schedule-info">
+                    <h4>Relances</h4>
+                    <p>Lun-Ven, 14h00 - Suivi prospects, relances automatiques</p>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="schedule-icon">W</div>
+                <div class="schedule-info">
+                    <h4>Audit Hebdomadaire</h4>
+                    <p>Vendredi, 17h00 - Audit CRM, KPIs, rapport complet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="section">
+        <h2>Journal d'activite</h2>
+        <ul class="activity-log" id="activity-log">
+            <li>
+                <span class="log-time">--:--</span>
+                <span class="log-badge badge-crm">SYSTEME</span>
+                <span>Chargement du journal d'activite...</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Services -->
+    <div class="section">
+        <h2>Services integres</h2>
+        <div class="services-grid">
+            <div class="service">
+                <div class="service-icon">H</div>
+                <h4>HubSpot CRM</h4>
+                <p>Gestion contacts, deals, taches et pipeline de vente</p>
+            </div>
+            <div class="service">
+                <div class="service-icon">G</div>
+                <h4>Gmail</h4>
+                <p>Lecture, brouillons et suivi des emails de prospection</p>
+            </div>
+            <div class="service">
+                <div class="service-icon">N</div>
+                <h4>Notion</h4>
+                <p>Documentation, bases de donnees et suivi de projets</p>
+            </div>
+            <div class="service">
+                <div class="service-icon">GH</div>
+                <h4>GitHub</h4>
+                <p>Suivi technique, issues et pull requests</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <p>SNBBM Consulting &mdash; Agent Commercial Autonome propulse par Claude AI</p>
+    <p style="margin-top:0.5rem">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></p>
+</footer>
+
+<script>
+    // Load robot status from status.json (updated by GitHub Actions)
+    async function loadStatus() {
+        try {
+            const resp = await fetch('status.json?t=' + Date.now());
+            if (!resp.ok) throw new Error('No status file');
+            const data = await resp.json();
+
+            // Update KPIs
+            document.getElementById('kpi-status').textContent = data.status || 'Actif';
+            document.getElementById('kpi-last-run').textContent = data.last_run
+                ? 'Derniere execution : ' + new Date(data.last_run).toLocaleString('fr-FR')
+                : 'En attente de la premiere execution';
+            document.getElementById('kpi-emails').textContent = data.emails_processed ?? '--';
+            document.getElementById('kpi-contacts').textContent = data.active_contacts ?? '--';
+            document.getElementById('kpi-routines').textContent = data.routines_this_week ?? '--';
+
+            // Update status dot
+            const dot = document.getElementById('status-dot');
+            const statusText = document.getElementById('robot-status-text');
+            if (data.status === 'Actif') {
+                dot.style.background = '#00c853';
+                statusText.textContent = 'Robot actif';
+            } else if (data.status === 'Erreur') {
+                dot.style.background = '#e53935';
+                statusText.textContent = 'Robot en erreur';
+            } else {
+                dot.style.background = '#ff9800';
+                statusText.textContent = 'Robot en attente';
+            }
+
+            // Update activity log
+            if (data.activity && data.activity.length > 0) {
+                const logEl = document.getElementById('activity-log');
+                logEl.innerHTML = '';
+                data.activity.forEach(function(item) {
+                    const li = document.createElement('li');
+                    const badgeClass = item.type === 'email' ? 'badge-email'
+                        : item.type === 'notion' ? 'badge-notion'
+                        : 'badge-crm';
+                    li.innerHTML =
+                        '<span class="log-time">' + (item.time || '--:--') + '</span>' +
+                        '<span class="log-badge ' + badgeClass + '">' + (item.type || 'info').toUpperCase() + '</span>' +
+                        '<span>' + (item.message || '') + '</span>';
+                    logEl.appendChild(li);
+                });
+            }
+        } catch (e) {
+            // First time — no status.json yet, show defaults
+            document.getElementById('kpi-last-run').textContent = 'En attente de la premiere execution du robot';
+        }
+    }
+
+    loadStatus();
+    // Refresh every 5 minutes
+    setInterval(loadStatus, 300000);
+</script>
+
+</body>
+</html>

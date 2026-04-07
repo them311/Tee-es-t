@@ -1,0 +1,14 @@
+{
+    "status": "Actif",
+    "last_run": null,
+    "emails_processed": 0,
+    "active_contacts": 0,
+    "routines_this_week": 0,
+    "activity": [
+        {
+            "time": "--:--",
+            "type": "systeme",
+            "message": "Robot configure et pret a demarrer. En attente de la premiere execution automatique."
+        }
+    ]
+}
