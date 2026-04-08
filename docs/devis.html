@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Francaise des Sauces | Demande de Devis Pro</title>
+    <meta name="description" content="Demandez votre devis professionnel La Francaise des Sauces. Tarifs grossiste, traiteur, epicerie fine. Livraison France entiere.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='18' width='100' height='100' fill='%232C1810'/><text x='50' y='68' text-anchor='middle' fill='%23C5A47E' font-size='52' font-family='serif' font-weight='700'>L</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lfds-dark: #2C1810;
+            --lfds-brown: #4A2C2A;
+            --lfds-gold: #C5A47E;
+            --lfds-gold-light: #D4BA9A;
+            --lfds-cream: #FAF7F2;
+            --lfds-cream-dark: #F0EBE3;
+            --lfds-text: #1A1A1A;
+            --lfds-muted: #8B7355;
+            --lfds-subtle: #666;
+            --lfds-border: #E8E0D4;
+            --lfds-white: #FFFFFF;
+            --lfds-success: #2D6A4F;
+            --lfds-error: #9B2C2C;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(44,24,16,0.08);
+            --shadow-md: 0 4px 12px rgba(44,24,16,0.1);
+            --shadow-lg: 0 8px 24px rgba(44,24,16,0.12);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--lfds-cream);color:var(--lfds-text);line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+        /* NAV */
+        nav{background:var(--lfds-dark);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(197,164,126,0.15);}
+        .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--lfds-cream);}
+        .nav-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--lfds-gold),var(--lfds-gold-light));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:16px;color:var(--lfds-dark);}
+        .nav-title{font-family:'Playfair Display',serif;font-weight:600;font-size:15px;letter-spacing:0.3px;}
+        .nav-title span{color:var(--lfds-muted);font-family:'Inter',sans-serif;font-weight:400;font-size:12px;}
+        .nav-links{display:flex;gap:24px;}
+        .nav-links a{color:var(--lfds-gold-light);text-decoration:none;font-size:13px;font-weight:500;opacity:0.8;transition:opacity 0.2s;}
+        .nav-links a:hover{opacity:1;}
+        .nav-links a.active{opacity:1;border-bottom:2px solid var(--lfds-gold);padding-bottom:2px;}
+
+        /* HERO */
+        .hero{background:linear-gradient(135deg,var(--lfds-dark) 0%,var(--lfds-brown) 100%);padding:48px 2rem 56px;text-align:center;position:relative;overflow:hidden;}
+        .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 500px 250px at 30% 80%,rgba(197,164,126,0.08),transparent),radial-gradient(ellipse 400px 200px at 70% 20%,rgba(197,164,126,0.05),transparent);}
+        .hero-inner{position:relative;max-width:640px;margin:0 auto;}
+        .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(197,164,126,0.1);border:1px solid rgba(197,164,126,0.2);border-radius:20px;font-size:12px;font-weight:600;color:var(--lfds-gold);margin-bottom:20px;letter-spacing:0.5px;text-transform:uppercase;}
+        .hero h1{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--lfds-cream);letter-spacing:0.5px;line-height:1.2;margin-bottom:12px;}
+        .hero p{font-size:15px;color:var(--lfds-muted);max-width:480px;margin:0 auto;line-height:1.7;}
+
+        /* CONTAINER */
+        .container{max-width:1080px;margin:0 auto;padding:0 20px;}
+
+        /* SEGMENT SELECTOR */
+        .segment-bar{margin-top:-28px;position:relative;z-index:2;background:var(--lfds-white);border-radius:var(--radius);box-shadow:var(--shadow-lg);border:1px solid var(--lfds-border);padding:20px 24px;}
+        .segment-bar label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--lfds-muted);margin-bottom:10px;}
+        .segments{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+        .seg-btn{padding:10px 8px;border:2px solid var(--lfds-border);border-radius:var(--radius);background:var(--lfds-white);cursor:pointer;text-align:center;transition:all 0.2s;font-size:12px;font-weight:600;color:var(--lfds-subtle);}
+        .seg-btn:hover{border-color:var(--lfds-gold-light);color:var(--lfds-brown);}
+        .seg-btn.active{border-color:var(--lfds-dark);background:var(--lfds-dark);color:var(--lfds-gold);}
+        .seg-btn small{display:block;font-size:10px;font-weight:400;margin-top:2px;opacity:0.7;}
+
+        /* MAIN GRID */
+        .main-grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:16px;}
+
+        /* PRODUCT CARDS */
+        .panel{background:var(--lfds-white);border-radius:var(--radius);border:1px solid var(--lfds-border);box-shadow:var(--shadow);overflow:hidden;}
+        .panel-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--lfds-cream-dark);}
+        .panel-title{font-size:14px;font-weight:700;color:var(--lfds-dark);display:flex;align-items:center;gap:8px;}
+        .panel-meta{font-size:11px;color:var(--lfds-muted);font-weight:500;}
+
+        .products{padding:12px 20px;}
+        .product{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--lfds-cream);}
+        .product:last-child{border-bottom:none;}
+        .prod-info h4{font-size:14px;font-weight:600;color:var(--lfds-dark);margin-bottom:2px;}
+        .prod-info p{font-size:11px;color:var(--lfds-subtle);line-height:1.4;}
+        .prod-info .ref{font-size:10px;color:var(--lfds-muted);font-weight:500;letter-spacing:0.5px;}
+        .prod-price{text-align:right;min-width:80px;}
+        .prod-price .price{font-size:16px;font-weight:700;color:var(--lfds-dark);}
+        .prod-price .unit{font-size:10px;color:var(--lfds-muted);display:block;}
+        .prod-qty{display:flex;align-items:center;gap:6px;}
+        .qty-btn{width:30px;height:30px;border:1px solid var(--lfds-border);border-radius:6px;background:var(--lfds-cream);cursor:pointer;font-size:16px;font-weight:600;color:var(--lfds-dark);display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+        .qty-btn:hover{background:var(--lfds-dark);color:var(--lfds-gold);border-color:var(--lfds-dark);}
+        .qty-input{width:48px;height:30px;border:1px solid var(--lfds-border);border-radius:6px;text-align:center;font-size:13px;font-weight:600;color:var(--lfds-dark);font-family:'Inter',sans-serif;}
+        .qty-input:focus{outline:none;border-color:var(--lfds-gold);}
+
+        /* SIDEBAR - RECAP */
+        .sidebar{position:sticky;top:72px;align-self:start;}
+        .recap-empty{padding:32px 20px;text-align:center;color:var(--lfds-muted);font-size:13px;}
+        .recap-lines{padding:12px 20px;}
+        .recap-line{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px solid var(--lfds-cream);}
+        .recap-line:last-child{border-bottom:none;}
+        .recap-line .rl-name{color:var(--lfds-text);font-weight:500;}
+        .recap-line .rl-detail{font-size:11px;color:var(--lfds-muted);}
+        .recap-line .rl-total{font-weight:600;color:var(--lfds-dark);white-space:nowrap;}
+        .recap-totals{padding:12px 20px;background:var(--lfds-cream);border-top:1px solid var(--lfds-border);}
+        .recap-total-line{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--lfds-subtle);}
+        .recap-total-line.grand{font-size:16px;font-weight:700;color:var(--lfds-dark);border-top:2px solid var(--lfds-dark);margin-top:6px;padding-top:8px;}
+
+        .recap-conditions{padding:12px 20px;border-top:1px solid var(--lfds-border);}
+        .recap-conditions h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--lfds-muted);margin-bottom:6px;}
+        .recap-conditions li{font-size:11px;color:var(--lfds-subtle);line-height:1.6;margin-left:14px;}
+
+        .alert-box{margin:8px 20px;padding:8px 12px;border-radius:6px;font-size:11px;font-weight:500;display:none;}
+        .alert-box.warn{display:block;background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;}
+        .alert-box.ok{display:block;background:#D1FAE5;color:var(--lfds-success);border:1px solid #A7F3D0;}
+
+        /* FORM */
+        .form-section{padding:16px 20px;border-top:1px solid var(--lfds-border);}
+        .form-section h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--lfds-muted);margin-bottom:10px;}
+        .form-row{margin-bottom:10px;}
+        .form-row input,.form-row select{width:100%;padding:8px 12px;border:1px solid var(--lfds-border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--lfds-dark);background:var(--lfds-white);}
+        .form-row input:focus,.form-row select:focus{outline:none;border-color:var(--lfds-gold);}
+        .form-row input::placeholder{color:var(--lfds-muted);}
+
+        .btn-devis{width:100%;padding:14px;background:var(--lfds-dark);color:var(--lfds-gold);border:none;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;font-family:'Inter',sans-serif;margin-top:4px;}
+        .btn-devis:hover{background:var(--lfds-brown);box-shadow:var(--shadow-md);}
+        .btn-devis:disabled{opacity:0.5;cursor:not-allowed;}
+
+        .btn-pdf{width:100%;padding:10px;background:var(--lfds-cream);color:var(--lfds-dark);border:1px solid var(--lfds-border);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;margin-top:6px;}
+        .btn-pdf:hover{border-color:var(--lfds-gold);}
+
+        .success-msg{display:none;padding:16px 20px;text-align:center;color:var(--lfds-success);font-size:13px;font-weight:500;}
+
+        /* FOOTER */
+        footer{margin-top:32px;padding:24px 2rem;background:var(--lfds-dark);text-align:center;font-size:12px;color:var(--lfds-muted);}
+        footer strong{color:var(--lfds-gold);}
+        footer a{color:var(--lfds-gold-light);text-decoration:none;}
+        footer a:hover{text-decoration:underline;}
+        footer .foot-line+.foot-line{margin-top:4px;}
+
+        /* RESPONSIVE */
+        @media(max-width:900px){
+            .main-grid{grid-template-columns:1fr;}
+            .sidebar{position:static;}
+            .segments{grid-template-columns:repeat(3,1fr);}
+        }
+        @media(max-width:480px){
+            nav{padding:0 12px;}
+            .nav-links{display:none;}
+            .hero h1{font-size:24px;}
+            .hero{padding:32px 1.5rem 44px;}
+            .segments{grid-template-columns:repeat(2,1fr);}
+            .product{grid-template-columns:1fr;gap:8px;}
+            .prod-price{text-align:left;}
+            .prod-qty{justify-content:flex-start;}
+        }
+
+        /* PRINT */
+        @media print{
+            nav,.hero,.segment-bar,.form-section,.btn-devis,.btn-pdf,.nav-links,footer,.alert-box{display:none!important;}
+            .main-grid{grid-template-columns:1fr!important;}
+            body{background:#fff;}
+            .panel{box-shadow:none;border:1px solid #ddd;}
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" href="index.html">
+        <div class="nav-logo">L</div>
+        <div class="nav-title">La Francaise des Sauces <span>| Espace Pro</span></div>
+    </a>
+    <div class="nav-links">
+        <a href="index.html">Dashboard</a>
+        <a href="devis.html" class="active">Devis Pro</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-badge">Espace professionnel</div>
+        <h1>Votre devis en quelques clics</h1>
+        <p>Selectionnez votre profil, composez votre commande et recevez instantanement votre devis personnalise avec les tarifs negocies.</p>
+    </div>
+</section>
+
+<div class="container">
+
+    <!-- SEGMENT SELECTOR -->
+    <div class="segment-bar">
+        <label>Votre profil professionnel</label>
+        <div class="segments" id="segments">
+            <button class="seg-btn" data-seg="grossiste" onclick="selectSegment('grossiste')">Grossiste<small>Vol. &gt; 500 EUR</small></button>
+            <button class="seg-btn" data-seg="gms" onclick="selectSegment('gms')">GMS<small>Grande distrib.</small></button>
+            <button class="seg-btn" data-seg="agent" onclick="selectSegment('agent')">Agent<small>Commercial</small></button>
+            <button class="seg-btn active" data-seg="traiteur" onclick="selectSegment('traiteur')">Traiteur<small>Restaurateur</small></button>
+            <button class="seg-btn" data-seg="epicerie_fine" onclick="selectSegment('epicerie_fine')">Epicerie fine<small>Specialiste</small></button>
+            <button class="seg-btn" data-seg="b2c" onclick="selectSegment('b2c')">Particulier<small>B2C</small></button>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-grid">
+
+        <!-- PRODUCTS -->
+        <div class="panel">
+            <div class="panel-head">
+                <div class="panel-title">Catalogue LFDS</div>
+                <div class="panel-meta">Prix HT selon votre profil</div>
+            </div>
+            <div class="products" id="product-list"></div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-title">Recapitulatif</div>
+                    <div class="panel-meta" id="recap-count">0 produit</div>
+                </div>
+                <div id="recap-content">
+                    <div class="recap-empty">Ajoutez des produits pour composer votre devis.</div>
+                </div>
+                <div id="recap-totals-container" style="display:none;">
+                    <div class="recap-totals" id="recap-totals"></div>
+                </div>
+                <div id="franco-alert" class="alert-box"></div>
+                <div class="recap-conditions" id="recap-conditions" style="display:none;">
+                    <h4>Conditions</h4>
+                    <ul id="conditions-list"></ul>
+                </div>
+
+                <!-- CLIENT FORM -->
+                <div class="form-section">
+                    <h4>Vos coordonnees</h4>
+                    <div class="form-row"><input type="text" id="f-name" placeholder="Nom complet"></div>
+                    <div class="form-row"><input type="text" id="f-company" placeholder="Entreprise / Enseigne"></div>
+                    <div class="form-row"><input type="email" id="f-email" placeholder="Email professionnel"></div>
+                    <div class="form-row"><input type="tel" id="f-phone" placeholder="Telephone (optionnel)"></div>
+                    <button class="btn-devis" id="btn-submit" disabled onclick="submitDevis()">Recevoir mon devis</button>
+                    <button class="btn-pdf" id="btn-print" onclick="window.print()">Imprimer / PDF</button>
+                </div>
+                <div class="success-msg" id="success-msg">Votre demande a ete envoyee. Vous recevrez votre devis sous 24h.</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <div class="foot-line"><strong>La Francaise des Sauces</strong> &mdash; Artisan saucier</div>
+    <div class="foot-line">Contact pro : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
+</footer>
+
+<script>
+(function(){
+    // ====== CATALOGUE (source de verite miroir de lfds_pricing.py) ======
+    var CATALOGUE = {
+        "LFDS-001": {nom:"Sauce Signature",desc:"La classique LFDS, polyvalente et raffinee",vol:"290ml",prix:{grossiste:4.20,gms:4.80,agent:4.50,traiteur:5.50,epicerie_fine:6.90,b2c:8.90}},
+        "LFDS-002": {nom:"Sauce Truffe Noire",desc:"Truffe noire du Perigord, intensite et elegance",vol:"190ml",prix:{grossiste:7.50,gms:8.50,agent:8.00,traiteur:9.50,epicerie_fine:11.90,b2c:14.90}},
+        "LFDS-003": {nom:"Sauce Poivre Sauvage",desc:"Poivre sauvage de Madagascar, puissance et finesse",vol:"290ml",prix:{grossiste:4.50,gms:5.20,agent:4.80,traiteur:5.90,epicerie_fine:7.50,b2c:9.50}},
+        "LFDS-004": {nom:"Sauce Echalote & Vin Rouge",desc:"Echalotes confites, vin rouge de Bordeaux",vol:"290ml",prix:{grossiste:4.50,gms:5.20,agent:4.80,traiteur:5.90,epicerie_fine:7.50,b2c:9.50}},
+        "LFDS-005": {nom:"Sauce Citron Confit & Herbes",desc:"Citron confit, herbes fraiches de Provence",vol:"290ml",prix:{grossiste:4.20,gms:4.80,agent:4.50,traiteur:5.50,epicerie_fine:6.90,b2c:8.90}},
+        "LFDS-006": {nom:"Coffret Decouverte",desc:"3 sauces signatures en format decouverte",vol:"3 x 100ml",prix:{grossiste:9.00,gms:10.50,agent:9.80,traiteur:11.50,epicerie_fine:14.50,b2c:18.90}}
+    };
+
+    var SEGMENTS = {
+        grossiste:{label:"Grossiste",franco:500,paiement:"30 jours fin de mois",moq:48,acompte:"30% a la commande"},
+        gms:{label:"GMS",franco:300,paiement:"45 jours fin de mois",moq:24,acompte:"Aucun"},
+        agent:{label:"Agent Commercial",franco:200,paiement:"30 jours",moq:12,acompte:"Aucun"},
+        traiteur:{label:"Traiteur / Restaurateur",franco:150,paiement:"30 jours",moq:6,acompte:"Aucun"},
+        epicerie_fine:{label:"Epicerie Fine",franco:100,paiement:"Comptant ou 15 jours",moq:6,acompte:"Aucun"},
+        b2c:{label:"Particulier",franco:35,paiement:"Comptant",moq:1,acompte:"Aucun"}
+    };
+
+    var TVA = 20;
+    var currentSegment = "traiteur";
+    var quantities = {};
+    Object.keys(CATALOGUE).forEach(function(r){quantities[r]=0;});
+
+    // ====== SEGMENT SELECTION ======
+    window.selectSegment = function(seg){
+        currentSegment = seg;
+        document.querySelectorAll('.seg-btn').forEach(function(b){
+            b.classList.toggle('active', b.dataset.seg === seg);
+        });
+        renderProducts();
+        updateRecap();
+    };
+
+    // ====== RENDER PRODUCTS ======
+    function renderProducts(){
+        var el = document.getElementById('product-list');
+        var html = '';
+        Object.keys(CATALOGUE).forEach(function(ref){
+            var p = CATALOGUE[ref];
+            var prix = p.prix[currentSegment];
+            var qty = quantities[ref];
+            html += '<div class="product">' +
+                '<div class="prod-info">' +
+                    '<h4>' + p.nom + '</h4>' +
+                    '<p>' + p.desc + '</p>' +
+                    '<span class="ref">' + ref + ' &mdash; ' + p.vol + '</span>' +
+                '</div>' +
+                '<div class="prod-price">' +
+                    '<span class="price">' + prix.toFixed(2) + ' &euro;</span>' +
+                    '<span class="unit">HT / unite</span>' +
+                '</div>' +
+                '<div class="prod-qty">' +
+                    '<button class="qty-btn" onclick="changeQty(\'' + ref + '\',-1)">-</button>' +
+                    '<input class="qty-input" type="number" min="0" value="' + qty + '" onchange="setQty(\'' + ref + '\',this.value)" id="qty-' + ref + '">' +
+                    '<button class="qty-btn" onclick="changeQty(\'' + ref + '\',1)">+</button>' +
+                '</div>' +
+            '</div>';
+        });
+        el.innerHTML = html;
+    }
+
+    // ====== QUANTITY CONTROLS ======
+    window.changeQty = function(ref, delta){
+        var v = Math.max(0, (quantities[ref]||0) + delta);
+        quantities[ref] = v;
+        document.getElementById('qty-'+ref).value = v;
+        updateRecap();
+    };
+    window.setQty = function(ref, val){
+        var v = Math.max(0, parseInt(val)||0);
+        quantities[ref] = v;
+        document.getElementById('qty-'+ref).value = v;
+        updateRecap();
+    };
+
+    // ====== UPDATE RECAP ======
+    function updateRecap(){
+        var seg = SEGMENTS[currentSegment];
+        var lines = [];
+        var totalHT = 0;
+        var nbProducts = 0;
+
+        Object.keys(CATALOGUE).forEach(function(ref){
+            var qty = quantities[ref];
+            if(qty > 0){
+                var p = CATALOGUE[ref];
+                var prix = p.prix[currentSegment];
+                var lt = qty * prix;
+                totalHT += lt;
+                nbProducts += qty;
+                lines.push({ref:ref, nom:p.nom, qty:qty, prix:prix, total:lt});
+            }
+        });
+
+        var countEl = document.getElementById('recap-count');
+        countEl.textContent = nbProducts + ' produit' + (nbProducts > 1 ? 's' : '');
+
+        var content = document.getElementById('recap-content');
+        var totalsContainer = document.getElementById('recap-totals-container');
+        var conditionsEl = document.getElementById('recap-conditions');
+        var alertEl = document.getElementById('franco-alert');
+        var btn = document.getElementById('btn-submit');
+
+        if(lines.length === 0){
+            content.innerHTML = '<div class="recap-empty">Ajoutez des produits pour composer votre devis.</div>';
+            totalsContainer.style.display = 'none';
+            conditionsEl.style.display = 'none';
+            alertEl.className = 'alert-box';
+            alertEl.textContent = '';
+            btn.disabled = true;
+            return;
+        }
+
+        // Lines
+        var lhtml = '<div class="recap-lines">';
+        lines.forEach(function(l){
+            lhtml += '<div class="recap-line"><div><span class="rl-name">' + l.nom + '</span><br><span class="rl-detail">' + l.qty + ' x ' + l.prix.toFixed(2) + ' EUR</span></div><span class="rl-total">' + l.total.toFixed(2) + ' EUR</span></div>';
+        });
+        lhtml += '</div>';
+        content.innerHTML = lhtml;
+
+        // Totals
+        var tva = totalHT * TVA / 100;
+        var ttc = totalHT + tva;
+        totalsContainer.style.display = 'block';
+        document.getElementById('recap-totals').innerHTML =
+            '<div class="recap-total-line"><span>Total HT</span><span>' + totalHT.toFixed(2) + ' EUR</span></div>' +
+            '<div class="recap-total-line"><span>TVA (' + TVA + '%)</span><span>' + tva.toFixed(2) + ' EUR</span></div>' +
+            '<div class="recap-total-line grand"><span>Total TTC</span><span>' + ttc.toFixed(2) + ' EUR</span></div>';
+
+        // Franco alert
+        if(totalHT < seg.franco){
+            alertEl.className = 'alert-box warn';
+            alertEl.textContent = 'Minimum ' + seg.franco + ' EUR HT pour la livraison offerte. Il manque ' + (seg.franco - totalHT).toFixed(2) + ' EUR.';
+        } else {
+            alertEl.className = 'alert-box ok';
+            alertEl.textContent = 'Franco de port atteint. Livraison incluse.';
+        }
+
+        // Conditions
+        conditionsEl.style.display = 'block';
+        document.getElementById('conditions-list').innerHTML =
+            '<li>Paiement : ' + seg.paiement + '</li>' +
+            (seg.acompte !== 'Aucun' ? '<li>Acompte : ' + seg.acompte + '</li>' : '') +
+            '<li>Franco : ' + seg.franco + ' EUR HT</li>' +
+            '<li>MOQ : ' + seg.moq + ' unites/ref.</li>' +
+            '<li>Livraison : 5 a 10 jours ouvres</li>';
+
+        btn.disabled = false;
+    }
+
+    // ====== SUBMIT ======
+    window.submitDevis = function(){
+        var name = document.getElementById('f-name').value.trim();
+        var email = document.getElementById('f-email').value.trim();
+        if(!name || !email){
+            alert('Merci de renseigner votre nom et email.');
+            return;
+        }
+
+        var seg = SEGMENTS[currentSegment];
+        var lines = [];
+        var totalHT = 0;
+        Object.keys(CATALOGUE).forEach(function(ref){
+            var qty = quantities[ref];
+            if(qty > 0){
+                var p = CATALOGUE[ref];
+                var prix = p.prix[currentSegment];
+                lines.push({ref:ref, nom:p.nom, qty:qty, prix:prix, total:qty*prix});
+                totalHT += qty * prix;
+            }
+        });
+
+        if(lines.length === 0){
+            alert('Ajoutez au moins un produit.');
+            return;
+        }
+
+        // Build mailto body as fallback
+        var body = 'DEMANDE DE DEVIS LFDS\n\n';
+        body += 'Client: ' + name + '\n';
+        body += 'Entreprise: ' + (document.getElementById('f-company').value||'-') + '\n';
+        body += 'Email: ' + email + '\n';
+        body += 'Tel: ' + (document.getElementById('f-phone').value||'-') + '\n';
+        body += 'Segment: ' + seg.label + '\n\n';
+        body += 'PRODUITS:\n';
+        lines.forEach(function(l){
+            body += '- ' + l.nom + ' (' + l.ref + ') x' + l.qty + ' = ' + l.total.toFixed(2) + ' EUR HT\n';
+        });
+        body += '\nTotal HT: ' + totalHT.toFixed(2) + ' EUR\n';
+        body += 'TVA 20%: ' + (totalHT*0.2).toFixed(2) + ' EUR\n';
+        body += 'Total TTC: ' + (totalHT*1.2).toFixed(2) + ' EUR\n';
+
+        var subject = 'Demande de devis LFDS - ' + name + ' (' + seg.label + ')';
+        var mailtoLink = 'mailto:bp.thevenot@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+        window.location.href = mailtoLink;
+
+        document.getElementById('success-msg').style.display = 'block';
+        document.getElementById('btn-submit').disabled = true;
+        document.getElementById('btn-submit').textContent = 'Demande envoyee';
+    };
+
+    // ====== INIT ======
+    renderProducts();
+    updateRecap();
+})();
+</script>
+
+</body>
+</html>
