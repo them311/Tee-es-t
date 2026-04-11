@@ -35,51 +35,100 @@ ROUTINES = {
 
 1. EMAILS : Utilise gmail_search_messages pour chercher les emails non-lus (is:unread) recus dans les dernieres 24h.
    - Ignore les newsletters, spam, notifications automatiques (Uber, Bolt, Apple, Indeed, Nickel, Adobe, etc.)
-   - Pour chaque email d'un vrai prospect ou client : lis le thread complet avec gmail_read_thread, puis cree un brouillon de reponse adapte avec gmail_create_draft.
+   - Pour chaque email d'un vrai prospect ou client : lis le thread complet avec gmail_read_thread.
 
-2. CRM : Utilise hubspot_search_contacts pour lister les contacts avec hs_lead_status = OPEN ou IN_PROGRESS.
-   - Pour chaque contact dont la derniere interaction date de plus de 3 jours, prepare un brouillon de relance.
+2. QUALIFICATION : Pour chaque nouveau prospect identifie :
+   - Evalue le score BANT (Budget, Autorite, Besoin, Timing) sur 100 points.
+   - Cherche/cree le contact dans HubSpot.
+   - Ajoute une note HubSpot avec le detail du score : "BANT: B=X A=X N=X T=X | Total=XX/100"
+   - Mets a jour hs_lead_status selon le score (>= 70: IN_PROGRESS, 40-69: OPEN, < 40: NEW).
 
-3. TACHES : Utilise hubspot_search_contacts pour verifier s'il y a des taches en retard.
+3. REPONSES ADAPTEES AU SCORE :
+   - Score >= 70 (CHAUD) : Genere un devis detaille (livrables_create_devis avec bant_score) + proposition si projet complexe (livrables_create_proposition). Utilise le template email "Prospect CHAUD". Mentionne la validite limitee (15 jours).
+   - Score 40-69 (TIEDE) : Utilise le template email "Prospect TIEDE" avec questions de qualification. Genere une proposition legere SANS pricing detaille si pertinent.
+   - Score < 40 (FROID) : Utilise le template email "Prospect FROID" — email de decouverte uniquement. PAS de devis ni proposition.
+   - Cree un brouillon Gmail adapte (gmail_create_draft).
 
-4. DEVIS & PROPOSITIONS : Pour chaque prospect qui a exprime un besoin concret ou demande un tarif :
-   - Utilise livrables_create_devis pour generer un devis avec les lignes de prestation adaptees.
-   - Si le projet est complexe, utilise livrables_create_proposition pour une proposition detaillee.
-   - Mentionne le livrable genere dans le brouillon de reponse au client.
+4. SUIVI REPONSES : Verifie les reponses aux propositions/devis envoyes precedemment.
+   - Si un prospect a repondu positivement → livrables_update_status avec status "responded" ou "negotiating".
+   - Si un prospect a decline → livrables_update_status avec status "lost" et la raison (budget, timing, concurrent, silence).
 
-5. RESUME : A la fin, donne un resume structure :
-   - Nombre d'emails traites
-   - Nombre de brouillons crees
-   - Nombre de devis/propositions generes
-   - Contacts a relancer
+5. CRM : Verifie les contacts IN_PROGRESS et OPEN dont la derniere interaction date de plus de 2 jours.
+
+6. RESUME : Donne un resume structure :
+   - Nombre d'emails traites et scores BANT attribues
+   - Nombre de brouillons crees (par segment chaud/tiede/froid)
+   - Nombre de devis/propositions generes (uniquement pour score >= 40)
+   - Conversions detectees (reponses positives, signatures)
    - Actions prioritaires
 
 IMPORTANT : Tu dois TOUJOURS creer des brouillons (gmail_create_draft), JAMAIS envoyer directement. Baptiste validera ensuite.""",
 
-    "followup": """Effectue la routine de relance :
+    "followup": """Effectue la routine de relance intelligente :
 
-1. Cherche dans HubSpot tous les contacts avec hs_lead_status = OPEN.
-2. Pour chacun, verifie dans Gmail s'il y a eu une reponse recente (gmail_search_messages from:email_du_contact).
-3. Si pas de reponse depuis plus de 3 jours : cree un brouillon de relance personnalise.
-4. Si pas de reponse depuis plus de 7 jours : cree un brouillon de derniere relance avec une offre speciale ou un devis adapte (livrables_create_devis).
-5. Si pas de reponse depuis plus de 14 jours : mets le statut a ATTEMPTED_TO_REACH dans HubSpot.
-6. Verifie les livrables existants (livrables_list) et mentionne-les dans les relances si pertinent.
-7. Resume les actions effectuees, incluant les devis generes.""",
+1. TRACKING : Utilise livrables_list pour voir tous les livrables en cours.
+   - Pour chaque livrable avec statut "sent", verifie dans Gmail si le prospect a repondu.
+   - Mets a jour le statut via livrables_update_status (responded, won, lost, etc.).
 
-    "weekly_audit": """Effectue l'audit hebdomadaire du CRM :
+2. RELANCES PAR SEGMENT :
+   Cherche dans HubSpot les contacts OPEN et IN_PROGRESS. Pour chacun :
 
-1. Liste tous les contacts actifs (hs_lead_status != UNQUALIFIED).
-2. Identifie :
+   a) Prospects CHAUDS (notes BANT >= 70 ou hs_lead_status = IN_PROGRESS) :
+      - Relance a J+2 si pas de reponse. Template : rappel de la proposition + deadline de validite.
+      - Relance a J+5 : partage d'un cas client similaire ou resultat concret.
+      - Relance a J+10 : "derniere relance" — pas insistant, porte ouverte.
+      - Apres 3 relances : marquer ATTEMPTED_TO_REACH + livrables_update_status status="lost" lost_reason="silence"
+
+   b) Prospects TIEDES (notes BANT 40-69 ou hs_lead_status = OPEN) :
+      - Relance a J+4 : apport de valeur (cas client, article, conseil).
+      - Relance a J+8 : proposition de call de 15 min.
+      - Relance a J+14 : derniere relance.
+      - Apres 3 relances : marquer ATTEMPTED_TO_REACH.
+
+   c) Prospects FROIDS (notes BANT < 40) :
+      - Relance a J+7 uniquement : email de valeur (pas de proposition commerciale).
+      - Si pas de reponse : marquer ATTEMPTED_TO_REACH. Pas de 2eme relance.
+
+3. CHAQUE RELANCE DOIT :
+   - Apporter de la VALEUR (cas client, conseil, ressource) — jamais un simple "je relance".
+   - Utiliser livrables_update_status avec followup_increment=true pour tracker le nombre de relances.
+   - Mentionner les livrables existants et leur date de validite si pertinent.
+
+4. RESUME : Actions effectuees, relances envoyees par segment, conversions detectees.""",
+
+    "weekly_audit": """Effectue l'audit hebdomadaire du CRM et du pipeline de conversion :
+
+1. CRM : Liste tous les contacts actifs (hs_lead_status != UNQUALIFIED).
+   Identifie :
    - Contacts sans activite depuis plus de 7 jours
    - Deals sans montant defini
    - Contacts sans email
    - Doublons potentiels
-3. Pour chaque probleme, propose une action corrective.
-4. Genere un rapport complet avec KPIs :
-   - Nombre total de contacts actifs
-   - Nombre de deals en cours et valeur totale
-   - Taux de reponse estime
-   - Actions prioritaires pour la semaine""",
+
+2. CONVERSION REPORT : Utilise livrables_conversion_report pour obtenir les KPIs de conversion.
+   Analyse :
+   - Taux de reponse et taux de conversion global
+   - Performance par segment BANT (chaud/tiede/froid)
+   - Raisons de perte principales
+   - CA signe vs pipeline en cours
+
+3. RECOMMANDATIONS : Base-toi sur le rapport de conversion pour proposer des ajustements :
+   - Si taux de conversion des chauds < 50% : le probleme est dans la proposition de valeur ou le pricing.
+   - Si taux de reponse < 30% : le probleme est dans le ciblage ou la qualite des emails.
+   - Si la raison de perte principale est "budget" : proposer des offres plus modulaires.
+   - Si la raison de perte principale est "timing" : mettre en place des relances longues (30/60/90 jours).
+   - Si la raison de perte principale est "concurrent" : renforcer la preuve sociale.
+
+4. ACTIONS CORRECTIVES :
+   - Pour chaque probleme identifie, propose une action concrete.
+   - Mets a jour les contacts CRM si necessaire.
+
+5. RAPPORT FINAL avec KPIs :
+   - Contacts actifs et repartition par statut
+   - Deals en cours et valeur totale
+   - Taux de conversion par segment
+   - CA signe cette semaine vs objectif
+   - Top 3 actions prioritaires pour la semaine prochaine""",
 }
 
 
