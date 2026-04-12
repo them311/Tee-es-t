@@ -1,15 +1,35 @@
 [build]
   publish = "docs"
+  # No build command needed — static site served directly from docs/
 
-# No build command needed — static site served directly from docs/
+[build.environment]
+  NODE_VERSION = "20"
 
+# Automatic branch deploys for preview
+[context.deploy-preview]
+  publish = "docs"
+
+[context.branch-deploy]
+  publish = "docs"
+
+# Headers
 [[headers]]
   for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Cache-Control = "public, max-age=300"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
 [[headers]]
   for = "/status.json"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
+    Access-Control-Allow-Origin = "*"
+
+# Custom 404
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
