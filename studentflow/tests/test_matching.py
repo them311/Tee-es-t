@@ -99,18 +99,14 @@ def test_hours_overflow_graceful() -> None:
 
 def test_availability_compatible() -> None:
     offer = make_offer(starts_on=date(2026, 9, 1), ends_on=date(2027, 8, 31))
-    student = make_student(
-        available_from=date(2026, 9, 1), available_until=date(2027, 12, 31)
-    )
+    student = make_student(available_from=date(2026, 9, 1), available_until=date(2027, 12, 31))
     s, _ = _score_availability(offer, student)
     assert s == 1.0
 
 
 def test_availability_incompatible() -> None:
     offer = make_offer(starts_on=date(2027, 1, 1), ends_on=date(2027, 6, 30))
-    student = make_student(
-        available_from=date(2026, 1, 1), available_until=date(2026, 12, 31)
-    )
+    student = make_student(available_from=date(2026, 1, 1), available_until=date(2026, 12, 31))
     s, _ = _score_availability(offer, student)
     assert s == 0.0
 

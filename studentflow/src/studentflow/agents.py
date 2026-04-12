@@ -89,8 +89,9 @@ class NotifierAgent:
         if not pending:
             return 0
         if not self.webhook_url:
-            log.warning("NotifierAgent: no webhook configured, marking %d as notified",
-                        len(pending))
+            log.warning(
+                "NotifierAgent: no webhook configured, marking %d as notified", len(pending)
+            )
             for m in pending:
                 self.repo.mark_match_notified(m.id)
             return len(pending)

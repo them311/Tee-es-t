@@ -16,11 +16,11 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ContractType(StrEnum):
-    INTERNSHIP = "internship"       # stage
+    INTERNSHIP = "internship"  # stage
     APPRENTICESHIP = "apprenticeship"  # alternance
     CDD = "cdd"
     CDI = "cdi"
-    PART_TIME = "part_time"         # job étudiant
+    PART_TIME = "part_time"  # job étudiant
     FREELANCE = "freelance"
     OTHER = "other"
 
@@ -50,7 +50,7 @@ class Offer(BaseModel):
 
     id: UUID = Field(default_factory=uuid4)
     source: Source
-    source_id: str                       # unique within (source, source_id)
+    source_id: str  # unique within (source, source_id)
     title: str
     description: str = ""
     company: str = ""

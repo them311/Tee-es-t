@@ -23,9 +23,7 @@ from .base import BaseScraper
 
 log = logging.getLogger(__name__)
 
-TOKEN_URL = (
-    "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire"
-)
+TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire"
 SEARCH_URL = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search"
 SCOPE = "api_offresdemploiv2 o2dsoffre"
 
@@ -58,8 +56,9 @@ class FranceTravailScraper(BaseScraper):
             return []
 
         async with httpx.AsyncClient(timeout=20.0) as client:
-            token = await self._get_token(client, settings.france_travail_client_id,
-                                          settings.france_travail_client_secret)
+            token = await self._get_token(
+                client, settings.france_travail_client_id, settings.france_travail_client_secret
+            )
             raw = await self._search(client, token)
         return [self._parse(row) for row in raw]
 

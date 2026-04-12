@@ -82,20 +82,16 @@ class SupabaseRepository:
 
     def list_unnotified_matches(self, limit: int = 100) -> list[Match]:
         resp = (
-            self.client.table("matches")
-            .select("*")
-            .is_("notified_at", None)
-            .limit(limit)
-            .execute()
+            self.client.table("matches").select("*").is_("notified_at", None).limit(limit).execute()
         )
         return [_row_to_match(r) for r in (resp.data or [])]
 
     def mark_match_notified(self, match_id: UUID) -> None:
         from datetime import datetime
 
-        self.client.table("matches").update(
-            {"notified_at": datetime.utcnow().isoformat()}
-        ).eq("id", str(match_id)).execute()
+        self.client.table("matches").update({"notified_at": datetime.utcnow().isoformat()}).eq(
+            "id", str(match_id)
+        ).execute()
 
 
 # ---- row adapters ----
