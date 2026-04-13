@@ -6,6 +6,7 @@ Every scraper implements `BaseScraper` and appears in `SCRAPERS` so the
 
 from __future__ import annotations
 
+from .adzuna import AdzunaScraper
 from .base import BaseScraper
 from .france_travail import FranceTravailScraper
 from .hellowork import HelloWorkScraper
@@ -15,14 +16,16 @@ from .studentjob import StudentJobScraper
 
 SCRAPERS: list[type[BaseScraper]] = [
     FranceTravailScraper,
-    IndeedScraper,
+    AdzunaScraper,
     HelloWorkScraper,
+    IndeedScraper,
     StudentJobScraper,
     JobTeaserScraper,
 ]
 
 __all__ = [
     "SCRAPERS",
+    "AdzunaScraper",
     "BaseScraper",
     "FranceTravailScraper",
     "HelloWorkScraper",

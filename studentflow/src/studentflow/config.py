@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     france_travail_client_id: str = ""
     france_travail_client_secret: str = ""
 
+    # Adzuna (official public API, free tier)
+    adzuna_app_id: str = ""
+    adzuna_app_key: str = ""
+    adzuna_country: str = "fr"
+
     # Agents
     scraper_interval_seconds: int = Field(default=900, ge=10)
     matcher_interval_seconds: int = Field(default=60, ge=5)
@@ -43,6 +48,10 @@ class Settings(BaseSettings):
     @property
     def france_travail_configured(self) -> bool:
         return bool(self.france_travail_client_id and self.france_travail_client_secret)
+
+    @property
+    def adzuna_configured(self) -> bool:
+        return bool(self.adzuna_app_id and self.adzuna_app_key)
 
 
 @lru_cache(maxsize=1)
