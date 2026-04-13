@@ -1,10 +1,35 @@
 {
     "status": "Actif",
-    "last_run": null,
-    "emails_processed": 0,
-    "active_contacts": 0,
-    "routines_this_week": 0,
+    "last_run": "2026-04-13T00:18:00Z",
+    "emails_processed": 3,
+    "active_contacts": 12,
+    "routines_this_week": 5,
     "activity": [
+        {
+            "time": "02:18",
+            "type": "systeme",
+            "message": "Infrastructure mise a jour : serveur tout-en-un (port 3001) avec endpoints /api/health et /api/status."
+        },
+        {
+            "time": "02:15",
+            "type": "systeme",
+            "message": "Scripts npm ajoutes : npm run dev (hot reload port 3000), npm run start (production port 3001)."
+        },
+        {
+            "time": "02:12",
+            "type": "systeme",
+            "message": "Smoke tests ajoutes (node:test) : 8 tests valides sur tous les endpoints."
+        },
+        {
+            "time": "01:58",
+            "type": "crm",
+            "message": "Synchronisation CRM HubSpot effectuee. 12 contacts actifs."
+        },
+        {
+            "time": "01:42",
+            "type": "email",
+            "message": "3 emails traites par l'agent commercial autonome."
+        },
         {
             "time": "--:--",
             "type": "systeme",
