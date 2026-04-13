@@ -490,6 +490,53 @@
             margin-top: 2px;
         }
 
+        /* ===== PIPELINE STAGES ===== */
+        .stages {
+            padding: 14px 20px 18px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+        .stages-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--slate-500);
+            margin-bottom: 10px;
+        }
+        .stage-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .stage-row:last-child { margin-bottom: 0; }
+        .stage-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-700);
+            min-width: 130px;
+        }
+        .stage-bar-wrap {
+            flex: 1;
+            height: 10px;
+            background: var(--slate-100);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .stage-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-500), #6366f1);
+            border-radius: 5px;
+            transition: width 0.6s ease;
+        }
+        .stage-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--slate-900);
+            min-width: 24px;
+            text-align: right;
+        }
+
         /* ===== FOOTER ===== */
         footer {
             margin-top: 32px;
@@ -707,6 +754,10 @@
                 <div class="lk-label">CA potentiel</div>
             </div>
         </div>
+        <div class="stages" id="stages-block" style="display:none">
+            <div class="stages-title">Pipeline par etape</div>
+            <div id="stages-list"></div>
+        </div>
         <ul class="log-list" id="livrables-list">
             <li class="log-empty">Aucun livrable genere pour le moment.</li>
         </ul>
@@ -823,6 +874,38 @@
                 var mt = l.total_montant || 0;
                 document.getElementById('kpi-montant').textContent = mt > 0 ? mt.toLocaleString('fr-FR') + ' \u20ac' : '--';
                 document.getElementById('liv-meta').textContent = (l.devis_count + l.propositions_count) + ' documents';
+
+                // Pipeline par etape
+                var stagesBlock = document.getElementById('stages-block');
+                var stagesList = document.getElementById('stages-list');
+                if (d.deals_by_stage && Object.keys(d.deals_by_stage).length) {
+                    var stageLabels = {
+                        'appointmentscheduled': 'RDV planifie',
+                        'qualifiedtobuy': 'Qualifie',
+                        'presentationscheduled': 'Presentation',
+                        'decisionmakerboughtin': 'Decideur convaincu',
+                        'contractsent': 'Contrat envoye',
+                        'closedwon': 'Gagne',
+                        'closedlost': 'Perdu'
+                    };
+                    var entries = Object.keys(d.deals_by_stage).map(function(k) {
+                        return { key: k, label: stageLabels[k] || k, count: d.deals_by_stage[k] };
+                    });
+                    var maxCount = Math.max.apply(null, entries.map(function(e) { return e.count; }));
+                    entries.sort(function(a, b) { return b.count - a.count; });
+                    stagesList.innerHTML = '';
+                    entries.forEach(function(e) {
+                        var pct = maxCount > 0 ? Math.round((e.count / maxCount) * 100) : 0;
+                        var row = document.createElement('div');
+                        row.className = 'stage-row';
+                        row.innerHTML =
+                            '<div class="stage-label">' + e.label + '</div>' +
+                            '<div class="stage-bar-wrap"><div class="stage-bar" style="width:' + pct + '%"></div></div>' +
+                            '<div class="stage-count">' + e.count + '</div>';
+                        stagesList.appendChild(row);
+                    });
+                    stagesBlock.style.display = 'block';
+                }
 
                 var ll = document.getElementById('livrables-list');
                 if (l.recent && l.recent.length) {
