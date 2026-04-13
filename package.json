@@ -1,0 +1,20 @@
+{
+  "name": "tee-es-t",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SNB Consulting - Site vitrine et agent commercial IA",
+  "scripts": {
+    "dev": "live-server docs --port=3000 --no-browser --wait=200",
+    "start": "http-server docs -p 3001 -c-1 --cors -s",
+    "build": "echo \"Static site - no build step required\" && exit 0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
