@@ -1,8 +1,9 @@
 # Dependencies
 node_modules/
 
-# Build
+# Build artifacts (rebuilt by CI/Netlify)
 dist/
+docs/quiz/
 
 # Environment (contains API key!)
 .env
