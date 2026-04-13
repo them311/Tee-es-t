@@ -26,9 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: npm
+          cache-dependency-path: studentflow-web/package-lock.json
 
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Typecheck
         run: npx tsc --noEmit
