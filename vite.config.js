@@ -7,6 +7,11 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   base: process.env.VITE_BASE || "/",
   plugins: [react()],
+  base: "/quiz/",
+  build: {
+    outDir: "docs/quiz",
+    emptyOutDir: true,
+  },
   server: {
     port: 3000,
     proxy: {
