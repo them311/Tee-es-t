@@ -4,8 +4,14 @@ on:
   push:
     branches: [main]
     paths:
+      - 'src/**'
       - 'docs/**'
+      - 'index.html'
+      - 'vite.config.js'
+      - 'package.json'
+      - 'package-lock.json'
       - 'netlify.toml'
+      - 'netlify/**'
       - '.github/workflows/netlify-deploy.yml'
   workflow_dispatch:
 
@@ -24,6 +30,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build quiz (Vite → docs/quiz)
+        run: npx vite build
+        env:
+          VITE_BASE: /quiz/
+          VITE_OUT_DIR: docs/quiz
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
