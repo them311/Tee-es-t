@@ -9,14 +9,12 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime
-
-import httpx
 
 from .config import Settings, get_settings
 from .db import Repository
 from .matching import rank_students_for_offer
 from .models import Match, Offer
+from .notifiers import NotificationChannel, build_notifier
 from .scrapers import SCRAPERS, BaseScraper
 
 log = logging.getLogger(__name__)
@@ -78,44 +76,43 @@ class MatcherAgent:
 
 
 class NotifierAgent:
-    """Sends notifications for unnotified matches via a webhook."""
+    """Dispatches unnotified matches through a pluggable `NotificationChannel`.
 
-    def __init__(self, repo: Repository, webhook_url: str) -> None:
+    The channel is decided at build time (`build_notifier(settings)`): email
+    if SMTP is configured, else webhook, else a null channel that just logs.
+    A failed send leaves `notified_at` null so the next tick retries; the
+    loop is isolated per-match so one bad match can't poison the rest.
+    """
+
+    def __init__(self, repo: Repository, channel: NotificationChannel) -> None:
         self.repo = repo
-        self.webhook_url = webhook_url
+        self.channel = channel
 
     async def tick(self) -> int:
         pending = self.repo.list_unnotified_matches()
         if not pending:
             return 0
-        if not self.webhook_url:
-            log.warning(
-                "NotifierAgent: no webhook configured, marking %d as notified", len(pending)
-            )
-            for m in pending:
-                self.repo.mark_match_notified(m.id)
-            return len(pending)
 
         sent = 0
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            for match in pending:
-                try:
-                    resp = await client.post(
-                        self.webhook_url,
-                        json={
-                            "match_id": str(match.id),
-                            "offer_id": str(match.offer_id),
-                            "student_id": str(match.student_id),
-                            "score": match.score,
-                            "reasons": match.reasons,
-                            "sent_at": datetime.utcnow().isoformat(),
-                        },
-                    )
-                    resp.raise_for_status()
-                    self.repo.mark_match_notified(match.id)
-                    sent += 1
-                except httpx.HTTPError as exc:
-                    log.warning("Notification failed for match %s: %s", match.id, exc)
+        for match in pending:
+            student = self.repo.get_student(match.student_id)
+            offer = self.repo.get_offer(match.offer_id)
+            if student is None or offer is None:
+                log.warning("NotifierAgent: skipping match %s (student or offer missing)", match.id)
+                # Mark as notified anyway so we don't loop forever on orphans.
+                self.repo.mark_match_notified(match.id)
+                continue
+            try:
+                await self.channel.send(match=match, student=student, offer=offer)
+                self.repo.mark_match_notified(match.id)
+                sent += 1
+            except Exception as exc:
+                log.warning(
+                    "NotifierAgent: channel=%s failed for match %s: %s",
+                    self.channel.name,
+                    match.id,
+                    exc,
+                )
         return sent
 
 
@@ -125,7 +122,7 @@ async def run_forever(repo: Repository, settings: Settings | None = None) -> Non
 
     scraper_agent = ScraperAgent(repo)
     matcher_agent = MatcherAgent(repo, threshold=settings.match_score_threshold)
-    notifier_agent = NotifierAgent(repo, webhook_url=settings.notification_webhook_url)
+    notifier_agent = NotifierAgent(repo, channel=build_notifier(settings))
 
     await asyncio.gather(
         _loop("scraper", scraper_agent.tick, settings.scraper_interval_seconds),

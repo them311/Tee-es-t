@@ -91,12 +91,23 @@ def create_student(
     return {"id": str(student.id)}
 
 
+@app.get("/stats")
+def stats(repo: Repository = Depends(get_repository)) -> dict[str, object]:
+    """Lightweight aggregates for dashboards and ops health-checks."""
+    return {
+        "offers": repo.count_offers(),
+        "students": repo.count_students(),
+        "matches": repo.count_matches(),
+        "matches_unnotified": repo.count_unnotified_matches(),
+        "per_source": repo.count_offers_by_source(),
+    }
+
+
 @app.get("/students/{student_id}/matches", response_model=list[MatchOut])
 def list_matches_for_student(
     student_id: UUID, repo: Repository = Depends(get_repository)
 ) -> list[MatchOut]:
-    students = {s.id: s for s in repo.list_active_students()}
-    student = students.get(student_id)
+    student = repo.get_student(student_id)
     if student is None:
         raise HTTPException(status_code=404, detail="Student not found")
 

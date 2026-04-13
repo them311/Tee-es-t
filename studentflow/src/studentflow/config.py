@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     adzuna_app_key: str = ""
     adzuna_country: str = "fr"
 
+    # Jooble (official public API, single free key)
+    jooble_api_key: str = ""
+    jooble_location: str = "France"
+
     # Agents
     scraper_interval_seconds: int = Field(default=900, ge=10)
     matcher_interval_seconds: int = Field(default=60, ge=5)
@@ -38,8 +42,16 @@ class Settings(BaseSettings):
     api_host: str = "0.0.0.0"
     api_port: int = 8000
 
-    # Notifications
+    # Notifications — webhook (fallback / bridge to Make/Zapier/n8n)
     notification_webhook_url: str = ""
+
+    # Notifications — SMTP email (preferred channel, direct to student)
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from: str = ""
+    smtp_use_tls: bool = True
 
     @property
     def supabase_configured(self) -> bool:
@@ -52,6 +64,14 @@ class Settings(BaseSettings):
     @property
     def adzuna_configured(self) -> bool:
         return bool(self.adzuna_app_id and self.adzuna_app_key)
+
+    @property
+    def jooble_configured(self) -> bool:
+        return bool(self.jooble_api_key)
+
+    @property
+    def smtp_configured(self) -> bool:
+        return bool(self.smtp_host and self.smtp_from)
 
 
 @lru_cache(maxsize=1)

@@ -32,6 +32,7 @@ class Source(StrEnum):
     STUDENTJOB = "studentjob"
     JOBTEASER = "jobteaser"
     ADZUNA = "adzuna"
+    JOOBLE = "jooble"
 
 
 def _norm_skills(skills: list[str]) -> list[str]:

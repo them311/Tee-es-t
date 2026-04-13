@@ -12,11 +12,13 @@ from .france_travail import FranceTravailScraper
 from .hellowork import HelloWorkScraper
 from .indeed import IndeedScraper
 from .jobteaser import JobTeaserScraper
+from .jooble import JoobleScraper
 from .studentjob import StudentJobScraper
 
 SCRAPERS: list[type[BaseScraper]] = [
     FranceTravailScraper,
     AdzunaScraper,
+    JoobleScraper,
     HelloWorkScraper,
     IndeedScraper,
     StudentJobScraper,
@@ -31,5 +33,6 @@ __all__ = [
     "HelloWorkScraper",
     "IndeedScraper",
     "JobTeaserScraper",
+    "JoobleScraper",
     "StudentJobScraper",
 ]

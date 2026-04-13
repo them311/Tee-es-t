@@ -20,9 +20,17 @@ class Repository(Protocol):
     def upsert_offers(self, offers: list[Offer]) -> int: ...
     def list_active_students(self) -> list[Student]: ...
     def list_recent_unmatched_offers(self, limit: int = 200) -> list[Offer]: ...
+    def insert_student(self, student: Student) -> None: ...
     def insert_match(self, match: Match) -> None: ...
     def list_unnotified_matches(self, limit: int = 100) -> list[Match]: ...
     def mark_match_notified(self, match_id: UUID) -> None: ...
+    def get_offer(self, offer_id: UUID) -> Offer | None: ...
+    def get_student(self, student_id: UUID) -> Student | None: ...
+    def count_offers(self) -> int: ...
+    def count_students(self) -> int: ...
+    def count_matches(self) -> int: ...
+    def count_unnotified_matches(self) -> int: ...
+    def count_offers_by_source(self) -> dict[str, int]: ...
 
 
 class SupabaseRepository:
@@ -92,6 +100,52 @@ class SupabaseRepository:
         self.client.table("matches").update({"notified_at": datetime.utcnow().isoformat()}).eq(
             "id", str(match_id)
         ).execute()
+
+    # ---- lookups (for notifier / API) ----
+
+    def get_offer(self, offer_id: UUID) -> Offer | None:
+        resp = self.client.table("offers").select("*").eq("id", str(offer_id)).limit(1).execute()
+        rows = resp.data or []
+        return _row_to_offer(rows[0]) if rows else None
+
+    def get_student(self, student_id: UUID) -> Student | None:
+        resp = (
+            self.client.table("students").select("*").eq("id", str(student_id)).limit(1).execute()
+        )
+        rows = resp.data or []
+        return _row_to_student(rows[0]) if rows else None
+
+    # ---- stats ----
+
+    def count_offers(self) -> int:
+        resp = self.client.table("offers").select("id", count="exact").execute()
+        return int(resp.count or 0)
+
+    def count_students(self) -> int:
+        resp = self.client.table("students").select("id", count="exact").execute()
+        return int(resp.count or 0)
+
+    def count_matches(self) -> int:
+        resp = self.client.table("matches").select("id", count="exact").execute()
+        return int(resp.count or 0)
+
+    def count_unnotified_matches(self) -> int:
+        resp = (
+            self.client.table("matches")
+            .select("id", count="exact")
+            .is_("notified_at", None)
+            .execute()
+        )
+        return int(resp.count or 0)
+
+    def count_offers_by_source(self) -> dict[str, int]:
+        resp = self.client.table("offers").select("source").execute()
+        rows = resp.data or []
+        out: dict[str, int] = {}
+        for r in rows:
+            src = r.get("source") or "unknown"
+            out[src] = out.get(src, 0) + 1
+        return out
 
 
 # ---- row adapters ----
@@ -192,3 +246,35 @@ class InMemoryRepository:
         m = self.matches.get(match_id)
         if m is not None:
             m.notified_at = datetime.utcnow()
+
+    # ---- lookups ----
+
+    def get_offer(self, offer_id: UUID) -> Offer | None:
+        for offer in self.offers.values():
+            if offer.id == offer_id:
+                return offer
+        return None
+
+    def get_student(self, student_id: UUID) -> Student | None:
+        return self.students.get(student_id)
+
+    # ---- stats ----
+
+    def count_offers(self) -> int:
+        return len(self.offers)
+
+    def count_students(self) -> int:
+        return len(self.students)
+
+    def count_matches(self) -> int:
+        return len(self.matches)
+
+    def count_unnotified_matches(self) -> int:
+        return sum(1 for m in self.matches.values() if m.notified_at is None)
+
+    def count_offers_by_source(self) -> dict[str, int]:
+        out: dict[str, int] = {}
+        for offer in self.offers.values():
+            src = offer.source.value
+            out[src] = out.get(src, 0) + 1
+        return out
