@@ -201,3 +201,93 @@ label {
   border: 1px dashed var(--border);
   border-radius: var(--radius);
 }
+
+.gate {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 3rem;
+}
+.gate-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.75rem;
+  text-align: center;
+  color: var(--fg);
+  transition: transform 150ms ease, border-color 150ms ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.gate-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  color: var(--fg);
+}
+.gate-card h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+.gate-card p {
+  color: var(--fg-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+.gate-cta {
+  margin-top: 0.75rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.how {
+  text-align: center;
+  padding: 1.5rem 0 2.5rem;
+  color: var(--fg-muted);
+}
+.how h2 {
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+}
+
+/* Robot live indicator */
+.robot-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(49, 196, 141, 0.08);
+  border: 1px solid rgba(49, 196, 141, 0.3);
+  padding: 0.6rem 1rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  color: var(--success);
+  width: fit-content;
+  margin: 0 auto 2rem;
+}
+.robot-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: robot-pulse 1.6s ease-in-out infinite;
+}
+@keyframes robot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%     { opacity: 0.4; transform: scale(1.4); }
+}
+
+/* Geolocation button */
+.geo-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  padding: 0.5rem 0.9rem;
+  font-size: 0.8rem;
+  border-radius: 99px;
+  margin-top: 0.3rem;
+}
+.geo-btn:hover:not(:disabled) {
+  background: rgba(124, 92, 255, 0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}

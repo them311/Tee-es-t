@@ -24,11 +24,62 @@ export default function Signup() {
   const [maxHours, setMaxHours] = useState(35);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [locating, setLocating] = useState(false);
 
   function toggleContract(c: ContractType) {
     setContracts((prev) =>
       prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
     );
+  }
+
+  /**
+   * Browser geolocation → OSM Nominatim reverse geocoding → city name.
+   *
+   * Zero API key required. Nominatim is free and CORS-enabled. The User-Agent
+   * header is set automatically by the browser. If either step fails, we just
+   * fall back to manual input and surface a soft error.
+   */
+  async function detectLocation() {
+    if (!("geolocation" in navigator)) {
+      setError("La géolocalisation n'est pas disponible dans ce navigateur.");
+      return;
+    }
+    setLocating(true);
+    setError(null);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          timeout: 10_000,
+          maximumAge: 60_000,
+        });
+      });
+      const { latitude, longitude } = pos.coords;
+      const resp = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+        { headers: { Accept: "application/json" } },
+      );
+      if (!resp.ok) throw new Error("Nominatim HTTP " + resp.status);
+      const data = await resp.json();
+      const addr = data.address ?? {};
+      const resolved: string =
+        addr.city || addr.town || addr.village || addr.municipality || addr.county || "";
+      if (resolved) {
+        setCity(resolved);
+      } else {
+        setError("Ville introuvable. Saisis-la à la main.");
+      }
+    } catch (err) {
+      setError(
+        err instanceof GeolocationPositionError
+          ? "Autorise la localisation dans ton navigateur, ou saisis la ville à la main."
+          : err instanceof Error
+            ? err.message
+            : String(err),
+      );
+    } finally {
+      setLocating(false);
+    }
   }
 
   async function onSubmit(e: FormEvent) {
@@ -91,6 +142,14 @@ export default function Signup() {
             onChange={(e) => setCity(e.target.value)}
             placeholder="Paris"
           />
+          <button
+            type="button"
+            className="geo-btn"
+            onClick={detectLocation}
+            disabled={locating}
+          >
+            {locating ? "Localisation…" : "📍 Utiliser ma position"}
+          </button>
         </label>
         <label>
           Compétences (séparées par des virgules)

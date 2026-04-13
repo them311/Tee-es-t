@@ -35,3 +35,26 @@ export interface Stats {
   matches_unnotified: number;
   per_source: Record<string, number>;
 }
+
+export interface OfferCreate {
+  title: string;
+  company: string;
+  description: string;
+  city: string;
+  remote: boolean;
+  contract: ContractType;
+  hours_per_week: number | null;
+  skills: string[];
+  url: string;
+  contact_email: string;
+}
+
+export interface StudentMatch {
+  student_id: string;
+  full_name: string;
+  email: string;
+  city: string;
+  skills: string[];
+  score: number;
+  reasons: string[];
+}

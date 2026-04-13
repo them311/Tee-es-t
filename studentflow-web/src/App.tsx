@@ -1,5 +1,7 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 
+import Company from "./pages/Company";
+import CompanyMatches from "./pages/CompanyMatches";
 import Home from "./pages/Home";
 import HowItWorks from "./pages/HowItWorks";
 import Matches from "./pages/Matches";
@@ -15,8 +17,8 @@ export default function App() {
           Accueil
         </NavLink>
         <NavLink to="/how-it-works">Comment ça marche</NavLink>
-        <NavLink to="/signup">Inscription</NavLink>
-        <NavLink to="/matches">Mes matches</NavLink>
+        <NavLink to="/student">Étudiant</NavLink>
+        <NavLink to="/company">Entreprise</NavLink>
         <NavLink to="/stats">Stats</NavLink>
         <span className="spacer" />
       </nav>
@@ -24,9 +26,15 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          {/* Student funnel (alias /signup kept for backward compat) */}
+          <Route path="/student" element={<Signup />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/matches/:studentId" element={<Matches />} />
+          {/* Company funnel */}
+          <Route path="/company" element={<Company />} />
+          <Route path="/company/matches" element={<CompanyMatches />} />
+          <Route path="/company/matches/:offerId" element={<CompanyMatches />} />
           <Route path="/stats" element={<Stats />} />
         </Routes>
       </main>

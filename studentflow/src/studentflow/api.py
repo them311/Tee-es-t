@@ -14,8 +14,8 @@ from pydantic import BaseModel, EmailStr, Field
 
 from .config import get_settings
 from .db import InMemoryRepository, Repository, SupabaseRepository
-from .matching import rank_offers_for_student
-from .models import ContractType, Student
+from .matching import rank_offers_for_student, rank_students_for_offer
+from .models import ContractType, Offer, Source, Student
 
 app = FastAPI(
     title="StudentFlow API",
@@ -67,6 +67,31 @@ class MatchOut(BaseModel):
     title: str
     company: str
     city: str
+    score: float
+    reasons: list[str]
+
+
+class OfferCreate(BaseModel):
+    """Body used when an employer publishes a mission through the web app."""
+
+    title: str
+    company: str
+    description: str = ""
+    city: str = ""
+    remote: bool = False
+    contract: ContractType = ContractType.PART_TIME
+    hours_per_week: int | None = None
+    skills: list[str] = Field(default_factory=list)
+    url: str = ""
+    contact_email: EmailStr | None = None
+
+
+class StudentMatchOut(BaseModel):
+    student_id: UUID
+    full_name: str
+    email: str
+    city: str
+    skills: list[str]
     score: float
     reasons: list[str]
 
@@ -125,4 +150,68 @@ def list_matches_for_student(
             reasons=result.reasons,
         )
         for offer, result in ranked
+    ]
+
+
+# ---- Company-facing routes ----------------------------------------------
+
+
+@app.post("/offers", status_code=201)
+def create_offer(
+    payload: OfferCreate, repo: Repository = Depends(get_repository)
+) -> dict[str, str]:
+    """Employer publishes a mission.
+
+    The offer is stored in the same `offers` table as scraped ones, so the
+    MatcherAgent picks it up automatically on its next tick and notifies
+    the best student candidates. Source is `studentjob` (manual entry) —
+    `source_id` is derived from email+title so re-submits are idempotent.
+    """
+    source_id = f"manual:{(payload.contact_email or payload.company).lower()}:{payload.title}"
+    offer = Offer(
+        source=Source.STUDENTJOB,
+        source_id=source_id,
+        title=payload.title,
+        description=payload.description,
+        company=payload.company,
+        city=payload.city,
+        remote=payload.remote,
+        contract=payload.contract,
+        hours_per_week=payload.hours_per_week,
+        skills=payload.skills,
+        url=payload.url,
+    )
+    repo.upsert_offers([offer])
+    return {"id": str(offer.id)}
+
+
+@app.get("/offers/{offer_id}/matches", response_model=list[StudentMatchOut])
+def list_matches_for_offer(
+    offer_id: UUID, repo: Repository = Depends(get_repository)
+) -> list[StudentMatchOut]:
+    """Top students for a given mission, scored on the fly.
+
+    Same engine as the student-side view — we just flip the axis. Employers
+    get the best candidates ranked by score, with the reasons attached so
+    they can explain why StudentFlow suggested them.
+    """
+    offer = repo.get_offer(offer_id)
+    if offer is None:
+        raise HTTPException(status_code=404, detail="Offer not found")
+
+    students = repo.list_active_students()
+    ranked = rank_students_for_offer(
+        offer, students, threshold=get_settings().match_score_threshold
+    )
+    return [
+        StudentMatchOut(
+            student_id=student.id,
+            full_name=student.full_name,
+            email=student.email,
+            city=student.city,
+            skills=student.skills,
+            score=result.score,
+            reasons=result.reasons,
+        )
+        for student, result in ranked
     ]

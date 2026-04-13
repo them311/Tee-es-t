@@ -1,4 +1,4 @@
-import type { Match, Stats, StudentCreate } from "./types";
+import type { Match, OfferCreate, Stats, StudentCreate, StudentMatch } from "./types";
 
 /**
  * Base URL of the StudentFlow API.
@@ -44,4 +44,13 @@ export const api = {
     request<Match[]>(`/students/${encodeURIComponent(studentId)}/matches`),
 
   getStats: () => request<Stats>("/stats"),
+
+  createOffer: (payload: OfferCreate) =>
+    request<{ id: string }>("/offers", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  listMatchesForOffer: (offerId: string) =>
+    request<StudentMatch[]>(`/offers/${encodeURIComponent(offerId)}/matches`),
 };

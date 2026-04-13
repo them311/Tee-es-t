@@ -20,6 +20,10 @@ export default function Stats() {
   return (
     <div>
       <h2>Stats plateforme</h2>
+      <div className="robot-strip" title="ScraperAgent, MatcherAgent, NotifierAgent">
+        <span className="robot-dot" />
+        Robot en ligne · scrape toutes les 15 min · 4 sources
+      </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
         <Metric label="Offres indexées" value={stats.offers} />
         <Metric label="Étudiants actifs" value={stats.students} />
