@@ -201,7 +201,7 @@
         /* ===== KPI CARDS ===== */
         .kpi-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
             margin-top: -32px;
             position: relative;
@@ -246,6 +246,8 @@
         }
 
         .kpi-value.green { color: var(--green-600); }
+        .kpi-value.blue { color: var(--blue-600); }
+        .kpi-value.purple { color: var(--purple-500); }
 
         /* ===== SECTIONS ===== */
         .panel {
@@ -504,6 +506,10 @@
         footer .foot-line + .foot-line { margin-top: 4px; }
 
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .kpi-row { grid-template-columns: repeat(3, 1fr); }
+        }
+
         @media (max-width: 768px) {
             .kpi-row { grid-template-columns: repeat(2, 1fr); }
             .sources { grid-template-columns: repeat(2, 1fr); }
@@ -570,14 +576,19 @@
             <div class="kpi-sub" id="kpi-lastrun"><span class="skel" style="width:120px;height:11px">&nbsp;</span></div>
         </div>
         <div class="kpi">
-            <div class="kpi-label">Emails traites</div>
-            <div class="kpi-value" id="kpi-emails">0</div>
-            <div class="kpi-sub">Brouillons crees</div>
+            <div class="kpi-label">Pipeline</div>
+            <div class="kpi-value blue" id="kpi-pipeline">--</div>
+            <div class="kpi-sub" id="kpi-pipeline-sub">Valeur deals actifs</div>
         </div>
         <div class="kpi">
             <div class="kpi-label">Contacts CRM</div>
             <div class="kpi-value" id="kpi-contacts">0</div>
             <div class="kpi-sub">Actifs dans HubSpot</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Emails traites</div>
+            <div class="kpi-value" id="kpi-emails">0</div>
+            <div class="kpi-sub">Brouillons crees</div>
         </div>
         <div class="kpi">
             <div class="kpi-label">Cycles cette semaine</div>
@@ -753,8 +764,28 @@
                 ? ago(d.last_run) + ' (' + new Date(d.last_run).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) + ')'
                 : 'En attente 1ere execution';
             document.getElementById('kpi-emails').textContent = d.emails_processed || 0;
-            document.getElementById('kpi-contacts').textContent = d.active_contacts || 0;
+            document.getElementById('kpi-contacts').textContent = (d.active_contacts || 0).toLocaleString('fr-FR');
             document.getElementById('kpi-routines').textContent = d.routines_this_week || 0;
+
+            // Pipeline KPI
+            var pipelineEl = document.getElementById('kpi-pipeline');
+            var pipelineSubEl = document.getElementById('kpi-pipeline-sub');
+            var pipelineVal = (d.livrables && d.livrables.total_montant) || d.pipeline_value || 0;
+            var dealCount = (d.livrables && d.livrables.propositions_count) || d.deals_count || 0;
+            if (pipelineVal > 0) {
+                var formatted;
+                if (pipelineVal >= 1000000) {
+                    formatted = (pipelineVal / 1000000).toFixed(1).replace('.0','') + 'M \u20ac';
+                } else if (pipelineVal >= 1000) {
+                    formatted = (pipelineVal / 1000).toFixed(1).replace('.0','') + 'k \u20ac';
+                } else {
+                    formatted = pipelineVal.toLocaleString('fr-FR') + ' \u20ac';
+                }
+                pipelineEl.textContent = formatted;
+                pipelineSubEl.textContent = dealCount + ' deal' + (dealCount > 1 ? 's' : '') + ' actif' + (dealCount > 1 ? 's' : '');
+            } else {
+                pipelineEl.textContent = '--';
+            }
 
             // Nav badge
             var badge = document.getElementById('nav-badge');

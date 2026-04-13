@@ -1,9 +1,16 @@
 {
     "status": "Actif",
-    "last_run": "2026-04-12T22:55:00Z",
+    "last_run": "2026-04-12T23:05:00Z",
     "emails_processed": 201,
     "active_contacts": 777,
+    "active_companies": 303,
+    "pipeline_value": 80000,
+    "deals_count": 10,
     "routines_this_week": 28,
+    "deals_by_stage": {
+        "qualifiedtobuy": 10,
+        "appointmentscheduled": 1
+    },
     "activity": [
         {"time": "20:05", "type": "crm", "message": "Deal mis a jour : Davigel/Nestle Pro - Grand Compte (20 000 EUR)"},
         {"time": "19:36", "type": "crm", "message": "Deal mis a jour : Delon - Artisan Traiteur (2 000 EUR)"},
@@ -13,12 +20,12 @@
         {"time": "14:38", "type": "crm", "message": "Deal mis a jour : Dalloyau - Sauces Premium (5 000 EUR)"},
         {"time": "14:37", "type": "crm", "message": "Deal mis a jour : Receptions Paris (4 000 EUR)"},
         {"time": "09:03", "type": "email", "message": "201 brouillons emails actifs (Gmail synchronise)"},
-        {"time": "09:02", "type": "crm", "message": "777 contacts LFDS synchronises avec HubSpot"},
+        {"time": "09:02", "type": "crm", "message": "777 contacts LFDS + 303 companies sync HubSpot"},
         {"time": "08:30", "type": "notion", "message": "Workspace SNB Mission Hunter mis a jour"}
     ],
     "livrables": {
         "devis_count": 0,
-        "propositions_count": 11,
+        "propositions_count": 10,
         "total_montant": 80000,
         "recent": [
             {"date": "11/04", "type": "proposition", "client": "Davigel/Nestle Pro", "objet": "Grand Compte", "montant": "20 000 EUR"},
