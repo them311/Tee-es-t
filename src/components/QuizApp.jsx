@@ -30,26 +30,26 @@ export default function QuizApp() {
         <div style={styles.introCard}>
           <div style={styles.introTopAccent} />
           <div style={styles.introContent}>
-            <p style={styles.eyebrow}>LA FRAN\u00c7AISE DES SAUCES</p>
+            <p style={styles.eyebrow}>LA FRANÇAISE DES SAUCES</p>
             <h1 style={styles.introTitle}>
-              Quel \u00e9picurien
+              Quel épicurien
               <br />
-              \u00eates-vous ?
+              êtes-vous ?
             </h1>
             <Divider />
             <p style={styles.introDesc}>
-              8 questions \u2014 2 minutes \u2014 un profil qui vous ressemble.
+              8 questions — 2 minutes — un profil qui vous ressemble.
               <br />
               <span style={styles.introDescSub}>
-                D\u00e9couvrez votre identit\u00e9 gourmande et recevez des recommandations
-                personnalis\u00e9es.
+                Découvrez votre identité gourmande et recevez des recommandations
+                personnalisées.
               </span>
             </p>
             <HoverButton style={styles.ctaButton} onClick={quiz.startQuiz}>
               Commencer le quiz
             </HoverButton>
             <p style={styles.footerNote}>
-              Vos donn\u00e9es restent confidentielles \u00b7 Conforme RGPD
+              Vos données restent confidentielles · Conforme RGPD
             </p>
           </div>
         </div>
@@ -70,9 +70,9 @@ export default function QuizApp() {
               <button
                 onClick={quiz.goBack}
                 style={styles.backButton}
-                aria-label="Question pr\u00e9c\u00e9dente"
+                aria-label="Question précédente"
               >
-                \u2190
+                ←
               </button>
             )}
             <div style={styles.progressBar}>
@@ -121,10 +121,10 @@ export default function QuizApp() {
           <div style={styles.emailIconWrap}>
             <span style={{ fontSize: 48 }}>{quiz.topProfile.emoji}</span>
           </div>
-          <h2 style={styles.emailTitle}>Votre profil est pr\u00eat !</h2>
+          <h2 style={styles.emailTitle}>Votre profil est prêt !</h2>
           <p style={styles.emailDesc}>
-            Entrez votre email pour d\u00e9couvrir votre r\u00e9sultat et recevoir une
-            recommandation personnalis\u00e9e.
+            Entrez votre email pour découvrir votre résultat et recevoir une
+            recommandation personnalisée.
           </p>
           <div style={styles.emailInputWrap}>
             <input
@@ -147,8 +147,8 @@ export default function QuizApp() {
                 style={styles.consentCheckbox}
               />
               <span style={styles.consentText}>
-                J\u2019accepte de recevoir des communications de La Fran\u00e7aise des Sauces.
-                D\u00e9sinscription possible \u00e0 tout moment.
+                J’accepte de recevoir des communications de La Française des Sauces.
+                Désinscription possible à tout moment.
               </span>
             </label>
             <HoverButton
@@ -164,10 +164,10 @@ export default function QuizApp() {
             </HoverButton>
           </div>
           <button onClick={quiz.skipEmail} style={styles.skipButton}>
-            Continuer sans email \u2192
+            Continuer sans email →
           </button>
           <p style={styles.rgpdNote}>
-            Conforme RGPD \u00b7 Donn\u00e9es h\u00e9berg\u00e9es en France \u00b7 Aucune revente \u00e0 des tiers
+            Conforme RGPD · Données hébergées en France · Aucune revente à des tiers
           </p>
         </div>
       </div>
@@ -260,7 +260,7 @@ export default function QuizApp() {
                 )
               }
             >
-              D\u00e9couvrir la sauce \u2192
+              Découvrir la sauce →
             </HoverButton>
           </div>
 
@@ -279,7 +279,7 @@ export default function QuizApp() {
             onClick={() => setShowDashboard(true)}
             style={styles.dashboardToggle}
           >
-            Voir les donn\u00e9es r\u00e9colt\u00e9es (vue admin)
+            Voir les données récoltées (vue admin)
           </button>
         </div>
       </div>
@@ -297,7 +297,7 @@ function Divider() {
   return (
     <div style={styles.divider}>
       <div style={styles.dividerLine} />
-      <span style={styles.dividerIcon}>\u2726</span>
+      <span style={styles.dividerIcon}>✦</span>
       <div style={styles.dividerLine} />
     </div>
   );
@@ -416,7 +416,7 @@ function DataDashboard({ quiz, onBack }) {
           }}
         >
           <h2 style={{ ...styles.questionText, fontSize: 20, marginBottom: 0 }}>
-            Donn\u00e9es r\u00e9colt\u00e9es
+            Données récoltées
           </h2>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={handleCopyJSON} style={styles.dashAction}>
@@ -426,7 +426,7 @@ function DataDashboard({ quiz, onBack }) {
               Export CSV ({storedSessions.length} sessions)
             </button>
             <button onClick={onBack} style={styles.skipButton}>
-              \u2190 Retour
+              ← Retour
             </button>
           </div>
         </div>
@@ -435,12 +435,12 @@ function DataDashboard({ quiz, onBack }) {
         <DashSection title="Session">
           <DashRow label="Session ID" value={quiz.sessionId} />
           <DashRow
-            label="Dur\u00e9e totale"
+            label="Durée totale"
             value={`${quiz.totalTimeSeconds}s`}
           />
           <DashRow
             label="Email"
-            value={quiz.email || "Non renseign\u00e9"}
+            value={quiz.email || "Non renseigné"}
           />
           <DashRow
             label="Consentement"
@@ -449,7 +449,7 @@ function DataDashboard({ quiz, onBack }) {
         </DashSection>
 
         {/* Answers */}
-        <DashSection title="R\u00e9ponses">
+        <DashSection title="Réponses">
           {quiz.answers.map((a, i) => (
             <DashRow
               key={i}
@@ -504,7 +504,7 @@ function DataDashboard({ quiz, onBack }) {
           {quiz.questionTimes.map((t, i) => (
             <DashRow
               key={i}
-              label={`Q${i + 1} \u2014 ${QUESTIONS[i]?.dataLabel || ""}`}
+              label={`Q${i + 1} — ${QUESTIONS[i]?.dataLabel || ""}`}
               value={`${t.seconds}s`}
               highlight={t.seconds > 10}
             />
@@ -524,11 +524,11 @@ function DataDashboard({ quiz, onBack }) {
             </span>
           </div>
           <DashRow
-            label="Interactions track\u00e9es"
+            label="Interactions trackées"
             value={quiz.interactionEvents.length}
           />
           <DashRow
-            label="Questions h\u00e9sitantes (>10s)"
+            label="Questions hésitantes (>10s)"
             value={
               quiz.questionTimes.filter((t) => t.seconds > 10).length || "Aucune"
             }
@@ -545,7 +545,7 @@ function DataDashboard({ quiz, onBack }) {
           }}
         >
           <h3 style={{ ...styles.dashLabel, color: COLORS.or }}>
-            Segment CRM sugg\u00e9r\u00e9
+            Segment CRM suggéré
           </h3>
           <p
             style={{
@@ -557,31 +557,31 @@ function DataDashboard({ quiz, onBack }) {
             }}
           >
             Profil principal :{" "}
-            <strong>{quiz.topProfile.name}</strong> \u00b7 Secondaire :{" "}
+            <strong>{quiz.topProfile.name}</strong> · Secondaire :{" "}
             <strong>{quiz.secondProfile.name}</strong>
             <br />
-            Canal d\u2019achat :{" "}
+            Canal d’achat :{" "}
             <strong>
               {quiz.answers.find((a) => a.questionId === "lieu_achat")?.value ||
-                "\u2014"}
+                "—"}
             </strong>
             <br />
-            Sensibilit\u00e9 prix :{" "}
+            Sensibilité prix :{" "}
             <strong>
               {quiz.answers.find((a) => a.questionId === "budget")?.value ||
-                "\u2014"}
+                "—"}
             </strong>
             <br />
-            Canal d\u00e9couverte :{" "}
+            Canal découverte :{" "}
             <strong>
               {quiz.answers.find((a) => a.questionId === "decouverte")?.value ||
-                "\u2014"}
+                "—"}
             </strong>
             <br />
-            Valeur cl\u00e9 :{" "}
+            Valeur clé :{" "}
             <strong>
               {quiz.answers.find((a) => a.questionId === "valeurs")?.value ||
-                "\u2014"}
+                "—"}
             </strong>
           </p>
         </div>
@@ -589,7 +589,7 @@ function DataDashboard({ quiz, onBack }) {
         {/* Stored sessions count */}
         {storedSessions.length > 1 && (
           <p style={{ ...styles.footerNote, marginTop: 16 }}>
-            {storedSessions.length} sessions stock\u00e9es localement \u00b7 Exportez en CSV
+            {storedSessions.length} sessions stockées localement · Exportez en CSV
             pour analyse
           </p>
         )}
