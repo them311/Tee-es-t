@@ -1,15 +1,15 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// Base path is configurable via env so the same build can be served either
-// at the root (npm run dev / npm run start) or under a sub-path like /quiz/
-// (static deploy alongside the SNB marketing site on Netlify).
+// Build is configurable via env vars so the same source can be deployed to:
+//  - Netlify (sub-path /quiz/ alongside SNB landing): VITE_BASE=/quiz/ VITE_OUT_DIR=docs/quiz
+//  - Fly.io / Docker (root path, served by Express):  VITE_BASE=/ VITE_OUT_DIR=dist
+//  - Local dev: defaults to /quiz/ + docs/quiz to mirror Netlify behavior
 export default defineConfig({
-  base: process.env.VITE_BASE || "/",
   plugins: [react()],
-  base: "/quiz/",
+  base: process.env.VITE_BASE || "/quiz/",
   build: {
-    outDir: "docs/quiz",
+    outDir: process.env.VITE_OUT_DIR || "docs/quiz",
     emptyOutDir: true,
   },
   server: {
