@@ -98,7 +98,26 @@
 
         .nav-title span { color: var(--slate-400); font-weight: 400; }
 
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 32px;
+        }
+        .nav-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--slate-400);
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: color 0.15s, background 0.15s;
+        }
+        .nav-link:hover { color: var(--slate-100); background: rgba(255,255,255,0.04); }
+        .nav-link.active { color: var(--blue-400); background: rgba(14,165,233,0.1); }
+
         .nav-right {
+            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 16px;
@@ -566,6 +585,10 @@
             .hero { padding: 32px 1.5rem 44px; }
         }
 
+        @media (max-width: 900px) {
+            .nav-menu { display: none; }
+        }
+
         @media (max-width: 480px) {
             nav { padding: 0 12px; }
             .nav-timer { display: none; }
@@ -591,10 +614,18 @@
 
 <!-- NAV -->
 <nav>
-    <a class="nav-brand" href="#">
+    <a class="nav-brand" href="/">
         <div class="nav-logo">S</div>
         <div class="nav-title">SNB Consulting <span>| Agent IA</span></div>
     </a>
+    <div class="nav-menu">
+        <a href="/" class="nav-link active">Dashboard</a>
+        <a href="/pipeline.html" class="nav-link">Pipeline</a>
+        <a href="/livrables.html" class="nav-link">Livrables</a>
+        <a href="/routines.html" class="nav-link">Routines</a>
+        <a href="/architecture.html" class="nav-link">Architecture</a>
+        <a href="/contact.html" class="nav-link">Contact</a>
+    </div>
     <div class="nav-right">
         <div class="nav-timer">Prochain cycle <strong id="hd-timer">--:--</strong></div>
         <div class="nav-badge" id="nav-badge">
@@ -769,6 +800,14 @@
 <footer>
     <div class="foot-line"><strong>SNB Consulting</strong> &mdash; Agent Commercial Autonome propulse par Claude AI</div>
     <div class="foot-line">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
+    <div class="foot-line" style="margin-top:12px">
+        <a href="/">Dashboard</a> &middot;
+        <a href="/pipeline.html">Pipeline</a> &middot;
+        <a href="/livrables.html">Livrables</a> &middot;
+        <a href="/routines.html">Routines</a> &middot;
+        <a href="/architecture.html">Architecture</a> &middot;
+        <a href="/contact.html">Contact</a>
+    </div>
     <div class="foot-line" id="foot-ts" style="margin-top:8px"></div>
 </footer>
 
