@@ -103,9 +103,43 @@ export default function MatchCard({ match, onAccepted, onDeclined }: Props) {
               Voir l'offre ↗
             </a>
           )}
+          <ShareButton match={match} />
         </div>
       ) : null}
       {error && <div className="alert error" style={{ marginTop: "0.5rem" }}>{error}</div>}
     </div>
+  );
+}
+
+/**
+ * WhatsApp share — the #1 way French students circulate job tips.
+ *
+ * Builds a `wa.me` deep link with pre-filled text. On desktop falls back to
+ * Web Share API when available (mobile Chrome, Safari iOS). Zero dependency.
+ */
+function ShareButton({ match }: { match: Match }) {
+  const message = `🎯 ${match.title} chez ${match.company} (${Math.round(
+    match.score * 100,
+  )}% match via StudentFlow)${match.url ? `\n${match.url}` : ""}`;
+
+  function share() {
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      void (navigator as Navigator & {
+        share: (data: ShareData) => Promise<void>;
+      }).share({
+        title: match.title,
+        text: message,
+        url: match.url || undefined,
+      });
+      return;
+    }
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <button type="button" className="share-btn" onClick={share} title="Partager à un pote">
+      Partager ↗
+    </button>
   );
 }

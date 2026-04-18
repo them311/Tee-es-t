@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 
+import Admin from "./pages/Admin";
 import Company from "./pages/Company";
 import CompanyMatches from "./pages/CompanyMatches";
 import Home from "./pages/Home";
@@ -20,6 +21,7 @@ export default function App() {
         <NavLink to="/student">Étudiant</NavLink>
         <NavLink to="/company">Entreprise</NavLink>
         <NavLink to="/stats">Stats</NavLink>
+        <NavLink to="/admin">Admin</NavLink>
         <span className="spacer" />
       </nav>
       <main className="container">
@@ -36,6 +38,7 @@ export default function App() {
           <Route path="/company/matches" element={<CompanyMatches />} />
           <Route path="/company/matches/:offerId" element={<CompanyMatches />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
     </>

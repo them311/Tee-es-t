@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { api } from "../api";
@@ -26,6 +26,38 @@ export default function Signup() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
+  const [vocabulary, setVocabulary] = useState<string[]>([]);
+  const [cvText, setCvText] = useState("");
+  const [cvBusy, setCvBusy] = useState(false);
+
+  // Fetch the canonical skill vocabulary once so the <datalist> shows the
+  // exact terms the matcher understands. Silent fallback if the API is cold.
+  useEffect(() => {
+    api
+      .getSkillVocabulary()
+      .then((r) => setVocabulary(r.skills))
+      .catch(() => undefined);
+  }, []);
+
+  async function parseCv() {
+    if (!cvText.trim()) return;
+    setCvBusy(true);
+    try {
+      const { skills: detected } = await api.extractSkills(cvText);
+      if (detected.length === 0) return;
+      // Merge with what the student already typed, deduped on lowercase.
+      const existing = skills
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean);
+      const merged = Array.from(new Set([...existing, ...detected]));
+      setSkills(merged.join(", "));
+    } catch {
+      /* silent — extraction is a nice-to-have */
+    } finally {
+      setCvBusy(false);
+    }
+  }
 
   function toggleContract(c: ContractType) {
     setContracts((prev) =>
@@ -171,7 +203,30 @@ export default function Signup() {
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
             placeholder="react, javascript, python"
+            list="skill-vocabulary"
           />
+          <datalist id="skill-vocabulary">
+            {vocabulary.map((s) => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
+        </label>
+        <label>
+          Ou colle ton CV (on détecte tes skills tout seul)
+          <textarea
+            rows={4}
+            value={cvText}
+            onChange={(e) => setCvText(e.target.value)}
+            placeholder="Colle ici le texte de ton CV ou une description de ton profil…"
+          />
+          <button
+            type="button"
+            className="geo-btn"
+            onClick={parseCv}
+            disabled={cvBusy || !cvText.trim()}
+          >
+            {cvBusy ? "Analyse…" : "✨ Extraire mes compétences"}
+          </button>
         </label>
         <label>
           Heures max / semaine

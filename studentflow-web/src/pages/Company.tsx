@@ -89,9 +89,13 @@ export default function Company() {
       longitude: coords?.lng ?? null,
     };
     try {
-      const { id } = await api.createOffer(payload);
-      localStorage.setItem("studentflow.offer_id", id);
-      nav(`/company/matches/${id}`);
+      const resp = await api.createOffer(payload);
+      localStorage.setItem("studentflow.offer_id", resp.id);
+      // Hand the inline candidates to the next page so the employer sees
+      // value on the very first paint — no loading spinner, no "come back later".
+      nav(`/company/matches/${resp.id}`, {
+        state: { bootstrap: resp.candidates, enriched: resp.enriched_skills },
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

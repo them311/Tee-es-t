@@ -182,3 +182,80 @@ def test_list_student_matches_hides_declined(client: TestClient, repo: InMemoryR
     repo.mark_match_declined(match.id)
     r2 = client.get(f"/students/{student.id}/matches")
     assert r2.json() == []
+
+
+def test_create_offer_returns_candidates_inline(
+    client: TestClient, repo: InMemoryRepository
+) -> None:
+    """Employer-side cold-start: POST /offers returns top students inline."""
+    repo.insert_student(
+        make_student(
+            email="alice@ex.com",
+            skills=["community management", "canva", "social media"],
+        )
+    )
+    repo.insert_student(make_student(email="bob@ex.com", skills=["python", "sql"]))
+
+    resp = client.post(
+        "/offers",
+        json={
+            "title": "Community manager",
+            "company": "LFDS",
+            "description": "Animation Instagram, Canva, rédaction.",
+            "city": "Paris",
+            "remote": True,
+            "contract": "part_time",
+            "hours_per_week": 10,
+            "skills": [],
+            "url": "",
+            "contact_email": "hr@lfds.fr",
+        },
+    )
+    assert resp.status_code == 201
+    body = resp.json()
+    assert "id" in body
+    assert len(body["enriched_skills"]) > 0
+    # Alice's skills match; Bob's don't.
+    emails = [c["email"] for c in body["candidates"]]
+    assert "alice@ex.com" in emails
+
+
+def test_funnel_endpoint_reports_acceptance_rate(
+    client: TestClient, repo: InMemoryRepository
+) -> None:
+    import asyncio
+
+    from studentflow.agents import MatcherAgent
+
+    repo.upsert_offers([make_offer(source_id=f"off-{i}") for i in range(3)])
+    repo.insert_student(make_student())
+    asyncio.run(MatcherAgent(repo, threshold=0.6).tick())
+    ms = list(repo.matches.values())
+    repo.mark_match_accepted(ms[0].id)
+    repo.mark_match_declined(ms[1].id)
+
+    body = client.get("/stats/funnel").json()
+    assert body["matches"]["total"] == 3
+    assert body["matches"]["accepted"] == 1
+    assert body["matches"]["declined"] == 1
+    assert body["matches"]["pending"] == 1
+    assert body["acceptance_rate"] == 0.5  # 1 / (1 + 1)
+    assert body["decision_rate"] == round(2 / 3, 3)
+
+
+def test_skill_vocabulary_is_exposed(client: TestClient) -> None:
+    body = client.get("/skills/vocabulary").json()
+    assert "python" in body["skills"]
+    assert "community management" in body["skills"]
+
+
+def test_skill_extract_endpoint(client: TestClient) -> None:
+    resp = client.post(
+        "/skills/extract",
+        json={"text": "Stage en développement web React avec TypeScript. Anglais courant."},
+    )
+    assert resp.status_code == 200
+    skills = resp.json()["skills"]
+    assert "react" in skills
+    assert "typescript" in skills
+    assert "anglais" in skills

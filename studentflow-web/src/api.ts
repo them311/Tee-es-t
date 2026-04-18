@@ -1,6 +1,8 @@
 import type {
+  FunnelStats,
   Match,
   OfferCreate,
+  OfferCreateResponse,
   Stats,
   StudentCreate,
   StudentCreateResponse,
@@ -57,8 +59,18 @@ export const api = {
 
   getStats: () => request<Stats>("/stats"),
 
+  getFunnel: () => request<FunnelStats>("/stats/funnel"),
+
+  getSkillVocabulary: () => request<{ skills: string[] }>("/skills/vocabulary"),
+
+  extractSkills: (text: string) =>
+    request<{ skills: string[] }>("/skills/extract", {
+      method: "POST",
+      body: JSON.stringify({ text }),
+    }),
+
   createOffer: (payload: OfferCreate) =>
-    request<{ id: string }>("/offers", {
+    request<OfferCreateResponse>("/offers", {
       method: "POST",
       body: JSON.stringify(payload),
     }),

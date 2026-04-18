@@ -34,6 +34,7 @@ class Repository(Protocol):
     def count_students(self) -> int: ...
     def count_matches(self) -> int: ...
     def count_unnotified_matches(self) -> int: ...
+    def count_matches_by_state(self) -> dict[str, int]: ...
     def count_offers_by_source(self) -> dict[str, int]: ...
 
 
@@ -178,6 +179,15 @@ class SupabaseRepository:
         for r in rows:
             src = r.get("source") or "unknown"
             out[src] = out.get(src, 0) + 1
+        return out
+
+    def count_matches_by_state(self) -> dict[str, int]:
+        resp = self.client.table("matches").select("state").execute()
+        rows = resp.data or []
+        out: dict[str, int] = {}
+        for r in rows:
+            state = r.get("state") or "pending"
+            out[state] = out.get(state, 0) + 1
         return out
 
 
@@ -351,4 +361,11 @@ class InMemoryRepository:
         for offer in self.offers.values():
             src = offer.source.value
             out[src] = out.get(src, 0) + 1
+        return out
+
+    def count_matches_by_state(self) -> dict[str, int]:
+        out: dict[str, int] = {}
+        for m in self.matches.values():
+            key = m.state.value
+            out[key] = out.get(key, 0) + 1
         return out

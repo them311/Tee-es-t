@@ -32,7 +32,7 @@ from .db import InMemoryRepository, Repository, SupabaseRepository
 from .matching import rank_offers_for_student, rank_students_for_offer
 from .models import ContractType, Match, MatchState, Offer, Source, Student
 from .realtime import broadcaster
-from .utils.skills import extract_skills, merge_skills
+from .utils.skills import VOCABULARY, extract_skills, merge_skills
 
 log = logging.getLogger(__name__)
 
@@ -139,6 +139,19 @@ class StudentCreateResponse(BaseModel):
     matches: list[MatchOut] = Field(default_factory=list)
 
 
+class OfferCreateResponse(BaseModel):
+    """Mirrors StudentCreateResponse on the employer side — never land on
+    an empty candidate list. Employers get their top students inline."""
+
+    id: UUID
+    enriched_skills: list[str] = Field(default_factory=list)
+    candidates: list[StudentMatchOut] = Field(default_factory=list)
+
+
+class SkillExtractRequest(BaseModel):
+    text: str
+
+
 # ---- routes ----
 
 
@@ -207,6 +220,57 @@ def stats(repo: Repository = Depends(get_repository)) -> dict[str, object]:
         "matches_unnotified": repo.count_unnotified_matches(),
         "per_source": repo.count_offers_by_source(),
     }
+
+
+@app.get("/stats/funnel")
+def funnel(repo: Repository = Depends(get_repository)) -> dict[str, object]:
+    """Full conversion funnel — offers → matches → accepts.
+
+    Drives the admin dashboard and the homepage social-proof counter. The
+    acceptance rate is the key engagement KPI: below 30% and notifications
+    are too loose; above 70% and we're under-indexing candidates.
+    """
+    states = repo.count_matches_by_state()
+    accepted = states.get("accepted", 0)
+    declined = states.get("declined", 0)
+    pending = states.get("pending", 0)
+    total = accepted + declined + pending
+    decided = accepted + declined
+    return {
+        "offers": repo.count_offers(),
+        "students": repo.count_students(),
+        "matches": {
+            "total": total,
+            "pending": pending,
+            "accepted": accepted,
+            "declined": declined,
+        },
+        "acceptance_rate": round(accepted / decided, 3) if decided else None,
+        "decision_rate": round(decided / total, 3) if total else None,
+        "per_source": repo.count_offers_by_source(),
+    }
+
+
+@app.get("/skills/vocabulary")
+def skill_vocabulary() -> dict[str, list[str]]:
+    """Canonical skill list the matcher understands.
+
+    Powers the student signup autocomplete — typing "comm" suggests
+    `community management`. Keeps the vocabulary students type aligned with
+    what the matcher scores, so Jaccard stays honest.
+    """
+    return {"skills": VOCABULARY}
+
+
+@app.post("/skills/extract")
+def extract_skills_endpoint(payload: SkillExtractRequest) -> dict[str, list[str]]:
+    """Deterministic CV/description → canonical skill list.
+
+    Student pastes a CV or job description, we return the skills we
+    recognised. Zero LLM, zero cost, fully deterministic. The student can
+    then accept / edit the list before hitting submit.
+    """
+    return {"skills": extract_skills(payload.text)}
 
 
 @app.get("/students/{student_id}/matches", response_model=list[MatchOut])
@@ -421,16 +485,20 @@ async def _relay_to_employer(*, match: Match, student: Student, offer: Offer) ->
 # ---- Company-facing routes ----------------------------------------------
 
 
-@app.post("/offers", status_code=201)
+@app.post("/offers", status_code=201, response_model=OfferCreateResponse)
 def create_offer(
     payload: OfferCreate, repo: Repository = Depends(get_repository)
-) -> dict[str, str]:
-    """Employer publishes a mission.
+) -> OfferCreateResponse:
+    """Employer publishes a mission AND gets candidates inline.
+
+    Cold-start problem killer on the employer side: right after submit,
+    the HR contact sees the top 5 students already ranked by StudentFlow
+    with the explanation for each score. No more "post and wait".
 
     The offer is stored in the same `offers` table as scraped ones, so the
-    MatcherAgent picks it up automatically on its next tick and notifies
-    the best student candidates. Source is `studentjob` (manual entry) —
-    `source_id` is derived from email+title so re-submits are idempotent.
+    MatcherAgent keeps notifying new matches as students sign up. Source is
+    `studentjob` (manual entry) — `source_id` is derived from email+title
+    so re-submits are idempotent.
 
     Auto-enrichment: if the employer didn't list skills, we mine them from
     the description with a deterministic vocabulary-matcher. This keeps the
@@ -457,7 +525,32 @@ def create_offer(
         longitude=payload.longitude,
     )
     repo.upsert_offers([offer])
-    return {"id": str(offer.id)}
+
+    # Employer-side cold-start: score against every active student and return
+    # the top 5 so the HR contact sees value immediately after submit.
+    students = repo.list_active_students()
+    ranked = rank_students_for_offer(
+        offer, students, threshold=get_settings().match_score_threshold
+    )
+    candidates = [
+        StudentMatchOut(
+            student_id=student.id,
+            full_name=student.full_name,
+            email=student.email,
+            city=student.city,
+            skills=student.skills,
+            score=result.score,
+            reasons=result.reasons,
+            distance_km=result.distance_km,
+        )
+        for student, result in ranked[:5]
+    ]
+
+    return OfferCreateResponse(
+        id=offer.id,
+        enriched_skills=enriched_skills,
+        candidates=candidates,
+    )
 
 
 @app.get("/offers/{offer_id}/matches", response_model=list[StudentMatchOut])

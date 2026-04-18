@@ -75,3 +75,23 @@ export interface StudentMatch {
   reasons: string[];
   distance_km?: number | null;
 }
+
+export interface OfferCreateResponse {
+  id: string;
+  enriched_skills: string[];
+  candidates: StudentMatch[];
+}
+
+export interface FunnelStats {
+  offers: number;
+  students: number;
+  matches: {
+    total: number;
+    pending: number;
+    accepted: number;
+    declined: number;
+  };
+  acceptance_rate: number | null;
+  decision_rate: number | null;
+  per_source: Record<string, number>;
+}

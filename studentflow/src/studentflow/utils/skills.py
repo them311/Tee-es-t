@@ -115,3 +115,8 @@ def merge_skills(existing: Iterable[str], extracted: Iterable[str]) -> list[str]
             seen.add(norm)
             out.append(norm)
     return out
+
+
+# Public canonical skill list — used by the frontend autocomplete to show
+# students the exact vocabulary the matcher understands. Sorted for stable UX.
+VOCABULARY: list[str] = sorted(_SKILL_VOCABULARY.keys())
