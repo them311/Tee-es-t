@@ -1,5 +1,6 @@
--- StudentFlow — Supabase schema
--- Run this in the Supabase SQL editor once.
+-- StudentFlow — Supabase schema (full, current)
+-- Run this in the Supabase SQL editor once on a fresh project.
+-- For existing projects, apply migrations/002_uber_grade.sql instead.
 -- Idempotent: safe to run multiple times.
 
 create extension if not exists "uuid-ossp";
@@ -20,6 +21,9 @@ create table if not exists offers (
     starts_on     date,
     ends_on       date,
     url           text default '',
+    contact_email text default '',
+    latitude      double precision,
+    longitude     double precision,
     scraped_at    timestamptz not null default now(),
     unique (source, source_id)
 );
@@ -27,6 +31,8 @@ create table if not exists offers (
 create index if not exists idx_offers_scraped_at on offers (scraped_at desc);
 create index if not exists idx_offers_city on offers (city);
 create index if not exists idx_offers_contract on offers (contract);
+create index if not exists idx_offers_geo on offers (latitude, longitude)
+    where latitude is not null and longitude is not null;
 
 -- ---------- students ----------
 create table if not exists students (
@@ -40,12 +46,16 @@ create table if not exists students (
     max_hours_per_week integer not null default 20,
     available_from     date,
     available_until    date,
+    latitude           double precision,
+    longitude          double precision,
     active             boolean not null default true,
     created_at         timestamptz not null default now()
 );
 
 create index if not exists idx_students_active on students (active);
 create index if not exists idx_students_city on students (city);
+create index if not exists idx_students_geo on students (latitude, longitude)
+    where latitude is not null and longitude is not null;
 
 -- ---------- matches ----------
 create table if not exists matches (
@@ -54,15 +64,22 @@ create table if not exists matches (
     student_id  uuid not null references students(id) on delete cascade,
     score       numeric(5, 4) not null,
     reasons     text[] default '{}',
+    token       text not null,
+    state       text not null default 'pending',
+    distance_km double precision,
     created_at  timestamptz not null default now(),
     notified_at timestamptz,
+    accepted_at timestamptz,
+    declined_at timestamptz,
     unique (offer_id, student_id)
 );
 
+create unique index if not exists idx_matches_token on matches (token);
 create index if not exists idx_matches_unnotified on matches (notified_at)
     where notified_at is null;
 create index if not exists idx_matches_student on matches (student_id);
 create index if not exists idx_matches_offer on matches (offer_id);
+create index if not exists idx_matches_state on matches (state);
 
 -- ---------- notifications ----------
 create table if not exists notifications (
@@ -78,12 +95,7 @@ create table if not exists notifications (
 create index if not exists idx_notifications_match on notifications (match_id);
 
 -- ---------- RLS ----------
--- Enable RLS. Policies are intentionally strict: all writes go through the
--- service role (agents + API), never a client token.
 alter table offers enable row level security;
 alter table students enable row level security;
 alter table matches enable row level security;
 alter table notifications enable row level security;
-
--- Students can read their own row and their own matches (via a future client
--- token). Add such policies when you wire the mobile app.
