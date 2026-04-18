@@ -18,6 +18,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [city, setCity] = useState("");
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [remoteOk, setRemoteOk] = useState(true);
   const [skills, setSkills] = useState("");
   const [contracts, setContracts] = useState<ContractType[]>(["internship", "apprenticeship"]);
@@ -33,11 +34,10 @@ export default function Signup() {
   }
 
   /**
-   * Browser geolocation → OSM Nominatim reverse geocoding → city name.
+   * Browser geolocation → OSM Nominatim reverse geocoding → city name + coords.
    *
-   * Zero API key required. Nominatim is free and CORS-enabled. The User-Agent
-   * header is set automatically by the browser. If either step fails, we just
-   * fall back to manual input and surface a soft error.
+   * We store both the human-readable city (for display) and the raw lat/lng
+   * (for the Haversine distance scorer server-side). Zero API key required.
    */
   async function detectLocation() {
     if (!("geolocation" in navigator)) {
@@ -55,6 +55,7 @@ export default function Signup() {
         });
       });
       const { latitude, longitude } = pos.coords;
+      setCoords({ lat: latitude, lng: longitude });
       const resp = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
         { headers: { Accept: "application/json" } },
@@ -97,12 +98,15 @@ export default function Signup() {
         .filter(Boolean),
       accepted_contracts: contracts,
       max_hours_per_week: maxHours,
+      latitude: coords?.lat ?? null,
+      longitude: coords?.lng ?? null,
     };
     try {
-      const { id } = await api.createStudent(payload);
-      // Stash locally so /matches can retrieve them without asking again.
-      localStorage.setItem("studentflow.student_id", id);
-      nav(`/matches/${id}`);
+      const resp = await api.createStudent(payload);
+      localStorage.setItem("studentflow.student_id", resp.id);
+      // The API already returns the cold-start matches. Hand them to
+      // the /matches page via navigation state so they show instantly.
+      nav(`/matches/${resp.id}`, { state: { bootstrap: resp.matches } });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -113,6 +117,10 @@ export default function Signup() {
   return (
     <div>
       <h2>Créer mon profil</h2>
+      <p style={{ color: "var(--fg-muted)", marginTop: 0 }}>
+        60 secondes. Dès le clic sur "Créer mon profil", tu vois tes meilleurs matches
+        — on ne te fait pas attendre.
+      </p>
       {error && <div className="alert error">{error}</div>}
       <form onSubmit={onSubmit} className="card">
         <label>
@@ -150,6 +158,11 @@ export default function Signup() {
           >
             {locating ? "Localisation…" : "📍 Utiliser ma position"}
           </button>
+          {coords && (
+            <span style={{ fontSize: "0.8rem", color: "var(--fg-muted)", marginLeft: "0.5rem" }}>
+              ✓ coordonnées captées ({coords.lat.toFixed(2)}, {coords.lng.toFixed(2)})
+            </span>
+          )}
         </label>
         <label>
           Compétences (séparées par des virgules)
@@ -194,7 +207,7 @@ export default function Signup() {
           ))}
         </fieldset>
         <button type="submit" disabled={submitting}>
-          {submitting ? "Envoi…" : "Créer mon profil"}
+          {submitting ? "Envoi…" : "Créer mon profil & voir mes matches →"}
         </button>
       </form>
     </div>

@@ -291,3 +291,49 @@ label {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* Match card actions (accept / decline / external link) */
+.match-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
+.match-actions button.accept {
+  background: var(--success);
+  color: #0b0d10;
+}
+.match-actions button.accept:hover:not(:disabled) {
+  background: #4fd8a3;
+}
+.match-actions button.decline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+}
+.match-actions button.decline:hover:not(:disabled) {
+  border-color: var(--fg-muted);
+  color: var(--fg);
+}
+.match-actions .match-link {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+.match-actions .match-link:hover {
+  color: var(--accent);
+}
+.match-status {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+.match-status.ok {
+  color: var(--success);
+  font-weight: 600;
+}

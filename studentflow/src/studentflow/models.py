@@ -8,6 +8,7 @@ validation.
 
 from __future__ import annotations
 
+import secrets
 from datetime import date, datetime
 from enum import StrEnum
 from uuid import UUID, uuid4
@@ -35,6 +36,19 @@ class Source(StrEnum):
     JOOBLE = "jooble"
 
 
+class MatchState(StrEnum):
+    """Lifecycle of a match from the student's perspective.
+
+    PENDING  — notified, awaiting the student's decision.
+    ACCEPTED — student clicked accept; employer relay should fire.
+    DECLINED — student passed; match stays in history but stops showing.
+    """
+
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    DECLINED = "declined"
+
+
 def _norm_skills(skills: list[str]) -> list[str]:
     """Lowercase + strip + dedupe while preserving insertion order."""
     seen: set[str] = set()
@@ -45,6 +59,11 @@ def _norm_skills(skills: list[str]) -> list[str]:
             seen.add(s)
             out.append(s)
     return out
+
+
+def _new_match_token() -> str:
+    """URL-safe opaque token used to accept/decline a match in one click."""
+    return secrets.token_urlsafe(24)
 
 
 class Offer(BaseModel):
@@ -64,6 +83,9 @@ class Offer(BaseModel):
     starts_on: date | None = None
     ends_on: date | None = None
     url: str = ""
+    contact_email: str = ""  # set when an employer publishes via POST /offers
+    latitude: float | None = None
+    longitude: float | None = None
     scraped_at: datetime = Field(default_factory=datetime.utcnow)
 
     def model_post_init(self, _: object) -> None:
@@ -84,11 +106,29 @@ class Student(BaseModel):
     max_hours_per_week: int = 20
     available_from: date | None = None
     available_until: date | None = None
+    latitude: float | None = None
+    longitude: float | None = None
     active: bool = True
 
     def model_post_init(self, _: object) -> None:
         object.__setattr__(self, "skills", _norm_skills(self.skills))
         object.__setattr__(self, "city", self.city.strip().lower())
+
+    @property
+    def completeness(self) -> float:
+        """0-1 heuristic on how many profile slots the student filled.
+
+        Drives a progress bar in the UI and influences how aggressively we
+        recommend the profile to employers (more info = better ranking).
+        """
+        signals = [
+            bool(self.full_name),
+            bool(self.city) or (self.latitude is not None and self.longitude is not None),
+            len(self.skills) >= 3,
+            bool(self.accepted_contracts),
+            self.available_from is not None,
+        ]
+        return round(sum(1 for s in signals if s) / len(signals), 2)
 
 
 class MatchResult(BaseModel):
@@ -97,6 +137,7 @@ class MatchResult(BaseModel):
     score: float = Field(ge=0.0, le=1.0)
     reasons: list[str] = Field(default_factory=list)
     components: dict[str, float] = Field(default_factory=dict)
+    distance_km: float | None = None
 
 
 class Match(BaseModel):
@@ -105,8 +146,13 @@ class Match(BaseModel):
     student_id: UUID
     score: float
     reasons: list[str] = Field(default_factory=list)
+    token: str = Field(default_factory=_new_match_token)
+    state: MatchState = MatchState.PENDING
+    distance_km: float | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     notified_at: datetime | None = None
+    accepted_at: datetime | None = None
+    declined_at: datetime | None = None
 
 
 class Notification(BaseModel):

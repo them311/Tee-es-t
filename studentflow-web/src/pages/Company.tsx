@@ -28,6 +28,8 @@ export default function Company() {
   const [contactEmail, setContactEmail] = useState("");
   const [description, setDescription] = useState("");
   const [city, setCity] = useState("");
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
   const [remote, setRemote] = useState(false);
   const [contract, setContract] = useState<ContractType>("part_time");
   const [hoursPerWeek, setHoursPerWeek] = useState<number | "">(15);
@@ -35,6 +37,35 @@ export default function Company() {
   const [url, setUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function detectLocation() {
+    if (!("geolocation" in navigator)) return;
+    setLocating(true);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          timeout: 10_000,
+          maximumAge: 60_000,
+        });
+      });
+      setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      const resp = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&zoom=10&addressdetails=1`,
+        { headers: { Accept: "application/json" } },
+      );
+      if (resp.ok) {
+        const data = await resp.json();
+        const addr = data.address ?? {};
+        const resolved: string =
+          addr.city || addr.town || addr.village || addr.municipality || addr.county || "";
+        if (resolved && !city) setCity(resolved);
+      }
+    } catch {
+      /* silently fallback to manual */
+    } finally {
+      setLocating(false);
+    }
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -54,6 +85,8 @@ export default function Company() {
         .filter(Boolean),
       url,
       contact_email: contactEmail,
+      latitude: coords?.lat ?? null,
+      longitude: coords?.lng ?? null,
     };
     try {
       const { id } = await api.createOffer(payload);
@@ -122,6 +155,19 @@ export default function Company() {
             onChange={(e) => setCity(e.target.value)}
             placeholder="Lyon"
           />
+          <button
+            type="button"
+            className="geo-btn"
+            onClick={detectLocation}
+            disabled={locating}
+          >
+            {locating ? "Localisation…" : "📍 Utiliser la position de l'entreprise"}
+          </button>
+          {coords && (
+            <span style={{ fontSize: "0.8rem", color: "var(--fg-muted)", marginLeft: "0.5rem" }}>
+              ✓ coordonnées captées — distance calculée vers chaque candidat
+            </span>
+          )}
         </label>
         <label style={{ flexDirection: "row", alignItems: "center" }}>
           <input

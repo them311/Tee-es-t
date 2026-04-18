@@ -39,19 +39,37 @@ def test_perfect_match_scores_near_one() -> None:
 def test_mismatched_city_penalizes_location() -> None:
     offer = make_offer(city="Lyon", remote=False)
     student = make_student(city="Paris", remote_ok=False)
-    _, reason = _score_location(offer, student)
+    s, reason, dist = _score_location(offer, student)
     assert "différentes" in reason.lower()
-
-    s, _ = _score_location(offer, student)
     assert s == 0.0
+    assert dist is None
 
 
 def test_remote_rescue_when_student_remote_ok() -> None:
     offer = make_offer(city="Lyon", remote=True)
     student = make_student(city="Paris", remote_ok=True)
-    s, reason = _score_location(offer, student)
+    s, reason, _ = _score_location(offer, student)
     assert s == 1.0
     assert "remote" in reason.lower()
+
+
+def test_location_uses_haversine_when_both_have_coords() -> None:
+    """Paris (48.85, 2.35) ↔ Versailles (48.80, 2.13) ≈ 17 km → perfect score."""
+    offer = make_offer(city="versailles", remote=False, latitude=48.8014, longitude=2.1301)
+    student = make_student(city="paris", remote_ok=False, latitude=48.8566, longitude=2.3522)
+    s, reason, dist = _score_location(offer, student)
+    assert s == 1.0  # under 30 km soft threshold → perfect
+    assert dist is not None and 10 < dist < 30
+    assert "km" in reason
+
+
+def test_location_haversine_penalises_far_distance() -> None:
+    """Paris → Marseille ≈ 660 km → score 0 (hard cut at 80 km)."""
+    offer = make_offer(city="marseille", remote=False, latitude=43.2965, longitude=5.3698)
+    student = make_student(city="paris", remote_ok=False, latitude=48.8566, longitude=2.3522)
+    s, _, dist = _score_location(offer, student)
+    assert s == 0.0
+    assert dist is not None and dist > 600
 
 
 def test_skills_jaccard() -> None:

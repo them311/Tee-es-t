@@ -65,6 +65,7 @@ export default function CompanyMatches() {
               <h3>{m.full_name || "Étudiant"}</h3>
               <div className="meta">
                 {m.email} {m.city ? ` · ${m.city}` : ""}
+                {typeof m.distance_km === "number" && <> · {Math.round(m.distance_km)} km</>}
               </div>
             </div>
             <span className="score">{Math.round(m.score * 100)}%</span>

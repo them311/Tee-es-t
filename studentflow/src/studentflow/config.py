@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     # API
     api_host: str = "0.0.0.0"
     api_port: int = 8000
+    # Public base URL used to build accept/decline links embedded in emails.
+    # In prod, set this to the API's public hostname (e.g. https://api.studentflow.fr).
+    public_base_url: str = "http://localhost:8000"
 
     # Notifications — webhook (fallback / bridge to Make/Zapier/n8n)
     notification_webhook_url: str = ""

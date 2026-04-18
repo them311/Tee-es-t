@@ -7,6 +7,8 @@ export type ContractType =
   | "freelance"
   | "other";
 
+export type MatchState = "pending" | "accepted" | "declined";
+
 export interface StudentCreate {
   email: string;
   full_name: string;
@@ -17,15 +19,27 @@ export interface StudentCreate {
   max_hours_per_week: number;
   available_from?: string | null;
   available_until?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface Match {
   offer_id: string;
+  match_id?: string | null;
   title: string;
   company: string;
   city: string;
+  url?: string;
   score: number;
   reasons: string[];
+  distance_km?: number | null;
+  state?: MatchState;
+}
+
+export interface StudentCreateResponse {
+  id: string;
+  completeness: number;
+  matches: Match[];
 }
 
 export interface Stats {
@@ -47,6 +61,8 @@ export interface OfferCreate {
   skills: string[];
   url: string;
   contact_email: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface StudentMatch {
@@ -57,4 +73,5 @@ export interface StudentMatch {
   skills: string[];
   score: number;
   reasons: string[];
+  distance_km?: number | null;
 }

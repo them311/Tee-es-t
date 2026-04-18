@@ -124,11 +124,53 @@ def test_email_notifier_builds_message_with_student_name_and_score() -> None:
         password="pw",
         from_addr="alerts@example.com",
     )
-    msg = notifier._build_message(match=match, student=student, offer=offer)
+    msg = notifier._build_student_message(match=match, student=student, offer=offer)
     assert msg["From"] == "alerts@example.com"
     assert msg["To"] == student.email
     assert "82%" in msg["Subject"]
-    body = msg.get_content()
+    plain = msg.get_body(preferencelist=("plain",))
+    assert plain is not None
+    body = plain.get_content()
     assert student.full_name in body
     assert offer.title in body
     assert "skills overlap" in body
+    # Accept/decline URLs now embedded in the body.
+    assert "/accept" in body
+    assert "/decline" in body
+
+
+def test_email_notifier_builds_html_alternative_with_accept_button() -> None:
+    offer = make_offer()
+    student = make_student()
+    match = _match_for(offer.id, student.id)
+    notifier = EmailNotifier(
+        host="smtp.example.com",
+        port=587,
+        username="user",
+        password="pw",
+        from_addr="alerts@example.com",
+    )
+    msg = notifier._build_student_message(match=match, student=student, offer=offer)
+    html = msg.get_body(preferencelist=("html",))
+    assert html is not None
+    content = html.get_content()
+    assert "J'accepte" in content
+    assert match.token in content
+
+
+def test_email_notifier_builds_employer_relay_message() -> None:
+    offer = make_offer(contact_email="hr@acme.fr")
+    student = make_student()
+    match = _match_for(offer.id, student.id)
+    notifier = EmailNotifier(
+        host="smtp.example.com",
+        port=587,
+        username="",
+        password="",
+        from_addr="alerts@example.com",
+    )
+    msg = notifier._build_employer_message(match=match, student=student, offer=offer)
+    assert msg["To"] == "hr@acme.fr"
+    body = msg.get_content()
+    assert student.email in body
+    assert offer.title in body

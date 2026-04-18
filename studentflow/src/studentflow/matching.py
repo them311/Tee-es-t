@@ -12,6 +12,7 @@ from __future__ import annotations
 from datetime import date
 
 from .models import ContractType, MatchResult, Offer, Student
+from .utils.geo import distance_score, haversine_km
 
 WEIGHTS: dict[str, float] = {
     "skills": 0.40,
@@ -43,16 +44,39 @@ def _score_skills(offer: Offer, student: Student) -> tuple[float, str]:
     return 0.0, "Aucune skill commune"
 
 
-def _score_location(offer: Offer, student: Student) -> tuple[float, str]:
+def _score_location(offer: Offer, student: Student) -> tuple[float, str, float | None]:
+    """Location score + reason + optional distance in km.
+
+    Priority order: remote match > Haversine distance (if both coords) > city
+    string equality > fallback. Returning distance separately lets the API
+    display "12 km de chez toi" without re-computing.
+    """
     if offer.remote and student.remote_ok:
-        return 1.0, "Offre remote, étudiant OK remote"
+        return 1.0, "Offre remote, étudiant OK remote", None
+
+    have_coords = (
+        offer.latitude is not None
+        and offer.longitude is not None
+        and student.latitude is not None
+        and student.longitude is not None
+    )
+    if have_coords:
+        dist = haversine_km(
+            offer.latitude,  # type: ignore[arg-type]
+            offer.longitude,  # type: ignore[arg-type]
+            student.latitude,  # type: ignore[arg-type]
+            student.longitude,  # type: ignore[arg-type]
+        )
+        score = distance_score(dist)
+        return score, f"{round(dist)} km de chez toi", round(dist, 1)
+
     if not offer.city and not student.city:
-        return 0.5, "Aucune ville renseignée"
+        return 0.5, "Aucune ville renseignée", None
     if offer.city and student.city and offer.city == student.city:
-        return 1.0, f"Même ville ({offer.city})"
+        return 1.0, f"Même ville ({offer.city})", 0.0
     if offer.remote:
-        return 0.3, "Offre remote mais étudiant préfère présentiel"
-    return 0.0, f"Villes différentes ({offer.city} vs {student.city})"
+        return 0.3, "Offre remote mais étudiant préfère présentiel", None
+    return 0.0, f"Villes différentes ({offer.city} vs {student.city})", None
 
 
 def _score_contract(offer: Offer, student: Student) -> tuple[float, str]:
@@ -110,7 +134,7 @@ def score(offer: Offer, student: Student) -> MatchResult:
     components["skills"] = s_skills
     reasons.append(f"[skills {s_skills:.2f}] {r_skills}")
 
-    s_loc, r_loc = _score_location(offer, student)
+    s_loc, r_loc, distance_km = _score_location(offer, student)
     components["location"] = s_loc
     reasons.append(f"[location {s_loc:.2f}] {r_loc}")
 
@@ -127,7 +151,12 @@ def score(offer: Offer, student: Student) -> MatchResult:
     reasons.append(f"[availability {s_avail:.2f}] {r_avail}")
 
     total = sum(components[name] * WEIGHTS[name] for name in WEIGHTS)
-    return MatchResult(score=round(total, 4), reasons=reasons, components=components)
+    return MatchResult(
+        score=round(total, 4),
+        reasons=reasons,
+        components=components,
+        distance_km=distance_km,
+    )
 
 
 def rank_offers_for_student(

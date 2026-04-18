@@ -26,6 +26,10 @@ class Repository(Protocol):
     def mark_match_notified(self, match_id: UUID) -> None: ...
     def get_offer(self, offer_id: UUID) -> Offer | None: ...
     def get_student(self, student_id: UUID) -> Student | None: ...
+    def get_match_by_token(self, token: str) -> Match | None: ...
+    def list_matches_for_student(self, student_id: UUID) -> list[Match]: ...
+    def mark_match_accepted(self, match_id: UUID) -> None: ...
+    def mark_match_declined(self, match_id: UUID) -> None: ...
     def count_offers(self) -> int: ...
     def count_students(self) -> int: ...
     def count_matches(self) -> int: ...
@@ -115,6 +119,35 @@ class SupabaseRepository:
         rows = resp.data or []
         return _row_to_student(rows[0]) if rows else None
 
+    def get_match_by_token(self, token: str) -> Match | None:
+        resp = self.client.table("matches").select("*").eq("token", token).limit(1).execute()
+        rows = resp.data or []
+        return _row_to_match(rows[0]) if rows else None
+
+    def list_matches_for_student(self, student_id: UUID) -> list[Match]:
+        resp = (
+            self.client.table("matches")
+            .select("*")
+            .eq("student_id", str(student_id))
+            .order("created_at", desc=True)
+            .execute()
+        )
+        return [_row_to_match(r) for r in (resp.data or [])]
+
+    def mark_match_accepted(self, match_id: UUID) -> None:
+        from datetime import datetime
+
+        self.client.table("matches").update(
+            {"state": "accepted", "accepted_at": datetime.utcnow().isoformat()}
+        ).eq("id", str(match_id)).execute()
+
+    def mark_match_declined(self, match_id: UUID) -> None:
+        from datetime import datetime
+
+        self.client.table("matches").update(
+            {"state": "declined", "declined_at": datetime.utcnow().isoformat()}
+        ).eq("id", str(match_id)).execute()
+
     # ---- stats ----
 
     def count_offers(self) -> int:
@@ -168,6 +201,9 @@ def _offer_to_row(o: Offer) -> dict[str, Any]:
         "starts_on": o.starts_on.isoformat() if o.starts_on else None,
         "ends_on": o.ends_on.isoformat() if o.ends_on else None,
         "url": o.url,
+        "contact_email": o.contact_email,
+        "latitude": o.latitude,
+        "longitude": o.longitude,
         "scraped_at": o.scraped_at.isoformat(),
     }
 
@@ -188,6 +224,8 @@ def _student_to_row(s: Student) -> dict[str, Any]:
         "max_hours_per_week": s.max_hours_per_week,
         "available_from": s.available_from.isoformat() if s.available_from else None,
         "available_until": s.available_until.isoformat() if s.available_until else None,
+        "latitude": s.latitude,
+        "longitude": s.longitude,
         "active": s.active,
     }
 
@@ -203,8 +241,13 @@ def _match_to_row(m: Match) -> dict[str, Any]:
         "student_id": str(m.student_id),
         "score": m.score,
         "reasons": m.reasons,
+        "token": m.token,
+        "state": m.state.value,
+        "distance_km": m.distance_km,
         "created_at": m.created_at.isoformat(),
         "notified_at": m.notified_at.isoformat() if m.notified_at else None,
+        "accepted_at": m.accepted_at.isoformat() if m.accepted_at else None,
+        "declined_at": m.declined_at.isoformat() if m.declined_at else None,
     }
 
 
@@ -257,6 +300,37 @@ class InMemoryRepository:
 
     def get_student(self, student_id: UUID) -> Student | None:
         return self.students.get(student_id)
+
+    def get_match_by_token(self, token: str) -> Match | None:
+        for m in self.matches.values():
+            if m.token == token:
+                return m
+        return None
+
+    def list_matches_for_student(self, student_id: UUID) -> list[Match]:
+        found = [m for m in self.matches.values() if m.student_id == student_id]
+        found.sort(key=lambda m: m.created_at, reverse=True)
+        return found
+
+    def mark_match_accepted(self, match_id: UUID) -> None:
+        from datetime import datetime
+
+        from .models import MatchState
+
+        m = self.matches.get(match_id)
+        if m is not None:
+            m.state = MatchState.ACCEPTED
+            m.accepted_at = datetime.utcnow()
+
+    def mark_match_declined(self, match_id: UUID) -> None:
+        from datetime import datetime
+
+        from .models import MatchState
+
+        m = self.matches.get(match_id)
+        if m is not None:
+            m.state = MatchState.DECLINED
+            m.declined_at = datetime.utcnow()
 
     # ---- stats ----
 

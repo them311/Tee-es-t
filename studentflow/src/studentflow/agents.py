@@ -15,6 +15,7 @@ from .db import Repository
 from .matching import rank_students_for_offer
 from .models import Match, Offer
 from .notifiers import NotificationChannel, build_notifier
+from .realtime import broadcaster
 from .scrapers import SCRAPERS, BaseScraper
 
 log = logging.getLogger(__name__)
@@ -68,8 +69,13 @@ class MatcherAgent:
                     student_id=student.id,
                     score=result.score,
                     reasons=result.reasons,
+                    distance_km=result.distance_km,
                 )
                 self.repo.insert_match(match)
+                broadcaster.publish(
+                    student.id,
+                    {"type": "match", "match_id": str(match.id)},
+                )
                 created += 1
         log.info("MatcherAgent: %d matches created", created)
         return created
