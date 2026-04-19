@@ -8,14 +8,13 @@ This script performs a full morning routine:
 """
 
 import os
-import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 
-import anthropic
 from dotenv import load_dotenv
 
 from config.routines import ROUTINES
+from agent_loop import run_agent_loop
 from config.system_prompt import get_system_prompt
 from tools import ALL_TOOLS, execute_tool
 
@@ -32,77 +31,24 @@ logging.basicConfig(
 log = logging.getLogger("commercial-agent")
 
 def run_autonomous(routine: str) -> str:
-    """Run an autonomous routine."""
+    """Run an autonomous routine via the shared agent loop."""
     if routine not in ROUTINES:
         log.error(f"Unknown routine: {routine}. Available: {list(ROUTINES.keys())}")
         return f"Error: unknown routine '{routine}'"
 
-    prompt = ROUTINES[routine]
     log.info(f"Starting routine: {routine}")
 
-    client = anthropic.Anthropic()
-    system_prompt = get_system_prompt()
+    result = run_agent_loop(
+        user_prompt=ROUTINES[routine],
+        system_prompt=get_system_prompt(),
+        tools=ALL_TOOLS,
+        execute_tool=execute_tool,
+        max_iterations=25,
+        on_text=lambda text: log.info(f"  Agent: {text[:200]}"),
+    )
 
-    messages = [{"role": "user", "content": prompt}]
-
-    max_iterations = 25
-    iteration = 0
-
-    while iteration < max_iterations:
-        iteration += 1
-        log.info(f"  Iteration {iteration}/{max_iterations}")
-
-        try:
-            response = client.messages.create(
-                model="claude-sonnet-4-6",
-                max_tokens=16000,
-                system=system_prompt,
-                tools=ALL_TOOLS,
-                messages=messages,
-            )
-        except Exception as e:
-            log.error(f"  API error: {e}")
-            return f"API Error: {e}"
-
-        if response.stop_reason == "end_turn":
-            final_text = ""
-            for block in response.content:
-                if block.type == "text":
-                    final_text += block.text
-            log.info(f"Routine '{routine}' completed in {iteration} iterations")
-            log.info(f"Result:\n{final_text[:500]}")
-            return final_text
-
-        tool_use_blocks = [b for b in response.content if b.type == "tool_use"]
-        text_blocks = [b for b in response.content if b.type == "text"]
-
-        for block in text_blocks:
-            if block.text.strip():
-                log.info(f"  Agent: {block.text[:200]}")
-
-        messages.append({"role": "assistant", "content": response.content})
-
-        tool_results = []
-        for tool in tool_use_blocks:
-            log.info(f"  Tool: {tool.name}")
-            try:
-                result = execute_tool(tool.name, tool.input)
-                if len(result) > 5000:
-                    result = result[:5000] + "... (truncated)"
-            except Exception as e:
-                result = f"Error: {e}"
-                log.error(f"  Tool error: {e}")
-
-            tool_results.append({
-                "type": "tool_result",
-                "tool_use_id": tool.id,
-                "content": result,
-            })
-
-        messages.append({"role": "user", "content": tool_results})
-
-    log.warning(f"Routine '{routine}' hit max iterations ({max_iterations})")
-    return "Agent stopped: maximum iterations reached."
+    log.info(f"Routine '{routine}' result:\n{result[:500]}")
+    return result
 
 
 def main():

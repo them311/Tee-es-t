@@ -64,3 +64,18 @@ services:
     depends_on:
       api:
         condition: service_healthy
+
+  lfds-quiz:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - quiz-data:/app/server/data
+      - ./.env:/app/.env:ro
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: unless-stopped
+
+volumes:
+  quiz-data:
