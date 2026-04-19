@@ -30,6 +30,7 @@ from xml.etree import ElementTree as ET
 import httpx
 
 from ..models import ContractType, Offer, Source
+from ..utils.skills import extract_skills
 from .base import BaseScraper
 
 log = logging.getLogger(__name__)
@@ -111,16 +112,18 @@ class HelloWorkScraper(BaseScraper):
         contract = _guess_contract(title + " " + description)
         city = _extract_city(title)
 
+        skills = extract_skills(f"{title}\n{description}")
+
         return Offer(
             source=Source.HELLOWORK,
             source_id=guid,
             title=title,
-            description=description[:2000],  # keep it bounded
-            company="",  # RSS rarely exposes the company cleanly
+            description=description[:2000],
+            company="",
             city=city,
             remote="télétravail" in (title + description).lower(),
             contract=contract,
-            skills=[],  # RSS doesn't expose structured skills; matcher will stay neutral
+            skills=skills,
             url=link,
         )
 

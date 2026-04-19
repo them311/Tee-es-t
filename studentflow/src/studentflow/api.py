@@ -202,6 +202,9 @@ def create_student(
             )
         )
         broadcaster.publish(student.id, {"type": "match", "match_id": str(m.id)})
+        broadcaster.publish_offer(
+            offer.id, {"type": "candidate", "match_id": str(m.id), "student_id": str(student.id)}
+        )
 
     return StudentCreateResponse(
         id=student.id,
@@ -352,6 +355,43 @@ async def stream_matches(
     )
 
 
+@app.get("/offers/{offer_id}/stream")
+async def stream_candidates(
+    offer_id: UUID,
+    request: Request,
+    repo: Repository = Depends(get_repository),
+) -> StreamingResponse:
+    """SSE stream: live candidate events for an employer's offer.
+
+    Mirror of the student stream. Every time the MatcherAgent creates a new
+    match for this offer, the employer's browser receives a push event and
+    auto-refreshes the candidate list — real Uber-grade live experience.
+    """
+    if repo.get_offer(offer_id) is None:
+        raise HTTPException(status_code=404, detail="Offer not found")
+
+    async def event_stream():
+        yield b": stream open\n\n"
+        async with broadcaster.subscribe_offer(offer_id) as queue:
+            while True:
+                if await request.is_disconnected():
+                    return
+                try:
+                    event = await asyncio.wait_for(queue.get(), timeout=15.0)
+                    yield f"data: {json.dumps(event)}\n\n".encode()
+                except TimeoutError:
+                    yield b": keep-alive\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
 # ---- accept / decline one-click flow -----------------------------------
 
 
@@ -404,6 +444,14 @@ async def accept_match(token: str, repo: Repository = Depends(get_repository)) -
     broadcaster.publish(
         match.student_id,
         {"type": "match_accepted", "match_id": str(match.id)},
+    )
+    broadcaster.publish_offer(
+        match.offer_id,
+        {
+            "type": "candidate_accepted",
+            "match_id": str(match.id),
+            "student_id": str(match.student_id),
+        },
     )
 
     # Fire-and-forget employer relay: we don't want the student's HTTP call

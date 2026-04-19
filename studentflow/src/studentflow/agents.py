@@ -76,6 +76,10 @@ class MatcherAgent:
                     student.id,
                     {"type": "match", "match_id": str(match.id)},
                 )
+                broadcaster.publish_offer(
+                    offer.id,
+                    {"type": "candidate", "match_id": str(match.id), "student_id": str(student.id)},
+                )
                 created += 1
         log.info("MatcherAgent: %d matches created", created)
         return created

@@ -77,4 +77,7 @@ export const api = {
 
   listMatchesForOffer: (offerId: string) =>
     request<StudentMatch[]>(`/offers/${encodeURIComponent(offerId)}/matches`),
+
+  streamForOffer: (offerId: string): EventSource =>
+    new EventSource(`${API_BASE}/offers/${encodeURIComponent(offerId)}/stream`),
 };

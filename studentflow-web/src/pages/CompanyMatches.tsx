@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 
 import { api } from "../api";
 import type { StudentMatch } from "../types";
 
 /**
- * Top students ranked for a given mission.
+ * Top students ranked for a given mission — live.
  *
- * Data flow mirrors the student Matches page:
- *   1. `location.state.bootstrap` — inline candidates returned by POST /offers
- *      so the employer never stares at an empty list on submit.
- *   2. REST GET /offers/:id/matches — source of truth on refresh.
+ * Three data paths (mirrors the student Matches page):
+ *   1. `location.state.bootstrap` — inline candidates from POST /offers
+ *   2. REST GET /offers/:id/matches — source of truth on refresh
+ *   3. SSE GET /offers/:id/stream — live push when a student signs up and
+ *      matches this offer, or when a student accepts. Uber-grade: the HR
+ *      contact sees candidates appear in real-time.
  */
 export default function CompanyMatches() {
   const { offerId: rawId } = useParams();
@@ -24,13 +26,11 @@ export default function CompanyMatches() {
   const [matches, setMatches] = useState<StudentMatch[] | null>(bootstrap);
   const [loading, setLoading] = useState(bootstrap === null);
   const [error, setError] = useState<string | null>(null);
+  const [livePing, setLivePing] = useState(0);
+  const esRef = useRef<EventSource | null>(null);
 
-  useEffect(() => {
-    if (!offerId) {
-      setError("Aucune mission. Publie-en une d'abord.");
-      setLoading(false);
-      return;
-    }
+  function load() {
+    if (!offerId) return;
     api
       .listMatchesForOffer(offerId)
       .then((data) => {
@@ -41,6 +41,39 @@ export default function CompanyMatches() {
         setError(err instanceof Error ? err.message : String(err)),
       )
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    if (!offerId) {
+      setError("Aucune mission. Publie-en une d'abord.");
+      setLoading(false);
+      return;
+    }
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offerId]);
+
+  // SSE subscription for live candidate events.
+  useEffect(() => {
+    if (!offerId) return;
+    const es = api.streamForOffer(offerId);
+    esRef.current = es;
+    es.onmessage = (evt) => {
+      try {
+        const ev = JSON.parse(evt.data);
+        if (ev.type === "candidate" || ev.type === "candidate_accepted") {
+          setLivePing((n) => n + 1);
+          load();
+        }
+      } catch {
+        /* ignore keep-alives */
+      }
+    };
+    return () => {
+      es.close();
+      esRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offerId]);
 
   if (loading && matches === null) return <div className="loading">Chargement des candidats…</div>;
@@ -58,9 +91,13 @@ export default function CompanyMatches() {
   return (
     <div>
       <h2>Candidats pour ta mission</h2>
+      <div className="robot-strip" title="Flux candidats temps réel">
+        <span className="robot-dot" />
+        Flux temps réel · {livePing > 0 ? `${livePing} nouveau(x) candidat(s) pendant ta session` : "en attente de nouveaux candidats"}
+      </div>
       <p style={{ color: "var(--fg-muted)" }}>
-        Top étudiants scorés par StudentFlow. Chaque ligne affiche le pourcentage
-        de match et les raisons derrière le score.
+        Top étudiants scorés par StudentFlow. Quand un nouvel étudiant matche
+        ta mission, il apparaît ici en direct.
       </p>
       {enriched && enriched.length > 0 && (
         <div className="card" style={{ background: "rgba(66,153,225,0.08)", borderColor: "var(--accent)" }}>
@@ -76,8 +113,8 @@ export default function CompanyMatches() {
       )}
       {matches && matches.length === 0 ? (
         <div className="empty">
-          Aucun candidat pour l'instant. StudentFlow notifiera automatiquement
-          les étudiants dès qu'un nouveau profil matchera ta mission.
+          Aucun candidat pour l'instant. Les étudiants qui matcheront ta mission
+          apparaîtront ici automatiquement — garde la page ouverte.
         </div>
       ) : (
         matches?.map((m) => (
