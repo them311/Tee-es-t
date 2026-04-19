@@ -8,6 +8,7 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { pushQuizLeadToHubSpot } = require("./hubspot");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -90,6 +91,21 @@ app.post("/api/quiz/submit", (req, res) => {
   console.log(
     `[${new Date().toISOString()}] Quiz submitted: ${data.session_id} | Profile: ${data.profile?.primary} | Email: ${data.contact?.email || "none"}`
   );
+
+  // Push to HubSpot CRM (fire-and-forget — don't block the quiz response)
+  pushQuizLeadToHubSpot(data)
+    .then((result) => {
+      if (result.ok) {
+        console.log(
+          `[hubspot] Contact ${result.action} (id=${result.contactId})${result.noteId ? `, note=${result.noteId}` : ""}`
+        );
+      } else if (result.skipped) {
+        // Silent skip — nothing to log in normal operation
+      }
+    })
+    .catch((err) => {
+      console.error(`[hubspot] Unexpected error: ${err.message}`);
+    });
 
   res.json({ success: true, session_id: data.session_id });
 });
