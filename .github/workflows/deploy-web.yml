@@ -6,6 +6,11 @@ on:
     paths:
       - "studentflow-web/**"
       - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-studentflow-web-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -31,7 +36,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://api.studentflow.fr' }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'https://studentflow-api.up.railway.app' }}
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
@@ -42,4 +47,5 @@ jobs:
           deploy-message: "Deploy from GitHub Actions — ${{ github.sha }}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          # Hardcoded: studentflow-app site (different from the LFDS quiz site)
+          NETLIFY_SITE_ID: 75402425-a791-4c68-9dc9-64509bb6e763
