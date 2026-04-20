@@ -1,43 +1,77 @@
 {
-    "status": "Actif",
-    "last_run": "2026-04-12T23:05:00Z",
-    "emails_processed": 201,
-    "active_contacts": 777,
-    "active_companies": 303,
-    "pipeline_value": 80000,
-    "deals_count": 10,
-    "routines_this_week": 28,
-    "deals_by_stage": {
-        "qualifiedtobuy": 10,
-        "appointmentscheduled": 1
+  "status": "Actif",
+  "last_run": "2026-04-20T03:37:55.869395",
+  "emails_processed": 201,
+  "active_contacts": 777,
+  "active_companies": 303,
+  "pipeline_value": 80000,
+  "deals_count": 10,
+  "routines_this_week": 1,
+  "deals_by_stage": {
+    "qualifiedtobuy": 10,
+    "appointmentscheduled": 1
+  },
+  "activity": [
+    {
+      "time": "03:37",
+      "type": "crm",
+      "message": "Routine du matin terminee - 0 actions executees"
     },
-    "activity": [
-        {"time": "20:05", "type": "crm", "message": "Deal mis a jour : Davigel/Nestle Pro - Grand Compte (20 000 EUR)"},
-        {"time": "19:36", "type": "crm", "message": "Deal mis a jour : Delon - Artisan Traiteur (2 000 EUR)"},
-        {"time": "18:35", "type": "crm", "message": "Deal mis a jour : Avigros - Grossiste Alimentaire (6 000 EUR)"},
-        {"time": "18:35", "type": "crm", "message": "Deal mis a jour : Biodis - Distribution Bio Europe (7 000 EUR)"},
-        {"time": "14:39", "type": "crm", "message": "Deals qualifies : Metzger Freres, Naturalia, Satoriz, Pomona"},
-        {"time": "14:38", "type": "crm", "message": "Deal mis a jour : Dalloyau - Sauces Premium (5 000 EUR)"},
-        {"time": "14:37", "type": "crm", "message": "Deal mis a jour : Receptions Paris (4 000 EUR)"},
-        {"time": "09:03", "type": "email", "message": "201 brouillons emails actifs (Gmail synchronise)"},
-        {"time": "09:02", "type": "crm", "message": "777 contacts LFDS + 303 companies sync HubSpot"},
-        {"time": "08:30", "type": "notion", "message": "Workspace SNB Mission Hunter mis a jour"}
-    ],
-    "livrables": {
-        "devis_count": 0,
-        "propositions_count": 10,
-        "total_montant": 80000,
-        "recent": [
-            {"date": "11/04", "type": "proposition", "client": "Davigel/Nestle Pro", "objet": "Grand Compte", "montant": "20 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Groupe Pomona", "objet": "Distribution Nationale", "montant": "15 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Satoriz", "objet": "Reseau Bio National", "montant": "10 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Naturalia", "objet": "Gamme Bio L-FDS", "montant": "8 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Biodis", "objet": "Distribution Bio Europe", "montant": "7 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Avigros", "objet": "Grossiste Alimentaire", "montant": "6 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Dalloyau", "objet": "Sauces Premium", "montant": "5 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Receptions Paris", "objet": "Traiteur Evenementiel", "montant": "4 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Metzger Freres", "objet": "Partenariat Artisanal", "montant": "3 000 EUR"},
-            {"date": "11/04", "type": "proposition", "client": "Delon", "objet": "Artisan Traiteur", "montant": "2 000 EUR"}
-        ]
+    {
+      "time": "20:05",
+      "type": "crm",
+      "message": "Deal mis a jour : Davigel/Nestle Pro - Grand Compte (20 000 EUR)"
+    },
+    {
+      "time": "19:36",
+      "type": "crm",
+      "message": "Deal mis a jour : Delon - Artisan Traiteur (2 000 EUR)"
+    },
+    {
+      "time": "18:35",
+      "type": "crm",
+      "message": "Deal mis a jour : Avigros - Grossiste Alimentaire (6 000 EUR)"
+    },
+    {
+      "time": "18:35",
+      "type": "crm",
+      "message": "Deal mis a jour : Biodis - Distribution Bio Europe (7 000 EUR)"
+    },
+    {
+      "time": "14:39",
+      "type": "crm",
+      "message": "Deals qualifies : Metzger Freres, Naturalia, Satoriz, Pomona"
+    },
+    {
+      "time": "14:38",
+      "type": "crm",
+      "message": "Deal mis a jour : Dalloyau - Sauces Premium (5 000 EUR)"
+    },
+    {
+      "time": "14:37",
+      "type": "crm",
+      "message": "Deal mis a jour : Receptions Paris (4 000 EUR)"
+    },
+    {
+      "time": "09:03",
+      "type": "email",
+      "message": "201 brouillons emails actifs (Gmail synchronise)"
+    },
+    {
+      "time": "09:02",
+      "type": "crm",
+      "message": "777 contacts LFDS + 303 companies sync HubSpot"
+    },
+    {
+      "time": "08:30",
+      "type": "notion",
+      "message": "Workspace SNB Mission Hunter mis a jour"
     }
+  ],
+  "livrables": {
+    "devis_count": 0,
+    "propositions_count": 0,
+    "total_montant": 0,
+    "recent": []
+  }
 }
