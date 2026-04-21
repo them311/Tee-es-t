@@ -1,45 +1,30 @@
 [build]
   publish = "docs"
-  command = "npm install && npx vite build"
-  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
 
-# Functions config
+[context.deploy-preview]
+  publish = "docs"
+
+[context.branch-deploy]
+  publish = "docs"
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Headers for security and caching
 [[headers]]
   for = "/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Cache-Control = "public, max-age=300"
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-
-[[headers]]
-  for = "/status.json"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Access-Control-Allow-Origin = "*"
-
-[[headers]]
-  for = "/quiz/assets/*"
-  [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# SPA fallback for /quiz routes
 [[redirects]]
   from = "/quiz/*"
   to = "/quiz/index.html"
   status = 200
 
-# Custom 404 for landing page
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 404
+  status = 200
