@@ -98,7 +98,26 @@
 
         .nav-title span { color: var(--slate-400); font-weight: 400; }
 
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 32px;
+        }
+        .nav-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--slate-400);
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: color 0.15s, background 0.15s;
+        }
+        .nav-link:hover { color: var(--slate-100); background: rgba(255,255,255,0.04); }
+        .nav-link.active { color: var(--blue-400); background: rgba(14,165,233,0.1); }
+
         .nav-right {
+            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 16px;
@@ -201,7 +220,7 @@
         /* ===== KPI CARDS ===== */
         .kpi-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
             margin-top: -32px;
             position: relative;
@@ -246,6 +265,8 @@
         }
 
         .kpi-value.green { color: var(--green-600); }
+        .kpi-value.blue { color: var(--blue-600); }
+        .kpi-value.purple { color: var(--purple-500); }
 
         /* ===== SECTIONS ===== */
         .panel {
@@ -488,6 +509,53 @@
             margin-top: 2px;
         }
 
+        /* ===== PIPELINE STAGES ===== */
+        .stages {
+            padding: 14px 20px 18px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+        .stages-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--slate-500);
+            margin-bottom: 10px;
+        }
+        .stage-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .stage-row:last-child { margin-bottom: 0; }
+        .stage-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-700);
+            min-width: 130px;
+        }
+        .stage-bar-wrap {
+            flex: 1;
+            height: 10px;
+            background: var(--slate-100);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .stage-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-500), #6366f1);
+            border-radius: 5px;
+            transition: width 0.6s ease;
+        }
+        .stage-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--slate-900);
+            min-width: 24px;
+            text-align: right;
+        }
+
         /* ===== FOOTER ===== */
         footer {
             margin-top: 32px;
@@ -504,6 +572,10 @@
         footer .foot-line + .foot-line { margin-top: 4px; }
 
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .kpi-row { grid-template-columns: repeat(3, 1fr); }
+        }
+
         @media (max-width: 768px) {
             .kpi-row { grid-template-columns: repeat(2, 1fr); }
             .sources { grid-template-columns: repeat(2, 1fr); }
@@ -511,6 +583,10 @@
             .livrables-kpis { grid-template-columns: 1fr; }
             .hero h1 { font-size: 26px; }
             .hero { padding: 32px 1.5rem 44px; }
+        }
+
+        @media (max-width: 900px) {
+            .nav-menu { display: none; }
         }
 
         @media (max-width: 480px) {
@@ -538,10 +614,21 @@
 
 <!-- NAV -->
 <nav>
-    <a class="nav-brand" href="#">
+    <a class="nav-brand" href="/">
         <div class="nav-logo">S</div>
         <div class="nav-title">SNB Consulting <span>| Agent IA</span></div>
     </a>
+    <div class="nav-menu">
+        <a href="/" class="nav-link active">Dashboard</a>
+        <a href="/pipeline.html" class="nav-link">Pipeline</a>
+        <a href="/livrables.html" class="nav-link">Livrables</a>
+        <a href="/missions.html" class="nav-link">Missions</a>
+        <a href="/documents.html" class="nav-link">Documents</a>
+        <a href="/portfolio.html" class="nav-link">Portfolio</a>
+        <a href="/routines.html" class="nav-link">Routines</a>
+        <a href="/architecture.html" class="nav-link">Architecture</a>
+        <a href="/contact.html" class="nav-link">Contact</a>
+    </div>
     <div class="nav-right">
         <div class="nav-timer">Prochain cycle <strong id="hd-timer">--:--</strong></div>
         <div class="nav-badge" id="nav-badge">
@@ -570,14 +657,19 @@
             <div class="kpi-sub" id="kpi-lastrun"><span class="skel" style="width:120px;height:11px">&nbsp;</span></div>
         </div>
         <div class="kpi">
-            <div class="kpi-label">Emails traites</div>
-            <div class="kpi-value" id="kpi-emails">0</div>
-            <div class="kpi-sub">Brouillons crees</div>
+            <div class="kpi-label">Pipeline</div>
+            <div class="kpi-value blue" id="kpi-pipeline">--</div>
+            <div class="kpi-sub" id="kpi-pipeline-sub">Valeur deals actifs</div>
         </div>
         <div class="kpi">
             <div class="kpi-label">Contacts CRM</div>
             <div class="kpi-value" id="kpi-contacts">0</div>
             <div class="kpi-sub">Actifs dans HubSpot</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Emails traites</div>
+            <div class="kpi-value" id="kpi-emails">0</div>
+            <div class="kpi-sub">Brouillons crees</div>
         </div>
         <div class="kpi">
             <div class="kpi-label">Cycles cette semaine</div>
@@ -696,6 +788,10 @@
                 <div class="lk-label">CA potentiel</div>
             </div>
         </div>
+        <div class="stages" id="stages-block" style="display:none">
+            <div class="stages-title">Pipeline par etape</div>
+            <div id="stages-list"></div>
+        </div>
         <ul class="log-list" id="livrables-list">
             <li class="log-empty">Aucun livrable genere pour le moment.</li>
         </ul>
@@ -707,6 +803,17 @@
 <footer>
     <div class="foot-line"><strong>SNB Consulting</strong> &mdash; Agent Commercial Autonome propulse par Claude AI</div>
     <div class="foot-line">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
+    <div class="foot-line" style="margin-top:12px">
+        <a href="/">Dashboard</a> &middot;
+        <a href="/pipeline.html">Pipeline</a> &middot;
+        <a href="/livrables.html">Livrables</a> &middot;
+        <a href="/missions.html">Missions</a> &middot;
+        <a href="/documents.html">Documents</a> &middot;
+        <a href="/portfolio.html">Portfolio</a> &middot;
+        <a href="/routines.html">Routines</a> &middot;
+        <a href="/architecture.html">Architecture</a> &middot;
+        <a href="/contact.html">Contact</a>
+    </div>
     <div class="foot-line" id="foot-ts" style="margin-top:8px"></div>
 </footer>
 
@@ -753,8 +860,28 @@
                 ? ago(d.last_run) + ' (' + new Date(d.last_run).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) + ')'
                 : 'En attente 1ere execution';
             document.getElementById('kpi-emails').textContent = d.emails_processed || 0;
-            document.getElementById('kpi-contacts').textContent = d.active_contacts || 0;
+            document.getElementById('kpi-contacts').textContent = (d.active_contacts || 0).toLocaleString('fr-FR');
             document.getElementById('kpi-routines').textContent = d.routines_this_week || 0;
+
+            // Pipeline KPI
+            var pipelineEl = document.getElementById('kpi-pipeline');
+            var pipelineSubEl = document.getElementById('kpi-pipeline-sub');
+            var pipelineVal = (d.livrables && d.livrables.total_montant) || d.pipeline_value || 0;
+            var dealCount = (d.livrables && d.livrables.propositions_count) || d.deals_count || 0;
+            if (pipelineVal > 0) {
+                var formatted;
+                if (pipelineVal >= 1000000) {
+                    formatted = (pipelineVal / 1000000).toFixed(1).replace('.0','') + 'M \u20ac';
+                } else if (pipelineVal >= 1000) {
+                    formatted = (pipelineVal / 1000).toFixed(1).replace('.0','') + 'k \u20ac';
+                } else {
+                    formatted = pipelineVal.toLocaleString('fr-FR') + ' \u20ac';
+                }
+                pipelineEl.textContent = formatted;
+                pipelineSubEl.textContent = dealCount + ' deal' + (dealCount > 1 ? 's' : '') + ' actif' + (dealCount > 1 ? 's' : '');
+            } else {
+                pipelineEl.textContent = '--';
+            }
 
             // Nav badge
             var badge = document.getElementById('nav-badge');
@@ -792,6 +919,38 @@
                 var mt = l.total_montant || 0;
                 document.getElementById('kpi-montant').textContent = mt > 0 ? mt.toLocaleString('fr-FR') + ' \u20ac' : '--';
                 document.getElementById('liv-meta').textContent = (l.devis_count + l.propositions_count) + ' documents';
+
+                // Pipeline par etape
+                var stagesBlock = document.getElementById('stages-block');
+                var stagesList = document.getElementById('stages-list');
+                if (d.deals_by_stage && Object.keys(d.deals_by_stage).length) {
+                    var stageLabels = {
+                        'appointmentscheduled': 'RDV planifie',
+                        'qualifiedtobuy': 'Qualifie',
+                        'presentationscheduled': 'Presentation',
+                        'decisionmakerboughtin': 'Decideur convaincu',
+                        'contractsent': 'Contrat envoye',
+                        'closedwon': 'Gagne',
+                        'closedlost': 'Perdu'
+                    };
+                    var entries = Object.keys(d.deals_by_stage).map(function(k) {
+                        return { key: k, label: stageLabels[k] || k, count: d.deals_by_stage[k] };
+                    });
+                    var maxCount = Math.max.apply(null, entries.map(function(e) { return e.count; }));
+                    entries.sort(function(a, b) { return b.count - a.count; });
+                    stagesList.innerHTML = '';
+                    entries.forEach(function(e) {
+                        var pct = maxCount > 0 ? Math.round((e.count / maxCount) * 100) : 0;
+                        var row = document.createElement('div');
+                        row.className = 'stage-row';
+                        row.innerHTML =
+                            '<div class="stage-label">' + e.label + '</div>' +
+                            '<div class="stage-bar-wrap"><div class="stage-bar" style="width:' + pct + '%"></div></div>' +
+                            '<div class="stage-count">' + e.count + '</div>';
+                        stagesList.appendChild(row);
+                    });
+                    stagesBlock.style.display = 'block';
+                }
 
                 var ll = document.getElementById('livrables-list');
                 if (l.recent && l.recent.length) {
