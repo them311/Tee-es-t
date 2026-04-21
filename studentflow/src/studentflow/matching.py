@@ -5,15 +5,40 @@ string. `score()` is a weighted sum and returns a `MatchResult`.
 
 If you add a new component, wire it in `WEIGHTS` and in `score()`, then add
 tests in `tests/test_matching.py`.
+
+Weights are loaded from ``config.Settings`` (env-var driven, auto-normalized).
+They can also be overridden per-call via the ``weights`` parameter on
+``score()``, ``rank_offers_for_student()``, and ``rank_students_for_offer()``.
 """
 
 from __future__ import annotations
 
 from datetime import date
 
+from .config import get_settings
 from .models import ContractType, MatchResult, Offer, Student
 from .utils.geo import distance_score, haversine_km
 
+
+def _get_weights(overrides: dict[str, float] | None = None) -> dict[str, float]:
+    """Return scoring weights.
+
+    If *overrides* is provided its values are used directly (and normalized).
+    Otherwise the weights come from ``Settings`` (already normalized).
+    """
+    if overrides is not None:
+        total = sum(overrides.values())
+        if total <= 0:
+            raise ValueError("Weight overrides must sum to a positive number")
+        if abs(total - 1.0) > 1e-9:
+            return {k: v / total for k, v in overrides.items()}
+        return dict(overrides)
+    return get_settings().scoring_weights
+
+
+# Module-level alias kept for backward compatibility (tests import it).
+# This is a *snapshot* of the defaults — runtime callers should prefer the
+# ``weights`` parameter or rely on ``_get_weights()``.
 WEIGHTS: dict[str, float] = {
     "skills": 0.40,
     "location": 0.25,
@@ -21,7 +46,6 @@ WEIGHTS: dict[str, float] = {
     "hours": 0.10,
     "availability": 0.10,
 }
-assert abs(sum(WEIGHTS.values()) - 1.0) < 1e-9, "WEIGHTS must sum to 1.0"
 
 
 def _score_skills(offer: Offer, student: Student) -> tuple[float, str]:
@@ -119,14 +143,30 @@ def _score_availability(offer: Offer, student: Student) -> tuple[float, str]:
     return 1.0, "Disponibilités compatibles"
 
 
-def score(offer: Offer, student: Student) -> MatchResult:
+def score(
+    offer: Offer,
+    student: Student,
+    *,
+    weights: dict[str, float] | None = None,
+) -> MatchResult:
     """Compute the overall match score between an offer and a student.
+
+    Parameters
+    ----------
+    offer : Offer
+    student : Student
+    weights : dict[str, float] | None
+        Optional per-call weight overrides. Keys must be a subset of
+        ``{"skills", "location", "contract", "hours", "availability"}``.
+        If not provided, weights are loaded from ``Settings``.
 
     Returns a `MatchResult` with:
       - score ∈ [0, 1] (weighted sum of components)
       - reasons: human-readable explanation per component
       - components: raw component scores by name
     """
+    effective_weights = _get_weights(weights)
+
     components: dict[str, float] = {}
     reasons: list[str] = []
 
@@ -150,7 +190,7 @@ def score(offer: Offer, student: Student) -> MatchResult:
     components["availability"] = s_avail
     reasons.append(f"[availability {s_avail:.2f}] {r_avail}")
 
-    total = sum(components[name] * WEIGHTS[name] for name in WEIGHTS)
+    total = sum(components[name] * effective_weights[name] for name in effective_weights)
     return MatchResult(
         score=round(total, 4),
         reasons=reasons,
@@ -160,20 +200,40 @@ def score(offer: Offer, student: Student) -> MatchResult:
 
 
 def rank_offers_for_student(
-    offers: list[Offer], student: Student, threshold: float = 0.6
+    offers: list[Offer],
+    student: Student,
+    threshold: float = 0.6,
+    *,
+    weights: dict[str, float] | None = None,
 ) -> list[tuple[Offer, MatchResult]]:
-    """Return offers scored >= threshold, sorted desc by score."""
-    scored = [(o, score(o, student)) for o in offers]
+    """Return offers scored >= threshold, sorted desc by score.
+
+    Parameters
+    ----------
+    weights : dict[str, float] | None
+        Optional per-call weight overrides forwarded to ``score()``.
+    """
+    scored = [(o, score(o, student, weights=weights)) for o in offers]
     kept = [(o, m) for o, m in scored if m.score >= threshold]
     kept.sort(key=lambda pair: pair[1].score, reverse=True)
     return kept
 
 
 def rank_students_for_offer(
-    offer: Offer, students: list[Student], threshold: float = 0.6
+    offer: Offer,
+    students: list[Student],
+    threshold: float = 0.6,
+    *,
+    weights: dict[str, float] | None = None,
 ) -> list[tuple[Student, MatchResult]]:
-    """Return students scored >= threshold, sorted desc by score."""
-    scored = [(s, score(offer, s)) for s in students if s.active]
+    """Return students scored >= threshold, sorted desc by score.
+
+    Parameters
+    ----------
+    weights : dict[str, float] | None
+        Optional per-call weight overrides forwarded to ``score()``.
+    """
+    scored = [(s, score(offer, s, weights=weights)) for s in students if s.active]
     kept = [(s, m) for s, m in scored if m.score >= threshold]
     kept.sort(key=lambda pair: pair[1].score, reverse=True)
     return kept

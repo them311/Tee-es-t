@@ -50,25 +50,42 @@
 <body>
 
 <nav>
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
     <a class="nav-brand" href="/">
         <div class="nav-logo">S</div>
         <div class="nav-title">SNB Consulting <span>| Agent IA</span></div>
     </a>
-    <div class="nav-menu">
-        <a href="/" class="nav-link">Dashboard</a>
-        <a href="/pipeline.html" class="nav-link">Pipeline</a>
-        <a href="/livrables.html" class="nav-link">Livrables</a>
-        <a href="/missions.html" class="nav-link">Missions</a>
-        <a href="/documents.html" class="nav-link">Documents</a>
-        <a href="/portfolio.html" class="nav-link">Portfolio</a>
-        <a href="/routines.html" class="nav-link">Routines</a>
-        <a href="/architecture.html" class="nav-link">Architecture</a>
-        <a href="/contact.html" class="nav-link active">Contact</a>
-    </div>
     <div class="nav-right">
         <div class="nav-badge"><span class="dot"></span><span>Actif</span></div>
     </div>
 </nav>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="app-layout">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a href="/" class="sidebar-link"><span class="sb-icon">&#9673;</span> Dashboard</a>
+        <a href="/pipeline.html" class="sidebar-link"><span class="sb-icon">&#9670;</span> Pipeline</a>
+        <a href="/missions.html" class="sidebar-link"><span class="sb-icon">&#9889;</span> Missions</a>
+        <a href="/livrables.html" class="sidebar-link"><span class="sb-icon">&#9997;</span> Livrables</a>
+        <div class="sidebar-section">Ressources</div>
+        <a href="/documents.html" class="sidebar-link"><span class="sb-icon">&#128196;</span> Documents</a>
+        <a href="/portfolio.html" class="sidebar-link"><span class="sb-icon">&#128188;</span> Portfolio</a>
+        <a href="/routines.html" class="sidebar-link"><span class="sb-icon">&#128260;</span> Routines</a>
+        <div class="sidebar-section">Systeme</div>
+        <a href="/architecture.html" class="sidebar-link"><span class="sb-icon">&#9881;</span> Architecture</a>
+        <a href="/contact.html" class="sidebar-link active"><span class="sb-icon">&#9993;</span> Contact</a>
+    </nav>
+    <div class="sidebar-footer">
+        <strong>SNB Consulting</strong>
+        Agent Commercial IA
+    </div>
+</aside>
+
+<div class="main-content">
 
 <section class="hero">
     <div class="hero-inner">
@@ -137,18 +154,17 @@
 <footer>
     <div class="foot-line"><strong>SNB Consulting</strong> &mdash; Agent Commercial Autonome propulse par Claude AI</div>
     <div class="foot-line">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
-    <div class="foot-nav">
-        <a href="/">Dashboard</a>
-        <a href="/pipeline.html">Pipeline</a>
-        <a href="/livrables.html">Livrables</a>
-        <a href="/missions.html">Missions</a>
-        <a href="/documents.html">Documents</a>
-        <a href="/portfolio.html">Portfolio</a>
-        <a href="/routines.html">Routines</a>
-        <a href="/architecture.html">Architecture</a>
-        <a href="/contact.html">Contact</a>
-    </div>
 </footer>
+
+</div><!-- /main-content -->
+</div><!-- /app-layout -->
+
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+</script>
 
 </body>
 </html>

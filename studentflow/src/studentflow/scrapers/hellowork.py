@@ -1,4 +1,4 @@
-"""HelloWork scraper via public RSS feed.
+"""HelloWork scraper via public RSS feed (FRANCE ONLY — hellowork.com/fr-fr/).
 
 HelloWork exposes a public RSS 2.0 feed per search keyword. We fetch it, parse
 each <item>, and map it to our `Offer` model. No authentication required,
@@ -37,6 +37,7 @@ log = logging.getLogger(__name__)
 
 FEED_URL = "https://www.hellowork.com/fr-fr/emploi/recherche.html"
 USER_AGENT = "StudentFlow/0.1 (+https://github.com/them311/Tee-es-t)"
+REQUEST_TIMEOUT = 10.0
 
 # Rough mapping of French contract keywords to our enum. Case-insensitive.
 CONTRACT_PATTERNS: list[tuple[re.Pattern[str], ContractType]] = [
@@ -63,17 +64,34 @@ class HelloWorkScraper(BaseScraper):
         self._max_results = max_results
 
     async def fetch(self) -> list[Offer]:
-        async with httpx.AsyncClient(
-            timeout=15.0,
-            headers={"User-Agent": USER_AGENT, "Accept": "application/rss+xml, application/xml"},
-        ) as client:
-            xml = await self._fetch_feed(client)
+        try:
+            async with httpx.AsyncClient(
+                timeout=REQUEST_TIMEOUT,
+                headers={"User-Agent": USER_AGENT, "Accept": "application/rss+xml, application/xml"},
+            ) as client:
+                xml = await self._fetch_feed(client)
+        except Exception as exc:
+            log.error("HelloWork fetch failed: %s", exc)
+            return []
+
+        if xml is None:
+            return []
         return self._parse(xml)[: self._max_results]
 
-    async def _fetch_feed(self, client: httpx.AsyncClient) -> bytes:
-        resp = await client.get(FEED_URL, params={"k": self._keyword, "rss": 1})
-        resp.raise_for_status()
-        return resp.content
+    async def _fetch_feed(self, client: httpx.AsyncClient) -> bytes | None:
+        try:
+            resp = await client.get(FEED_URL, params={"k": self._keyword, "rss": 1})
+            if resp.status_code in (403, 429, 503):
+                log.warning(
+                    "HelloWork returned %d — rate-limited or blocked",
+                    resp.status_code,
+                )
+                return None
+            resp.raise_for_status()
+            return resp.content
+        except httpx.HTTPError as exc:
+            log.warning("HelloWork feed fetch failed: %s", exc)
+            return None
 
     def _parse(self, xml: bytes) -> list[Offer]:
         try:

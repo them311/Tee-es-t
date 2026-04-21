@@ -571,6 +571,37 @@
         footer a:hover { text-decoration: underline; }
         footer .foot-line + .foot-line { margin-top: 4px; }
 
+        /* ===== SIDEBAR LAYOUT ===== */
+        .app-layout { display: flex; min-height: calc(100vh - 56px); }
+        .sidebar {
+            width: 260px; background: var(--slate-900); border-right: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0; display: flex; flex-direction: column; position: sticky;
+            top: 56px; height: calc(100vh - 56px); overflow-y: auto; z-index: 40;
+        }
+        .sidebar-nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-section { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--slate-500); padding: 16px 12px 6px; }
+        .sidebar-section:first-child { padding-top: 4px; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px;
+            font-size: 13px; font-weight: 500; color: var(--slate-400); text-decoration: none;
+            transition: color 0.15s, background 0.15s; min-height: 44px;
+        }
+        .sidebar-link:hover { color: var(--slate-100); background: rgba(255,255,255,0.04); }
+        .sidebar-link.active { color: var(--blue-400); background: rgba(14,165,233,0.1); }
+        .sidebar-link .sb-icon { width: 20px; text-align: center; font-size: 15px; flex-shrink: 0; }
+        .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: var(--slate-500); }
+        .sidebar-footer strong { color: var(--slate-300); display: block; margin-bottom: 2px; font-size: 12px; }
+        .main-content { flex: 1; min-width: 0; overflow-x: hidden; }
+        .hamburger {
+            display: none; background: none; border: none; color: var(--slate-300); font-size: 22px;
+            cursor: pointer; padding: 8px; margin-right: 8px; border-radius: 6px;
+            min-width: 44px; min-height: 44px; align-items: center; justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.06); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 39; backdrop-filter: blur(2px); }
+        .nav-menu { display: none; }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .kpi-row { grid-template-columns: repeat(3, 1fr); }
@@ -583,10 +614,14 @@
             .livrables-kpis { grid-template-columns: 1fr; }
             .hero h1 { font-size: 26px; }
             .hero { padding: 32px 1.5rem 44px; }
-        }
-
-        @media (max-width: 900px) {
-            .nav-menu { display: none; }
+            .hamburger { display: flex; }
+            .sidebar {
+                position: fixed; top: 0; left: 0; height: 100vh;
+                transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); z-index: 100;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .app-layout { display: block; }
         }
 
         @media (max-width: 480px) {
@@ -614,21 +649,11 @@
 
 <!-- NAV -->
 <nav>
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
     <a class="nav-brand" href="/">
         <div class="nav-logo">S</div>
         <div class="nav-title">SNB Consulting <span>| Agent IA</span></div>
     </a>
-    <div class="nav-menu">
-        <a href="/" class="nav-link active">Dashboard</a>
-        <a href="/pipeline.html" class="nav-link">Pipeline</a>
-        <a href="/livrables.html" class="nav-link">Livrables</a>
-        <a href="/missions.html" class="nav-link">Missions</a>
-        <a href="/documents.html" class="nav-link">Documents</a>
-        <a href="/portfolio.html" class="nav-link">Portfolio</a>
-        <a href="/routines.html" class="nav-link">Routines</a>
-        <a href="/architecture.html" class="nav-link">Architecture</a>
-        <a href="/contact.html" class="nav-link">Contact</a>
-    </div>
     <div class="nav-right">
         <div class="nav-timer">Prochain cycle <strong id="hd-timer">--:--</strong></div>
         <div class="nav-badge" id="nav-badge">
@@ -637,6 +662,34 @@
         </div>
     </div>
 </nav>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="app-layout">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a href="/" class="sidebar-link active"><span class="sb-icon">&#9673;</span> Dashboard</a>
+        <a href="/pipeline.html" class="sidebar-link"><span class="sb-icon">&#9670;</span> Pipeline</a>
+        <a href="/missions.html" class="sidebar-link"><span class="sb-icon">&#9889;</span> Missions</a>
+        <a href="/livrables.html" class="sidebar-link"><span class="sb-icon">&#9997;</span> Livrables</a>
+        <div class="sidebar-section">Ressources</div>
+        <a href="/documents.html" class="sidebar-link"><span class="sb-icon">&#128196;</span> Documents</a>
+        <a href="/portfolio.html" class="sidebar-link"><span class="sb-icon">&#128188;</span> Portfolio</a>
+        <a href="/routines.html" class="sidebar-link"><span class="sb-icon">&#128260;</span> Routines</a>
+        <div class="sidebar-section">Systeme</div>
+        <a href="/architecture.html" class="sidebar-link"><span class="sb-icon">&#9881;</span> Architecture</a>
+        <a href="/contact.html" class="sidebar-link"><span class="sb-icon">&#9993;</span> Contact</a>
+    </nav>
+    <div class="sidebar-footer">
+        <strong>SNB Consulting</strong>
+        Agent Commercial IA
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
 
 <!-- HERO -->
 <section class="hero">
@@ -803,19 +856,11 @@
 <footer>
     <div class="foot-line"><strong>SNB Consulting</strong> &mdash; Agent Commercial Autonome propulse par Claude AI</div>
     <div class="foot-line">Contact : <a href="mailto:bp.thevenot@gmail.com">bp.thevenot@gmail.com</a></div>
-    <div class="foot-line" style="margin-top:12px">
-        <a href="/">Dashboard</a> &middot;
-        <a href="/pipeline.html">Pipeline</a> &middot;
-        <a href="/livrables.html">Livrables</a> &middot;
-        <a href="/missions.html">Missions</a> &middot;
-        <a href="/documents.html">Documents</a> &middot;
-        <a href="/portfolio.html">Portfolio</a> &middot;
-        <a href="/routines.html">Routines</a> &middot;
-        <a href="/architecture.html">Architecture</a> &middot;
-        <a href="/contact.html">Contact</a>
-    </div>
     <div class="foot-line" id="foot-ts" style="margin-top:8px"></div>
 </footer>
+
+</div><!-- /main-content -->
+</div><!-- /app-layout -->
 
 <script>
 (function() {
@@ -982,6 +1027,11 @@
     startCountdown();
     setInterval(loadStatus, CYCLE * 1000);
 })();
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebar-overlay').classList.toggle('open');
+}
 </script>
 
 </body>

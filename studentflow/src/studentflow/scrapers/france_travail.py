@@ -1,4 +1,4 @@
-"""France Travail (ex Pôle Emploi) scraper.
+"""France Travail (ex Pole Emploi) scraper (FRANCE ONLY by design).
 
 Uses the official public API:
   - OAuth2 token: POST entreprise.francetravail.fr/connexion/oauth2/access_token
@@ -26,14 +26,15 @@ log = logging.getLogger(__name__)
 TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire"
 SEARCH_URL = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search"
 SCOPE = "api_offresdemploiv2 o2dsoffre"
+REQUEST_TIMEOUT = 10.0
 
 # Map FT contract codes to our enum.
 CONTRACT_MAP: dict[str, ContractType] = {
     "CDI": ContractType.CDI,
     "CDD": ContractType.CDD,
-    "MIS": ContractType.CDD,  # mission intérim
+    "MIS": ContractType.CDD,  # mission interim
     "SAI": ContractType.CDD,  # saisonnier
-    "CCE": ContractType.APPRENTICESHIP,  # contrat aidé
+    "CCE": ContractType.APPRENTICESHIP,  # contrat aide
     "DIN": ContractType.FREELANCE,
     "FRA": ContractType.FREELANCE,
     "LIB": ContractType.FREELANCE,
@@ -55,12 +56,24 @@ class FranceTravailScraper(BaseScraper):
             log.info("France Travail not configured; skipping")
             return []
 
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            token = await self._get_token(
-                client, settings.france_travail_client_id, settings.france_travail_client_secret
-            )
-            raw = await self._search(client, token)
-        return [self._parse(row) for row in raw]
+        try:
+            async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+                token = await self._get_token(
+                    client, settings.france_travail_client_id, settings.france_travail_client_secret
+                )
+                raw = await self._search(client, token)
+        except Exception as exc:
+            log.error("France Travail fetch failed: %s", exc)
+            return []
+
+        offers: list[Offer] = []
+        for row in raw:
+            try:
+                offers.append(self._parse(row))
+            except Exception as exc:
+                log.warning("France Travail: failed to parse row: %s", exc)
+                continue
+        return offers
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8))
     async def _get_token(
@@ -76,6 +89,13 @@ class FranceTravailScraper(BaseScraper):
             },
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
+        if resp.status_code in (429, 503):
+            log.warning("France Travail token endpoint rate-limited (%d)", resp.status_code)
+            raise httpx.HTTPStatusError(
+                f"Rate limited: {resp.status_code}",
+                request=resp.request,
+                response=resp,
+            )
         resp.raise_for_status()
         data = resp.json()
         return data["access_token"]
@@ -94,6 +114,13 @@ class FranceTravailScraper(BaseScraper):
         # 204 means "no content" (valid).
         if resp.status_code == 204:
             return []
+        if resp.status_code in (429, 503):
+            log.warning("France Travail search rate-limited (%d)", resp.status_code)
+            raise httpx.HTTPStatusError(
+                f"Rate limited: {resp.status_code}",
+                request=resp.request,
+                response=resp,
+            )
         resp.raise_for_status()
         data = resp.json()
         return data.get("resultats", [])

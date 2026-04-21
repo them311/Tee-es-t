@@ -1,4 +1,4 @@
-"""Indeed scraper via public RSS feed.
+"""Indeed scraper via public RSS feed (FRANCE ONLY — fr.indeed.com).
 
 Indeed still serves RSS 2.0 feeds for search queries on most country domains.
 No API key required — we just hit the feed URL, parse XML, and map to Offer.
@@ -39,8 +39,11 @@ from .base import BaseScraper
 
 log = logging.getLogger(__name__)
 
+# France only — hardcoded to fr.indeed.com.
 FEED_URL = "https://fr.indeed.com/rss"
+LOCATION = "France"
 USER_AGENT = "StudentFlow/0.1 (+https://github.com/them311/Tee-es-t)"
+REQUEST_TIMEOUT = 10.0
 
 _CONTRACT_PATTERNS: list[tuple[re.Pattern[str], ContractType]] = [
     (re.compile(r"\b(stage|stagiaire)\b", re.I), ContractType.INTERNSHIP),
@@ -64,23 +67,26 @@ class IndeedScraper(BaseScraper):
         self,
         *,
         keyword: str = "etudiant",
-        location: str = "France",
         max_results: int = 50,
     ) -> None:
         self._keyword = keyword
-        self._location = location
         self._max_results = max_results
 
     async def fetch(self) -> list[Offer]:
-        async with httpx.AsyncClient(
-            timeout=15.0,
-            follow_redirects=True,
-            headers={
-                "User-Agent": USER_AGENT,
-                "Accept": "application/rss+xml, application/xml, text/xml",
-            },
-        ) as client:
-            xml = await self._fetch_feed(client)
+        try:
+            async with httpx.AsyncClient(
+                timeout=REQUEST_TIMEOUT,
+                follow_redirects=True,
+                headers={
+                    "User-Agent": USER_AGENT,
+                    "Accept": "application/rss+xml, application/xml, text/xml",
+                },
+            ) as client:
+                xml = await self._fetch_feed(client)
+        except Exception as exc:
+            log.error("Indeed fetch failed: %s", exc)
+            return []
+
         if xml is None:
             return []
         return self._parse(xml)[: self._max_results]
@@ -89,7 +95,7 @@ class IndeedScraper(BaseScraper):
         try:
             resp = await client.get(
                 FEED_URL,
-                params={"q": self._keyword, "l": self._location, "sort": "date"},
+                params={"q": self._keyword, "l": LOCATION, "sort": "date"},
             )
             if resp.status_code in (403, 429, 503):
                 log.warning(

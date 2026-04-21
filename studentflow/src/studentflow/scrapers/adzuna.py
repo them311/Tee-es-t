@@ -1,17 +1,12 @@
-"""Adzuna scraper — official public JSON API.
+"""Adzuna scraper — official public JSON API (FRANCE ONLY).
 
 Adzuna exposes a clean, free-tier REST API (1000 calls/month on the free plan).
-We treat it as a third reliable source alongside France Travail (FR-only) and
-HelloWork (RSS). Adzuna is useful because:
-
-  - It's multi-country (fr, gb, us, de…) so we can scale beyond France later.
-  - The schema is stable and well documented.
-  - It does not require OAuth — just app_id + app_key query params.
+This scraper is locked to France ("fr") — no multi-country support.
 
 Docs: https://developer.adzuna.com/activedocs
 
 Endpoint:
-    GET https://api.adzuna.com/v1/api/jobs/{country}/search/{page}
+    GET https://api.adzuna.com/v1/api/jobs/fr/search/{page}
         ?app_id=...&app_key=...&what=...&results_per_page=...&content-type=application/json
 
 Rate limits: soft, ~1 req/s is safe.
@@ -34,6 +29,8 @@ log = logging.getLogger(__name__)
 
 BASE_URL = "https://api.adzuna.com/v1/api/jobs"
 DEFAULT_RESULTS_PER_PAGE = 50  # Adzuna caps at 50
+COUNTRY = "fr"  # France only — hardcoded, not configurable.
+REQUEST_TIMEOUT = 10.0
 
 
 # Adzuna uses `contract_type` ∈ {permanent, contract} and
@@ -72,11 +69,9 @@ class AdzunaScraper(BaseScraper):
         *,
         keyword: str = "etudiant",
         max_results: int = 50,
-        country: str | None = None,
     ) -> None:
         self._keyword = keyword
         self._max_results = max_results
-        self._country_override = country
 
     async def fetch(self) -> list[Offer]:
         settings = get_settings()
@@ -84,26 +79,42 @@ class AdzunaScraper(BaseScraper):
             log.info("Adzuna not configured; skipping")
             return []
 
-        country = self._country_override or settings.adzuna_country
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            rows = await self._search(
-                client,
-                country=country,
-                app_id=settings.adzuna_app_id,
-                app_key=settings.adzuna_app_key,
+        # Enforce France-only regardless of env var value.
+        if settings.adzuna_country != "fr":
+            log.warning(
+                "ADZUNA_COUNTRY is '%s' but only 'fr' is supported — forcing 'fr'",
+                settings.adzuna_country,
             )
-        return [self._parse(row) for row in rows][: self._max_results]
+
+        try:
+            async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+                rows = await self._search(
+                    client,
+                    app_id=settings.adzuna_app_id,
+                    app_key=settings.adzuna_app_key,
+                )
+        except Exception as exc:
+            log.error("Adzuna fetch failed: %s", exc)
+            return []
+
+        offers: list[Offer] = []
+        for row in rows[: self._max_results]:
+            try:
+                offers.append(self._parse(row))
+            except Exception as exc:
+                log.warning("Adzuna: failed to parse row: %s", exc)
+                continue
+        return offers
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8))
     async def _search(
         self,
         client: httpx.AsyncClient,
         *,
-        country: str,
         app_id: str,
         app_key: str,
     ) -> list[dict[str, Any]]:
-        url = f"{BASE_URL}/{country}/search/1"
+        url = f"{BASE_URL}/{COUNTRY}/search/1"
         resp = await client.get(
             url,
             params={
@@ -115,6 +126,13 @@ class AdzunaScraper(BaseScraper):
             },
             headers={"Accept": "application/json"},
         )
+        if resp.status_code in (429, 503):
+            log.warning("Adzuna rate-limited (%d) — will retry", resp.status_code)
+            raise httpx.HTTPStatusError(
+                f"Rate limited: {resp.status_code}",
+                request=resp.request,
+                response=resp,
+            )
         resp.raise_for_status()
         data = resp.json()
         return data.get("results", []) or []

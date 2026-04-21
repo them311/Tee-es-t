@@ -1,7 +1,10 @@
-"""Scrapers package.
+"""Scrapers package (FRANCE ONLY).
 
 Every scraper implements `BaseScraper` and appears in `SCRAPERS` so the
 `ScraperAgent` can iterate on them without knowing the concrete types.
+
+Only production-ready scrapers are registered. Stub/unimplemented scrapers
+(StudentJob, JobTeaser) are excluded from the registry.
 """
 
 from __future__ import annotations
@@ -11,9 +14,7 @@ from .base import BaseScraper
 from .france_travail import FranceTravailScraper
 from .hellowork import HelloWorkScraper
 from .indeed import IndeedScraper
-from .jobteaser import JobTeaserScraper
 from .jooble import JoobleScraper
-from .studentjob import StudentJobScraper
 
 SCRAPERS: list[type[BaseScraper]] = [
     FranceTravailScraper,
@@ -21,8 +22,6 @@ SCRAPERS: list[type[BaseScraper]] = [
     JoobleScraper,
     HelloWorkScraper,
     IndeedScraper,
-    StudentJobScraper,
-    JobTeaserScraper,
 ]
 
 __all__ = [
@@ -32,7 +31,5 @@ __all__ = [
     "FranceTravailScraper",
     "HelloWorkScraper",
     "IndeedScraper",
-    "JobTeaserScraper",
     "JoobleScraper",
-    "StudentJobScraper",
 ]

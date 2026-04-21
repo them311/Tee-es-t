@@ -1,0 +1,151 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-04-21",
+  "entity": {
+    "name": "SNB Consulting",
+    "founder": "Baptiste Thevenot",
+    "email": "bp.thevenot@gmail.com",
+    "positioning": "Consultant freelance en agents IA autonomes, automatisation et integration CRM",
+    "experience_years": 8,
+    "ai_specialization_years": 3
+  },
+  "typologies_metiers": {
+    "agent_ia": {
+      "label": "Agent IA Autonome",
+      "description": "Conception et deploiement d'agents IA en production",
+      "skills": ["claude-api", "openai-api", "langchain", "orchestration", "prompt-engineering", "rag", "tool-use"],
+      "platforms": ["codeur", "malt", "freelance-info", "upwork"],
+      "tjm_range": [550, 800],
+      "deliverables": ["agent-autonome", "pipeline-ia", "chatbot-metier", "assistant-ia"]
+    },
+    "automatisation": {
+      "label": "Automatisation & Workflows",
+      "description": "Automatisation de processus metier avec Python, APIs, webhooks",
+      "skills": ["python", "apis-rest", "webhooks", "cron", "make", "zapier", "n8n"],
+      "platforms": ["codeur", "malt", "freelance-info"],
+      "tjm_range": [450, 650],
+      "deliverables": ["workflow-automatise", "pipeline-donnees", "script-batch", "integration-api"]
+    },
+    "crm_revops": {
+      "label": "CRM & RevOps",
+      "description": "Structuration CRM, RevOps, HubSpot, automatisation commerciale",
+      "skills": ["hubspot", "salesforce", "crm", "revops", "pipeline-commercial", "reporting"],
+      "platforms": ["malt", "codeur", "freelance-info"],
+      "tjm_range": [500, 700],
+      "deliverables": ["setup-crm", "automatisation-deals", "dashboard-commercial", "scoring-leads"]
+    },
+    "scraping_data": {
+      "label": "Scraping & Data Collection",
+      "description": "Extraction de donnees web, enrichissement, pipelines de collecte",
+      "skills": ["python", "beautifulsoup", "scrapy", "playwright", "selenium", "data-pipeline"],
+      "platforms": ["codeur", "malt", "upwork"],
+      "tjm_range": [400, 600],
+      "deliverables": ["scraper-modulaire", "pipeline-enrichissement", "base-donnees-structuree"]
+    },
+    "devops_deploy": {
+      "label": "DevOps & Deploiement",
+      "description": "CI/CD, deploiement cloud, Docker, monitoring",
+      "skills": ["docker", "github-actions", "netlify", "railway", "fly-io", "ci-cd", "monitoring"],
+      "platforms": ["malt", "freelance-info"],
+      "tjm_range": [500, 700],
+      "deliverables": ["pipeline-ci-cd", "infra-docker", "monitoring-alerting", "deploiement-cloud"]
+    },
+    "web_fullstack": {
+      "label": "Developpement Web Fullstack",
+      "description": "Applications web React, Node.js, API REST, dashboards",
+      "skills": ["react", "nodejs", "typescript", "vite", "express", "fastapi", "html-css"],
+      "platforms": ["codeur", "malt", "upwork", "freelance-info"],
+      "tjm_range": [450, 650],
+      "deliverables": ["application-web", "dashboard", "api-rest", "landing-page"]
+    },
+    "email_marketing": {
+      "label": "Email & Marketing Automation",
+      "description": "Campagnes email, nurturing, integration Gmail/SMTP",
+      "skills": ["gmail-api", "smtp", "email-templates", "segmentation", "nurturing", "brevo"],
+      "platforms": ["malt", "codeur"],
+      "tjm_range": [400, 550],
+      "deliverables": ["campagne-email", "workflow-nurturing", "template-email", "integration-crm"]
+    }
+  },
+  "competences": {
+    "langages": ["python", "javascript", "typescript", "html", "css", "sql", "bash"],
+    "frameworks": ["fastapi", "express", "react", "vite", "next-js"],
+    "ia_ml": ["claude-api", "openai-api", "langchain", "rag", "prompt-engineering", "embeddings", "fine-tuning"],
+    "cloud_devops": ["docker", "github-actions", "netlify", "railway", "fly-io", "vercel", "supabase"],
+    "crm_marketing": ["hubspot", "airtable", "google-sheets", "brevo", "mailchimp"],
+    "scraping": ["beautifulsoup", "scrapy", "playwright", "selenium", "puppeteer"],
+    "bdd": ["postgresql", "supabase", "sqlite", "mongodb", "redis"],
+    "integrations": ["gmail-api", "google-sheets-api", "notion-api", "slack-api", "shopify-api", "stripe-api", "webhooks"]
+  },
+  "connecteurs": {
+    "crm": {
+      "hubspot": {"status": "actif", "operations": ["contacts", "deals", "taches", "notes", "pipeline"]},
+      "airtable": {"status": "disponible", "operations": ["bases", "records", "views"]},
+      "google-sheets": {"status": "disponible", "operations": ["lecture", "ecriture", "formules"]}
+    },
+    "communication": {
+      "gmail": {"status": "actif", "operations": ["lecture", "envoi", "brouillons", "labels"]},
+      "slack": {"status": "disponible", "operations": ["messages", "channels", "webhooks"]},
+      "notion": {"status": "actif", "operations": ["pages", "bases", "commentaires"]}
+    },
+    "dev": {
+      "github": {"status": "actif", "operations": ["issues", "prs", "actions", "repos"]},
+      "netlify": {"status": "actif", "operations": ["deploy", "functions", "env-vars"]},
+      "railway": {"status": "disponible", "operations": ["deploy", "services", "logs"]}
+    },
+    "commerce": {
+      "shopify": {"status": "disponible", "operations": ["produits", "commandes", "clients"]},
+      "stripe": {"status": "disponible", "operations": ["paiements", "abonnements", "factures"]}
+    }
+  },
+  "platforms_freelance": {
+    "codeur": {
+      "url": "https://www.codeur.com",
+      "style": "direct-concis",
+      "format": "texte-court-argumente",
+      "signature": true
+    },
+    "malt": {
+      "url": "https://www.malt.fr",
+      "style": "professionnel-structure",
+      "format": "proposition-detaillee",
+      "signature": true
+    },
+    "freelance-info": {
+      "url": "https://www.freelance-info.fr",
+      "style": "technique-precis",
+      "format": "cv-mission",
+      "signature": true
+    },
+    "upwork": {
+      "url": "https://www.upwork.com",
+      "style": "international-english",
+      "format": "cover-letter",
+      "signature": true
+    }
+  },
+  "mission_templates": {
+    "reponse_standard": {
+      "structure": [
+        "accroche_personnalisee",
+        "comprehension_besoin",
+        "proposition_technique",
+        "methodologie",
+        "livrables_concrets",
+        "budget_delai",
+        "signature"
+      ]
+    },
+    "devis": {
+      "structure": [
+        "contexte_client",
+        "objectifs",
+        "perimetre",
+        "livrables",
+        "planning",
+        "budget_detaille",
+        "conditions"
+      ]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "weights": {
+    "skills": 0.40,
+    "location": 0.25,
+    "contract": 0.15,
+    "hours": 0.10,
+    "availability": 0.10
+  },
+  "threshold": 0.6,
+  "description": {
+    "skills": "Jaccard overlap between student and offer skills",
+    "location": "Haversine distance or city match",
+    "contract": "Contract type acceptance check",
+    "hours": "Hours/week feasibility (5% penalty per extra hour)",
+    "availability": "Date range overlap"
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "test-001",
+    "platform": "codeur",
+    "mission_title": "Agent IA commercial autonome - HubSpot + Gmail",
+    "subject": "[SNB Consulting] Proposition - Agent IA commercial HubSpot + Gmail",
+    "budget": "3 500 EUR",
+    "delai": "Demarrage sous 2 semaines, livraison 10 jours",
+    "content": "Bonjour,\n\nVotre mission correspond exactement a mon expertise principale : la conception d'agents IA autonomes en production.\n\nCe que je propose :\n\n1. Agent IA connecte a HubSpot (contacts, deals, taches) et Gmail (lecture, brouillons, relances)\n2. Cycle automatique toutes les 10 minutes : traitement emails, qualification leads, mise a jour CRM\n3. Generation automatique de devis et propositions commerciales personnalisees\n4. Dashboard de suivi temps reel (deploye sur Netlify)\n\nStack technique : Python, Claude API, HubSpot API, Gmail API, GitHub Actions\n\nJ'ai deja livre ce type exact de systeme — mon propre agent commercial tourne en production depuis 3 mois et a genere plus de 15 propositions automatisees.\n\nJe suis disponible pour un appel de cadrage cette semaine.\n\nCordialement,\nBaptiste Thevenot\nSNB Consulting",
+    "to_test": "bp.thevenot@gmail.com"
+  },
+  {
+    "id": "test-002",
+    "platform": "malt",
+    "mission_title": "Automatisation pipeline de scraping et enrichissement CRM",
+    "subject": "[SNB Consulting] Proposition - Pipeline scraping + enrichissement CRM",
+    "budget": "TJM 600 EUR - 8 jours",
+    "delai": "Livraison sous 3 semaines",
+    "content": "Bonjour,\n\nVotre besoin en scraping et enrichissement CRM est clairement defini. Voici ma proposition structuree :\n\nPerimetre :\n- 5 sources de scraping francaises (France Travail, Adzuna, Jooble, HelloWork, Indeed)\n- Extraction structuree : titre, entreprise, competences, localisation, type de contrat\n- Enrichissement automatique des contacts CRM avec les donnees extraites\n- Pipeline resilient avec gestion d'erreurs, retry, rate-limiting\n\nLivrables :\n- Scrapers modulaires Python (reutilisables et extensibles)\n- Pipeline d'enrichissement avec normalisation des donnees\n- Integration CRM (HubSpot ou Airtable selon votre stack)\n- Documentation technique complete\n\nMethodologie :\n- Jour 1-2 : Cadrage + architecture\n- Jour 3-5 : Developpement scrapers + pipeline\n- Jour 6-7 : Integration CRM + tests\n- Jour 8 : Deploiement + documentation\n\nJe travaille deja avec ces outils au quotidien pour mes propres systemes de prospection.\n\nCordialement,\nBaptiste Thevenot\nSNB Consulting",
+    "to_test": "bp.thevenot@gmail.com"
+  },
+  {
+    "id": "test-003",
+    "platform": "freelance-info",
+    "mission_title": "Developpement plateforme matching IA - React + FastAPI",
+    "subject": "[SNB Consulting] Proposition - Plateforme matching IA",
+    "budget": "TJM 650 EUR - 15 jours sur 2 mois",
+    "delai": "Demarrage immediat, MVP en 2 semaines",
+    "content": "Bonjour,\n\nVotre projet de plateforme de matching correspond parfaitement a mon expertise technique et produit.\n\nProposition technique :\n\nBackend (FastAPI + Python) :\n- API REST complete avec endpoints CRUD\n- Moteur de scoring configurable (5 dimensions : competences, localisation, contrat, horaires, disponibilite)\n- Agents autonomes : scraping (15min), matching (1min), notification (30s)\n- Base PostgreSQL (Supabase) avec schema optimise\n- SSE pour les mises a jour temps reel\n\nFrontend (React + TypeScript + Vite) :\n- Interface responsive (mobile-first, sidebar adaptative)\n- Formulaires d'inscription etudiant et entreprise\n- Inbox de matches avec scoring visuel\n- Dashboard statistiques et funnel\n\nInfrastructure :\n- API sur Railway (Docker)\n- Frontend sur Netlify (CDN global)\n- CI/CD GitHub Actions\n\nJ'ai deja construit ce systeme exact — StudentFlow, actuellement en production. Je peux l'adapter a votre contexte metier.\n\nDisponible pour un call de cadrage.\n\nCordialement,\nBaptiste Thevenot\nSNB Consulting",
+    "to_test": "bp.thevenot@gmail.com"
+  }
+]

@@ -1,15 +1,14 @@
-"""Jooble scraper — official public JSON API.
+"""Jooble scraper — official public JSON API (FRANCE ONLY).
 
 Jooble aggregates millions of jobs across thousands of job boards worldwide.
-Their API is free (single API key, no per-call cost on the hobby tier), uses
-a simple POST-JSON schema, and complements France Travail / Adzuna / HelloWork
-well because it indexes small French boards that the others miss.
+Their API is free (single API key, no per-call cost on the hobby tier).
+This scraper is locked to location "France" only.
 
 Docs: https://jooble.org/api/about
 
 Endpoint:
     POST https://jooble.org/api/{api_key}
-    Body: { "keywords": "...", "location": "...", "page": "1" }
+    Body: { "keywords": "...", "location": "France", "page": "1" }
 
 Response shape:
     {
@@ -47,6 +46,8 @@ from .base import BaseScraper
 log = logging.getLogger(__name__)
 
 BASE_URL = "https://jooble.org/api"
+LOCATION = "France"  # France only — hardcoded.
+REQUEST_TIMEOUT = 10.0
 
 _HTML_TAG = re.compile(r"<[^>]+>")
 
@@ -84,11 +85,9 @@ class JoobleScraper(BaseScraper):
         *,
         keyword: str = "etudiant",
         max_results: int = 50,
-        location: str | None = None,
     ) -> None:
         self._keyword = keyword
         self._max_results = max_results
-        self._location_override = location
 
     async def fetch(self) -> list[Offer]:
         settings = get_settings()
@@ -96,20 +95,45 @@ class JoobleScraper(BaseScraper):
             log.info("Jooble not configured; skipping")
             return []
 
-        location = self._location_override or settings.jooble_location
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            rows = await self._search(client, settings.jooble_api_key, location)
-        return [self._parse(row) for row in rows][: self._max_results]
+        # Enforce France-only regardless of env var value.
+        if settings.jooble_location != "France":
+            log.warning(
+                "JOOBLE_LOCATION is '%s' but only 'France' is supported — forcing 'France'",
+                settings.jooble_location,
+            )
+
+        try:
+            async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+                rows = await self._search(client, settings.jooble_api_key)
+        except Exception as exc:
+            log.error("Jooble fetch failed: %s", exc)
+            return []
+
+        offers: list[Offer] = []
+        for row in rows[: self._max_results]:
+            try:
+                offers.append(self._parse(row))
+            except Exception as exc:
+                log.warning("Jooble: failed to parse row: %s", exc)
+                continue
+        return offers
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8))
     async def _search(
-        self, client: httpx.AsyncClient, api_key: str, location: str
+        self, client: httpx.AsyncClient, api_key: str
     ) -> list[dict[str, Any]]:
         resp = await client.post(
             f"{BASE_URL}/{api_key}",
-            json={"keywords": self._keyword, "location": location, "page": "1"},
+            json={"keywords": self._keyword, "location": LOCATION, "page": "1"},
             headers={"Content-Type": "application/json", "Accept": "application/json"},
         )
+        if resp.status_code in (429, 503):
+            log.warning("Jooble rate-limited (%d) — will retry", resp.status_code)
+            raise httpx.HTTPStatusError(
+                f"Rate limited: {resp.status_code}",
+                request=resp.request,
+                response=resp,
+            )
         resp.raise_for_status()
         data = resp.json()
         return data.get("jobs", []) or []
