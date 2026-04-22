@@ -3,30 +3,68 @@ node_modules/
 
 # Build artifacts (rebuilt by CI/Netlify)
 dist/
+build/
 docs/quiz/
 
 # Environment (contains API key!)
 .env
+.env.local
+.env.*.local
+commercial-agent/.env
+commercial-agent/config/gmail_token.json
+commercial-agent/config/gmail_credentials.json
 
 # Quiz data (user submissions)
 server/data/
 
 # Logs
 *.log
+logs/
 
 # OS
 .DS_Store
+Thumbs.db
 
-# Compiled class file
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.code-workspace
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+.python-version
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+
+# Local SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Package artefacts
 *.class
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files
 *.jar
 *.war
 *.nar
@@ -34,18 +72,5 @@ server/data/
 *.zip
 *.tar.gz
 *.rar
-
-# VM crash logs
 hs_err_pid*
 replay_pid*
-
-# Environment secrets
-.env
-commercial-agent/.env
-commercial-agent/config/gmail_token.json
-commercial-agent/config/gmail_credentials.json
-
-# Python
-__pycache__/
-*.pyc
-.venv/

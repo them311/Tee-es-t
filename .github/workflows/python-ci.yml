@@ -1,0 +1,52 @@
+name: python-ci
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "snb/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - ".github/workflows/python-ci.yml"
+  pull_request:
+    paths:
+      - "snb/**"
+      - "tests/**"
+      - "pyproject.toml"
+
+concurrency:
+  group: python-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Ruff
+        run: ruff check snb tests
+
+      - name: Ruff format check
+        run: ruff format --check snb tests
+
+      - name: Mypy
+        run: mypy snb || true   # soft-fail while codebase stabilises
+
+      - name: Tests
+        run: pytest -q

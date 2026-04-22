@@ -1,0 +1,141 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "snb"
+version = "0.1.0"
+description = "SNB Consulting — automation, agents, integrations, scrapers, pipelines"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "SNB Consulting" }]
+keywords = ["automation", "agents", "crm", "scraping", "integrations"]
+
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "typer>=0.12",
+    "loguru>=0.7",
+    "python-dotenv>=1.0",
+    "anyio>=4.3",
+    "tenacity>=9.0",
+    "orjson>=3.10",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+]
+db = [
+    "sqlalchemy[asyncio]>=2.0",
+    "aiosqlite>=0.20",
+    "asyncpg>=0.29",
+    "alembic>=1.13",
+]
+queue = [
+    "redis>=5.0",
+    "arq>=0.26",
+]
+scrape = [
+    "selectolax>=0.3.21",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.2",
+    "playwright>=1.45",
+]
+llm = [
+    "anthropic>=0.34",
+    "openai>=1.40",
+]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "respx>=0.21",
+    "pre-commit>=3.8",
+    "types-requests",
+]
+
+[project.scripts]
+snb = "snb.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["snb"]
+
+# ---------- ruff ----------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["snb", "tests"]
+extend-exclude = ["studentflow", "studentflow-web", "server", "src", "netlify", "commercial-agent"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",      # pycodestyle / pyflakes
+    "I",                # isort
+    "UP",               # pyupgrade
+    "B",                # bugbear
+    "SIM",              # simplify
+    "C4",               # comprehensions
+    "TCH",              # type-checking blocks
+    "PL",               # pylint subset
+    "RUF",
+]
+ignore = [
+    "PLR0913",  # too many arguments
+    "PLR2004",  # magic numbers — noisy in small scripts
+    "B008",     # function call in default arg (typer depends on it)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["snb"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ---------- mypy ----------
+[tool.mypy]
+python_version = "3.11"
+strict = false
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+check_untyped_defs = true
+files = ["snb"]
+exclude = "(studentflow|studentflow-web|server|src|netlify|commercial-agent)"
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+ignore_errors = true
+
+# ---------- pytest ----------
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+]
+
+# ---------- coverage ----------
+[tool.coverage.run]
+branch = true
+source = ["snb"]
+omit = ["snb/cli/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
