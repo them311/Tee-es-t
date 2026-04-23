@@ -19,6 +19,10 @@ on:
 jobs:
   run-robot:
     runs-on: ubuntu-latest
+    # Garde-fou : n'accepter que les runs cron OU les dispatchs depuis main.
+    # Empeche un workflow_dispatch depuis une feature branch de pousser un
+    # status.json issu de code non merge sur main.
+    if: github.event_name == 'schedule' || github.ref == 'refs/heads/main'
     permissions:
       contents: write
     defaults:
