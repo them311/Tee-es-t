@@ -134,12 +134,62 @@ This `snb/` package is the new **shared foundation** — sub-projects can depend
 on it (`pip install -e ..` from inside `studentflow/` for example) without any
 of them being forced to migrate today.
 
+## Built-in agents
+
+Registered automatically by `snb/bootstrap.py`; visible via `snb agents list`.
+Every run is persisted to `data/job_log.jsonl` for the digest to consume.
+
+| Agent              | Interval | Purpose                                             |
+|--------------------|----------|-----------------------------------------------------|
+| `shopify_sync`     | 1h       | pull Shopify customers → upsert HubSpot contacts    |
+| `lead_enrichment`  | 15min    | new Airtable leads → HubSpot upsert + flag synced   |
+| `outreach`         | 30min    | Airtable outreach queue → Claude draft → Gmail send |
+| `daily_digest`     | 24h      | 24h ops summary → Claude rewrite → email to sender  |
+
+Trigger manually:
+```bash
+snb agents run shopify_sync
+snb agents run outreach -p batch_size=10
+snb scheduler              # run them all on their intervals
+```
+
+## API surface (FastAPI)
+
+Install the extra once (`pip install -e '.[api]'`), then:
+
+```bash
+make api                     # dev, hot-reload on :8080
+```
+
+| Route                       | Method | Purpose                                  |
+|-----------------------------|--------|------------------------------------------|
+| `/health`                   | GET    | liveness + version + registered agents   |
+| `/webhook/lead`             | POST   | ingest JSON lead (Airtable + HubSpot)    |
+| `/webhook/shopify`          | POST   | upsert Shopify order customer to HubSpot |
+| `/agents/{name}/run`        | POST   | trigger any agent out-of-band (API key)  |
+
+Secure the `/agents/*` endpoint with `SNB_API_KEY=<random>` in `.env`.
+
+## Deploy
+
+Two-process Fly.io app: one HTTP machine (API) + one worker (scheduler).
+Shared volume `snb_data` persists the job log.
+
+```bash
+make deploy-init              # first time only
+make deploy-secrets           # push .env -> Fly secrets
+make deploy                   # build + roll out
+make deploy-status            # app + machines
+make deploy-logs              # stream logs
+```
+
+GitHub Actions: `.github/workflows/deploy-snb.yml` offers a manual trigger
+(type "deploy" to confirm). Requires `FLY_API_TOKEN` repo secret.
+
 ## Next high-impact modules
 
 - `snb/db/` — async SQLAlchemy session, Alembic migrations
-- `snb/api/` — FastAPI app factory + health + OpenAPI
-- `snb/queue/` — arq worker + job definitions
-- `snb/llm/` — Claude + OpenAI wrappers with prompt caching
+- `snb/queue/` — arq worker (replace in-process scheduler for scale)
 - `snb/integrations/google_sheets.py` — service account flow
 - `snb/scrapers/playwright.py` — headless-browser base for JS-heavy sites
-- `snb/services/outreach.py` — sequenced email/LinkedIn flows
+- `snb/services/outreach.py` — multi-step cadences (LinkedIn + email)

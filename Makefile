@@ -69,6 +69,15 @@ scheduler: ## Run all scheduled agents
 shell: ## Drop into a python REPL with snb preloaded
 	$(BIN)/python -c "import snb; import IPython; IPython.embed()" || $(BIN)/python
 
+# ---------------- Runtime: API ----------------
+.PHONY: api
+api: ## run the FastAPI server with hot-reload
+	$(BIN)/uvicorn snb.api.app:app --reload --host 0.0.0.0 --port 8080
+
+.PHONY: api-prod
+api-prod: ## run the FastAPI server in production mode
+	$(BIN)/uvicorn snb.api.app:app --host 0.0.0.0 --port $${PORT:-8080} --workers 2
+
 # ---------------- Docker ----------------
 .PHONY: up
 up: ## docker compose dev stack (postgres + redis + app)
@@ -81,6 +90,35 @@ down: ## stop dev stack
 .PHONY: logs
 logs: ## tail dev stack logs
 	docker compose -f docker-compose.dev.yml logs -f
+
+.PHONY: build-prod
+build-prod: ## build the production image locally
+	docker build -f Dockerfile.prod -t snb-api:local .
+
+.PHONY: run-prod
+run-prod: ## run the production image locally
+	docker run --rm -p 8080:8080 --env-file .env snb-api:local
+
+# ---------------- Deploy ----------------
+.PHONY: deploy-init
+deploy-init: ## one-time Fly setup for the snb API
+	./scripts/deploy-snb.sh init
+
+.PHONY: deploy-secrets
+deploy-secrets: ## push .env values as Fly secrets
+	./scripts/deploy-snb.sh secrets
+
+.PHONY: deploy
+deploy: ## deploy to Fly.io
+	./scripts/deploy-snb.sh deploy
+
+.PHONY: deploy-status
+deploy-status: ## show Fly app status
+	./scripts/deploy-snb.sh status
+
+.PHONY: deploy-logs
+deploy-logs: ## stream Fly logs
+	./scripts/deploy-snb.sh logs
 
 # ---------------- Hooks ----------------
 .PHONY: hooks

@@ -1,0 +1,70 @@
+# ─────────────────────────────────────────────────────────
+# Fly.io — SNB API + scheduled agents
+# Deploy:
+#   flyctl launch --config fly.snb.toml --copy-config --no-deploy  (first time)
+#   flyctl deploy --config fly.snb.toml
+#
+# Secrets (set once, never committed):
+#   flyctl secrets set --config fly.snb.toml \
+#       LLM_ANTHROPIC_API_KEY=...           \
+#       AIRTABLE_API_KEY=...                \
+#       AIRTABLE_BASE_ID=...                \
+#       HUBSPOT_ACCESS_TOKEN=...            \
+#       SHOPIFY_SHOP_DOMAIN=...             \
+#       SHOPIFY_ACCESS_TOKEN=...            \
+#       GMAIL_CLIENT_ID=...                 \
+#       GMAIL_CLIENT_SECRET=...             \
+#       GMAIL_REFRESH_TOKEN=...             \
+#       GMAIL_SENDER=...                    \
+#       SNB_API_KEY=$(openssl rand -hex 32)
+# ─────────────────────────────────────────────────────────
+
+app = "snb-api"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "Dockerfile.prod"
+
+[env]
+  ENV = "prod"
+  LOG_LEVEL = "INFO"
+  LOG_JSON = "true"
+  PORT = "8080"
+
+# Two processes share the same image: the API and the scheduler.
+[processes]
+  api = "uvicorn snb.api.app:app --host 0.0.0.0 --port 8080"
+  scheduler = "snb scheduler"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["api"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "15s"
+    method = "GET"
+    path = "/health"
+
+# Persist the job log between machine restarts.
+[mounts]
+  source = "snb_data"
+  destination = "/app/data"
+  processes = ["api", "scheduler"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  cpus = 1
+  processes = ["api"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
+  cpus = 1
+  processes = ["scheduler"]
