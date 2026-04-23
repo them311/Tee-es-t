@@ -5,10 +5,15 @@ Parses agent.log to extract metrics and updates the website status file.
 """
 
 import json
+import logging
 import os
 import re
 import sys
 from datetime import datetime
+
+
+logger = logging.getLogger("update_status")
+logging.basicConfig(level=logging.INFO, format="%(levelname)s update_status: %(message)s")
 
 
 STATUS_FILE = os.path.join(os.path.dirname(__file__), "..", "docs", "status.json")
@@ -67,8 +72,8 @@ def parse_log() -> dict:
         # Check completion
         metrics["completed"] = "completed" in content.lower()
 
-    except Exception:
-        pass
+    except (OSError, UnicodeDecodeError) as exc:
+        logger.warning("Failed to parse %s: %s", LOG_FILE, exc)
 
     return metrics
 
@@ -140,7 +145,8 @@ def update_status(routine_name: str):
                         "objet": meta.get("objet", meta.get("titre", "")),
                         "montant": f"{meta.get('total_ht', 0):,.0f} EUR" if meta.get("total_ht") else None,
                     })
-            except (json.JSONDecodeError, IOError):
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.warning("Skipping malformed livrable %s: %s", fname, exc)
                 continue
     status["livrables"] = livrables_data
 
