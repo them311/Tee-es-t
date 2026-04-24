@@ -13,6 +13,14 @@ function checkAuth(req) {
   return expected && key === expected;
 }
 
+function escapeCsvField(value) {
+  let str = String(value ?? "");
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = "'" + str;
+  }
+  return '"' + str.replace(/"/g, '""') + '"';
+}
+
 export default async (req) => {
   if (!checkAuth(req)) {
     return new Response("Unauthorized", { status: 401 });
@@ -52,7 +60,7 @@ export default async (req) => {
           d.profile?.scores?.epicurien || 0, d.profile?.scores?.artisan || 0,
           d.profile?.scores?.pragmatique || 0, d.profile?.scores?.curieux || 0, d.profile?.scores?.social || 0,
         ]
-          .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
+          .map(escapeCsvField)
           .join(",")
       );
     }
