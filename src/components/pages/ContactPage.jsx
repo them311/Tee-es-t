@@ -106,6 +106,7 @@ export default function ContactPage() {
                 />
               </div>
               <HoverButton
+                type="submit"
                 style={{
                   background: COLORS.noir,
                   color: COLORS.blanc,

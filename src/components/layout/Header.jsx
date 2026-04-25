@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { COLORS } from "../../data/quizData";
-import { ACCENT_GRADIENT, useIsMobile } from "../../utils/styles";
+import { useIsMobile } from "../../utils/styles";
 import AccentBar from "../shared/AccentBar";
 
 const NAV_ITEMS = [
