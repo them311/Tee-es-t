@@ -17,11 +17,21 @@ dossier-ami/
 ├── CHECKLIST.md               ← pièces à rassembler avant d'envoyer
 ├── SUIVI.md                   ← tableau de suivi (à tenir à jour)
 ├── SUIVI.csv                  ← même tableau, format tableur
-├── courriers/
+├── courriers/                 ← templates avec variables {NOM}, {DATE}…
 │   ├── cetelem/               ← email.md + lrar.md
 │   ├── banque/                ← email.md + lrar.md
 │   ├── operateur/             ← email.md + lrar.md
 │   ├── cnil/                  ← formulaire.md (pas de LRAR en priorité)
+│   ├── assurance/             ← email.md + lrar.md
+│   └── banque-de-france/      ← email.md + lrar.md
+├── specimens/                 ← courriers ENTIÈREMENT rédigés (scénario
+│   │                            usurpation d'identité), à adapter en
+│   │                            remplaçant 5-6 informations
+│   ├── SPECIMENS.md           ← cover note : comment s'en servir
+│   ├── cetelem/               ← email.md + lrar.md
+│   ├── banque/                ← email.md + lrar.md
+│   ├── operateur/             ← email.md + lrar.md
+│   ├── cnil/                  ← formulaire.md
 │   ├── assurance/             ← email.md + lrar.md
 │   └── banque-de-france/      ← email.md + lrar.md
 ├── pieces/                    ← pièces jointes du dossier
@@ -37,6 +47,17 @@ dossier-ami/
 └── scripts/
     └── init-dossier.sh        ← regénère une arborescence vierge ailleurs
 ```
+
+## Templates vs spécimens
+
+- **`courriers/`** : templates neutres avec variables `{NOM}`, `{DATE}`, etc.
+  Bon si on veut un courrier court et générique, ou si la situation ne
+  correspond à aucun scénario type.
+- **`specimens/`** : **6 courriers entièrement rédigés** dans le scénario
+  *usurpation d'identité → contestation crédit Cetelem + impacts bancaires
+  + FICP*. Tout est écrit en prose ; il suffit de remplacer
+  `Jean MARTIN`, l'adresse, et les marqueurs `[À ADAPTER]` (numéros de
+  contrat, dates, montants). Recommandé pour ce scénario.
 
 ## Stratégie d'envoi par organisme
 
