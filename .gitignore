@@ -57,7 +57,13 @@ dossier-ami/pieces/*/*
 !dossier-ami/pieces/README.md
 dossier-ami/archives/*/*
 !dossier-ami/archives/*/.gitkeep
-# PDF générés : on bloque PARTOUT sauf dans dossier-ami/pdf/
+# PDF générés : on bloque PARTOUT sauf le kit + l'exemple public Sophie Dupont
 dossier-ami/**/*.pdf
 !dossier-ami/pdf/**/*.pdf
+!dossier-ami/exemples/sophie-dupont/pdf/*.pdf
 dossier-ami/INDEX.pdf
+
+# Profils personnels : tout sauf l'exemple public est local-only
+dossier-ami/exemples/*
+!dossier-ami/exemples/sophie-dupont/
+!dossier-ami/exemples/sophie-dupont/**
