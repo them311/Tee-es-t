@@ -57,5 +57,7 @@ dossier-ami/pieces/*/*
 !dossier-ami/pieces/README.md
 dossier-ami/archives/*/*
 !dossier-ami/archives/*/.gitkeep
+# PDF générés : on bloque PARTOUT sauf dans dossier-ami/pdf/
 dossier-ami/**/*.pdf
+!dossier-ami/pdf/**/*.pdf
 dossier-ami/INDEX.pdf
