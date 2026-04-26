@@ -30,6 +30,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("commercial-agent")
 
+
 def run_autonomous(routine: str) -> str:
     """Run an autonomous routine via the shared agent loop."""
     if routine not in ROUTINES:

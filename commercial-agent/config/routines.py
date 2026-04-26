@@ -7,7 +7,42 @@ point re-exports `ROUTINES` from here for backwards compatibility.
 
 from __future__ import annotations
 
+BRAND_BIBLE = """
+== BRAND BIBLE — La Francaise Des Sauces ==
+Produit : sauce beurre aux herbes bio (nom commercial a adapter selon le site l-fds.com)
+Ingredients : beurre francais, echalotes, estragon, basilic
+Format : pots 200g (24,50 EUR/kg)
+Fabrication : artisanale, Occitanie, France
+Positionnement : sauce de finition premium — "sublimer sans masquer"
+Ton : elegant, subtil, gastronomique, jamais agressif
+Vocabulaire : harmonie, secret, exception, finition, terroir, subtilite, raffinement, sublimer, reveler
+INTERDIT : ne jamais mentionner "entrecote" ou "sauce d'entrecote"
+Fondateur : Baptiste Thevenot (bp.thevenot@gmail.com)
+Site : l-fds.com
+"""
+
 ROUTINES: dict[str, str] = {
+    "email_prospection": f"""Effectue la routine d'envoi d'emails de prospection (10 emails/jour).
+
+{BRAND_BIBLE}
+
+PROCESS :
+1. Utilise hubspot_search_contacts pour trouver les contacts avec hs_lead_status = NEW qui n'ont pas encore ete contactes (max 10).
+2. Pour chaque contact, identifie le type de prospect :
+   - GROSSISTE (Pomona, Davigel, Avigros) : ton pro, chiffres, volumes, CTA = dossier de referencement
+   - RESEAU BIO (Naturalia, Satoriz, Biodis) : valeurs partagees, bio, CTA = echantillons
+   - GASTRONOMIE (Dalloyau, restaurants) : prestige, artisanal, CTA = degustation
+   - TRAITEUR (Receptions Paris) : gain de temps, qualite constante, CTA = echantillonnage
+   - ARTISAN (Metzger, Delon) : artisan a artisan, terroir, CTA = echange de produits
+3. Pour chaque contact, cree un brouillon Gmail personnalise avec gmail_create_draft :
+   - Objet < 50 caracteres, personnalise
+   - Corps < 150 mots, adapte au persona
+   - Signature : Baptiste Thevenot / La Francaise Des Sauces / l-fds.com
+4. Cree une note dans HubSpot avec le contenu de l'email envoye
+5. Cree une tache de relance a J+5 dans HubSpot
+6. Passe le statut du contact de NEW a OPEN dans HubSpot
+7. Resume : combien d'emails crees, pour qui, prochaines relances""",
+
     "morning": """Effectue la routine du matin :
 
 1. EMAILS : Utilise gmail_search_messages pour chercher les emails non-lus (is:unread) recus dans les dernieres 24h.

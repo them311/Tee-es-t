@@ -28,7 +28,7 @@ import anthropic
 
 log = logging.getLogger("commercial-agent")
 
-DEFAULT_MODEL = "claude-sonnet-4-6"
+DEFAULT_MODEL = "claude-opus-4-7"
 DEFAULT_MAX_TOKENS = 16000
 TOOL_RESULT_TRUNCATE_AT = 5000
 RATE_LIMIT_MAX_RETRIES = 3
