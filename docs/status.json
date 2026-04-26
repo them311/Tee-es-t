@@ -1,17 +1,22 @@
 {
   "status": "Actif",
-  "last_run": "2026-04-26T20:52:05.411374",
+  "last_run": "2026-04-26T21:48:01.121171",
   "emails_processed": 201,
   "active_contacts": 777,
   "active_companies": 303,
   "pipeline_value": 80000,
   "deals_count": 10,
-  "routines_this_week": 103,
+  "routines_this_week": 104,
   "deals_by_stage": {
     "qualifiedtobuy": 10,
     "appointmentscheduled": 1
   },
   "activity": [
+    {
+      "time": "21:48",
+      "type": "crm",
+      "message": "Relances prospects terminee - 0 actions executees"
+    },
     {
       "time": "20:52",
       "type": "crm",
@@ -104,11 +109,6 @@
     },
     {
       "time": "22:56",
-      "type": "crm",
-      "message": "Routine du matin terminee - 0 actions executees"
-    },
-    {
-      "time": "22:04",
       "type": "crm",
       "message": "Routine du matin terminee - 0 actions executees"
     }
