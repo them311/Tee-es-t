@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../lib/auth'
-import { Zap, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 
 export default function LoginPage({ onLogin }) {
   const [username, setUsername] = useState('')
@@ -15,7 +15,7 @@ export default function LoginPage({ onLogin }) {
     e.preventDefault()
     setError('')
     setLoading(true)
-    await new Promise(r => setTimeout(r, 400))
+    await new Promise(r => setTimeout(r, 300))
     const session = login(username, password)
     if (session) {
       onLogin(session)
@@ -27,39 +27,38 @@ export default function LoginPage({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 mb-4">
-            <Zap className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-white">Mission Hunter</h1>
-          <p className="text-slate-400 text-sm mt-1">Connectez-vous pour accéder au dashboard</p>
+        <div className="mb-10 text-center">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase">Mission Hunter</p>
+          <h1 className="text-xl font-semibold text-slate-900 mt-2">Espace consultant</h1>
+          <p className="text-sm text-slate-500 mt-1">Plateforme de chasse aux missions freelance</p>
         </div>
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg">{error}</div>
+            <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-md px-3 py-2">{error}</div>
           )}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Identifiant</label>
+            <label className="block text-[11px] font-semibold tracking-wider text-slate-500 uppercase mb-1.5">Identifiant</label>
             <input
               type="text"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="baptiste ou sacha"
+              className="w-full px-3 py-2.5 rounded-md border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              placeholder="baptiste"
               autoFocus
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Mot de passe</label>
+            <label className="block text-[11px] font-semibold tracking-wider text-slate-500 uppercase mb-1.5">Mot de passe</label>
             <div className="relative">
               <input
                 type={showPw ? 'text' : 'password'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                placeholder="Mot de passe"
+                className="w-full px-3 py-2.5 rounded-md border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent pr-10"
+                placeholder="********"
               />
               <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                 {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -69,12 +68,14 @@ export default function LoginPage({ onLogin }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white rounded-lg text-sm font-semibold transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white rounded-md text-sm font-medium transition-colors"
           >
             {loading ? 'Connexion...' : 'Se connecter'}
+            {!loading && <ArrowRight className="w-4 h-4" strokeWidth={2} />}
           </button>
         </form>
-        <p className="text-center text-slate-500 text-xs mt-6">Baptiste Thevenot — Consultant Web & IA</p>
+
+        <p className="text-center text-[11px] text-slate-400 mt-6">Baptiste Thevenot — Consultant Web & IA</p>
       </div>
     </div>
   )

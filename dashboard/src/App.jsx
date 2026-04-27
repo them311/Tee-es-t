@@ -8,6 +8,7 @@ import MissionsPage from './pages/MissionsPage'
 import MissionDetailPage from './pages/MissionDetailPage'
 import ProposalsPage from './pages/ProposalsPage'
 import DocumentsPage from './pages/DocumentsPage'
+import AgentPage from './pages/AgentPage'
 import SettingsPage from './pages/SettingsPage'
 
 function ProtectedRoute({ children }) {
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="missions/:id" element={<MissionDetailPage session={session} />} />
         <Route path="proposals" element={<ProposalsPage session={session} />} />
         <Route path="documents" element={<DocumentsPage session={session} />} />
+        <Route path="agent" element={<AgentPage session={session} />} />
         <Route path="settings" element={<SettingsPage session={session} />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
