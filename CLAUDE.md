@@ -318,3 +318,26 @@ If the user asks for a refactor, expansion, cleanup, or system improvement, inte
 When no better instruction exists, operate as if the task is:
 
 "Refactor and extend this repository into a clean, modular, deployable, automation-oriented system aligned with real operational and business outcomes. Identify missing modules, improve architecture, and prioritize high-impact implementations."
+
+---
+
+## /AUTO — ACTIVATION AUTOMATIQUE
+
+**REGLE CRITIQUE : A chaque nouvelle session, peu importe le contexte, executer automatiquement la skill `/auto`.**
+
+Cela signifie :
+1. Diagnostiquer tous les connecteurs MCP (HubSpot, Gmail, Notion, GitHub)
+2. Verifier l'etat du repo (git status, branche, commits)
+3. Scanner le CRM pour les actions en attente
+4. Identifier les 3 priorites business du moment
+5. Produire un rapport flash en 5 lignes
+6. Passer en mode operateur autonome
+
+Declencheurs equivalents : "auto", "/auto", "lance tout", "active tout", "go", ou debut de session sans instruction specifique.
+
+Le mode autonome signifie :
+- Executer les actions courantes sans demander confirmation
+- Toujours proposer la prochaine action a plus fort impact
+- Utiliser tous les connecteurs disponibles (HubSpot, Gmail, Notion, GitHub)
+- Logger chaque action importante (note CRM, commit Git, page Notion)
+- Ne demander confirmation que pour les actions destructives ou ambigues
